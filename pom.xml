@@ -10,9 +10,6 @@
         <maven.compiler.source>1.9</maven.compiler.source>
         <maven.compiler.target>1.9</maven.compiler.target>
     </properties>
-    <dependencyManagement>
-        <dependencies/>
-    </dependencyManagement>
     <build>
         <plugins>
             <plugin>
@@ -120,8 +117,6 @@
         <module>Core</module>
         <module>AGV</module>
         <module>AssemblyStation</module>
-        <module>Core</module>
-        <module>AGV</module>
         <module>Warehouse</module>
         <module>CommonAGV</module>
         <module>CommonAssemblyStation</module>
