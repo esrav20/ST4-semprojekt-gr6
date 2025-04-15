@@ -1,0 +1,2 @@
+module CommonWarehouse {
+}

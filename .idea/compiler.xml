@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="AGV" />
+        <module name="Warehouse" />
+        <module name="CommonWarehouse" />
+        <module name="AssemblyStation" />
+        <module name="CommonAGV" />
+        <module name="CommonAssemblyStation" />
+        <module name="Core" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ST4-semprojekt-gr6" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
