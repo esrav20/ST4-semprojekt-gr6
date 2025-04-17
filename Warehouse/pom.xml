@@ -10,7 +10,45 @@
     </parent>
 
     <artifactId>Warehouse</artifactId>
+    <dependencies>
+        <!-- JAX-WS runtime for SOAP -->
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>2.3.3</version>
+        </dependency>
+    </dependencies>
 
+    <repositories>
+        <repository>
+            <id>mojo</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <plugins>
+            <!-- SOAP client generator from WSDL -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>2.2</version> <!-- You can keep version 2.2 -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlUrls>
+                                <wsdlUrl>http://localhost:8081/Service.asmx?WSDL</wsdlUrl>
+                            </wsdlUrls>
+                            <packageName>warehouseclient</packageName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
