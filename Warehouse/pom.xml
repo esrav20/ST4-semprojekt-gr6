@@ -8,51 +8,51 @@
         <artifactId>Semesterproject</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+        <groupId>com.example</groupId>
+        <artifactId>warehouse-spring-soap</artifactId>
+        <version>1.0.0</version>
+        <packaging>jar</packaging>
 
-    <artifactId>Warehouse</artifactId>
-    <dependencies>
-        <!-- JAX-WS runtime for SOAP -->
-        <dependency>
-            <groupId>com.sun.xml.ws</groupId>
-            <artifactId>jaxws-rt</artifactId>
-            <version>2.3.3</version>
-        </dependency>
-    </dependencies>
+        <properties>
+            <java.version>17</java.version>
+        </properties>
 
-    <repositories>
-        <repository>
-            <id>mojo</id>
-            <url>https://repo.maven.apache.org/maven2</url>
-        </repository>
-    </repositories>
+        <dependencies>
 
-    <build>
-        <plugins>
-            <!-- SOAP client generator from WSDL -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxws-maven-plugin</artifactId>
-                <version>2.2</version> <!-- You can keep version 2.2 -->
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>wsimport</goal>
-                        </goals>
-                        <configuration>
-                            <wsdlUrls>
-                                <wsdlUrl>http://localhost:8081/Service.asmx?WSDL</wsdlUrl>
-                            </wsdlUrls>
-                            <packageName>warehouseclient</packageName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-    <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+            <!-- Spring Boot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>3.3.4</version>
+            </dependency>
 
-</project>
+            <!-- Spring Web Services (SOAP) -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web-services</artifactId>
+                <version>3.3.4</version>
+            </dependency>
+
+            <!-- JAXB for XML (marshalling/unmarshalling) -->
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>3.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>3.0.1</version>
+            </dependency>
+
+        </dependencies>
+
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                </plugin>
+            </plugins>
+        </build>
+    </project>
