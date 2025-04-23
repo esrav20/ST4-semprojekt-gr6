@@ -10,11 +10,80 @@
     </parent>
 
     <artifactId>Core</artifactId>
-
+    <name>Core</name>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>21.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>21.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>21.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>21.0.2</version>
+        </dependency>
+    </dependencies>
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-maven-plugin</artifactId>
+            <version>0.0.8</version>
+            <configuration>
+                <mainClass>Core/com.example.guidemo_4semester.HelloApplication</mainClass>
+            </configuration>
+        </plugin>
+        <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>3.3.0</version>
+            <executions>
+                <execution>
+                    <id>copy-dependencies</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                        <includeArtifactIds>javafx-controls,javafx-graphics,javafx-base</includeArtifactIds>
+                        <outputDirectory>../mods-mvn</outputDirectory>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>copy</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>copy</goal>
+                    </goals>
+                    <configuration>
+                        <artifactItems>
+                            <artifactItem>
+                                <groupId>org.openjfx</groupId>
+                                <artifactId>javafx-controls</artifactId>
+                                <overWrite>true</overWrite>
+                                <outputDirectory>../libs</outputDirectory>
+                            </artifactItem>
+                        </artifactItems>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
 </project>
