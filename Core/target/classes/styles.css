@@ -82,3 +82,20 @@
 .column{
     -fx-background-radius: 10;
 }
+
+.agv-status {
+    -fx-padding: 15px;
+    -fx-background-color: #f8f8f8;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 5px;
+    -fx-spacing: 10px;
+}
+
+.agv-status .label {
+    -fx-font-size: 13px;
+}
+
+#agvStateLabel, #agvOperationLabel {
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
