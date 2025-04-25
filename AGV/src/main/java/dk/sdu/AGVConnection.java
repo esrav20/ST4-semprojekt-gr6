@@ -2,59 +2,67 @@ package dk.sdu;
 import java.net.*;
 import java.io.*;
 import org.json.JSONObject;
+import java.net.HttpURLConnection;
 
 
 
 public class AGVConnection {
+    static int currentState;
+    static int battery = 100;
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
        /* SendRequestPUT("http://localhost:8082/v1/status/", "{\"Program name\":\"MoveToAssemblyOperation\",\"State\":1}");
        SendRequestPUT("http://localhost:8082/v1/status/", "{\"State\":2}");
         GetRequest("http://localhost:8082/v1/status/");*/
+        AGVConnectionManager.getInstance().initialize("http://localhost:8082/v1/status/");
         AGVLoop("http://localhost:8082/v1/status/");
 
     }
 
-   static int currentState;
+
     public static void SendRequestPUT(String URLStr, String Operation) throws IOException, InterruptedException {
-        URL url = new URL(URLStr);
-        HttpURLConnection con1 = (HttpURLConnection) url.openConnection();
-        con1.setRequestMethod("PUT");
-        con1.setConnectTimeout(5000);
-        con1.setReadTimeout(5000);
-        con1.setDoOutput(true);
-        con1.setRequestProperty("Content-Type", "application/json");
+        AGVConnectionManager connectionManager = AGVConnectionManager.getInstance();
+        HttpURLConnection con1 = null;
+        try {
+            con1 = connectionManager.createConnection();
+            con1.setRequestMethod("PUT");
+            con1.setConnectTimeout(5000);
+            con1.setReadTimeout(5000);
+            con1.setDoOutput(true);
+            con1.setRequestProperty("Content-Type", "application/json");
 
-        try(OutputStream OS = con1.getOutputStream()){
-            byte[] input = Operation.getBytes("utf-8");
-            OS.write(input, 0, input.length);
-
-        }
-
-        while (true) {
-              // use GET request
-
-            if (currentState == 1 || currentState == 3 ) {
-                break; // it's idle, safe to send new command
+            try(OutputStream OS = con1.getOutputStream()){
+                byte[] input = Operation.getBytes("utf-8");
+                OS.write(input, 0, input.length);
             }
-            System.out.println("AGV busy... waiting.");
-            currentState = 1;
-            Thread.sleep(3000); // wait 1 sec
-        }
 
-        int responseCode = con1.getResponseCode();
-        InputStream responseStream;
+            while (true) {
+                if (currentState == 1 || currentState == 3) {
+                    break; // it's idle, safe to send new command
+                }
+                System.out.println("AGV busy... waiting.");
+                Thread.sleep(3000);
+                GetRequest(URLStr); // Refresh actual currentState from server
+            }
 
-        if (responseCode >= 400) {
-            // It's an error response, read from error stream
-            responseStream = con1.getErrorStream();
-            System.out.println("❌ Error code: " + responseCode);
-        } else {
-            // It's a successful response, read from input stream
-            responseStream = con1.getInputStream();
-            System.out.println("✅ Success code: " + responseCode);
+
+            int responseCode = con1.getResponseCode();
+            InputStream responseStream;
+
+            if (responseCode >= 400) {
+                responseStream = con1.getErrorStream();
+                System.out.println("❌ Error code: " + responseCode);
+            } else {
+                responseStream = con1.getInputStream();
+                System.out.println("✅ Success code: " + responseCode);
+            }
+        } finally {
+            if (con1 != null) {
+                con1.disconnect();
+            }
         }
+    }
 
 // Read the response
         /*if (responseStream != null) {
@@ -80,40 +88,44 @@ public class AGVConnection {
             System.out.println("Response: " + response.toString());
 
     }*/
-    }
-    static int battery = 100;
+
+
     public static void GetRequest(String URLstr) throws IOException {
-        URL url = new URL(URLstr);
-        HttpURLConnection con1 = (HttpURLConnection) url.openConnection();
-        con1.setRequestMethod("GET");
-        con1.setConnectTimeout(5000);
-        con1.setReadTimeout(5000);
-        con1.setRequestProperty("Content-Type", "application/json");
+        AGVConnectionManager connectionManager = AGVConnectionManager.getInstance();
+        HttpURLConnection con1 = null;
 
-        int status = con1.getResponseCode();
+        try {
+            // Create connection using singleton
+            con1 = connectionManager.createConnection();
+            con1.setRequestMethod("GET");
+            con1.setConnectTimeout(5000);
+            con1.setReadTimeout(5000);
+            con1.setRequestProperty("Content-Type", "application/json");
 
-        try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(con1.getInputStream(), "utf-8"))) {
-            StringBuilder response = new StringBuilder();
-            String responseLine;
-            while ((responseLine = br.readLine()) != null) {
-                response.append(responseLine);
+            int status = con1.getResponseCode();
+
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con1.getInputStream(), "utf-8"))) {
+                StringBuilder response = new StringBuilder();
+                String responseLine;
+                while ((responseLine = br.readLine()) != null) {
+                    response.append(responseLine);
+                }
+
+                String jsonResponse = response.toString();
+                int batteryStart = jsonResponse.indexOf("\"battery\":") + 10;
+                int batteryEnd = jsonResponse.indexOf(",", batteryStart);
+                battery = Integer.parseInt(jsonResponse.substring(batteryStart, batteryEnd));
+
+                JSONObject json = new JSONObject(jsonResponse.toString());
+                currentState = json.getInt("state");
+
+                System.out.println("Response (" + status + "): " + response.toString());
             }
-
-
-            String jsonResponse = response.toString();
-            int batteryStart = jsonResponse.indexOf("\"battery\":") + 10;
-            int batteryEnd = jsonResponse.indexOf(",", batteryStart);
-            battery = Integer.parseInt(jsonResponse.substring(batteryStart, batteryEnd));
-
-            JSONObject json = new JSONObject(jsonResponse.toString());
-            currentState = json.getInt("state");
-
-
-            System.out.println("Response (" + status + "): " + response.toString());
-
         } finally {
-            con1.disconnect();
+            if (con1 != null) {
+                con1.disconnect();
+            }
         }
     }
     public static void AGVLoop(String URLstr) throws IOException, InterruptedException {
