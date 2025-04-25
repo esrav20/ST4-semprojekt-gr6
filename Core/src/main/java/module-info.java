@@ -1,6 +1,7 @@
 module Core {
     requires javafx.controls;
     requires javafx.fxml;
+    requires AGV;
 
 
 
