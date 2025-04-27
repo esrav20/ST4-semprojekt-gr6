@@ -7,7 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="AGV" />
-        <module name="Warehouse" />
+        <module name="warehouse-spring-soap" />
         <module name="CommonWarehouse" />
         <module name="AssemblyStation" />
         <module name="CommonAGV" />
@@ -17,6 +17,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="ST4-semprojekt-gr6" target="1.5" />
+      <module name="Warehouse" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>
