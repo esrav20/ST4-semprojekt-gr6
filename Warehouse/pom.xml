@@ -43,7 +43,7 @@
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-runtime</artifactId>
                 <version>3.0.1</version>
-                <executions>
+                <!--<executions>
                     <execution>
                         <goals>
                             <goal>wsimport</goal>
@@ -55,7 +55,7 @@
                             <packageName>warehouseclient</packageName>
                         </configuration>
                     </execution>
-                </executions>
+                </executions>-->
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
