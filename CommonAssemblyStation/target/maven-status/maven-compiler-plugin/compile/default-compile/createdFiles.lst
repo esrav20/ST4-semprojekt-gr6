@@ -1,2 +1,3 @@
-dk\sdu\Main.class
 module-info.class
+dk\sdu\Common\AssemblyStation.class
+dk\sdu\Common\MqttConnection.class

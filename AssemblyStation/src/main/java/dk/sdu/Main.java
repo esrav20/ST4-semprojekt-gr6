@@ -1,4 +1,4 @@
-package dk.sdu;
+/*package dk.sdu;
 
 import com.fasterxml.jackson.core.ObjectCodec;
 import org.eclipse.paho.client.mqttv3.*;
@@ -84,3 +84,5 @@ public class Main {
 
     }
 }
+
+ */
