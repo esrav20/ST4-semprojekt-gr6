@@ -6,4 +6,5 @@ module Warehouse {
     requires jakarta.xml.ws;
     requires spring.context;
     requires spring.web;
+    requires java.xml.bind;
 }
