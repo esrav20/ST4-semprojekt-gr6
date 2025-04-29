@@ -7,4 +7,6 @@ module Warehouse {
     requires spring.context;
     requires spring.web;
     requires java.xml.bind;
+    requires javax.jws;
+    requires java.xml.ws;
 }
