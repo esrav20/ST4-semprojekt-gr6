@@ -1,4 +1,4 @@
-package dk.sdu.AGVConnection;
+package dk.sdu.AGV;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -20,7 +20,7 @@ public class AGVConnectionManager {
         return instance;
     }
 
-
+    //What is this for? when you in the constructor is calling what baseUrl you should use?
     public void setBaseUrl(String baseUrl) {
         if (baseUrl != null && !baseUrl.isEmpty()) {
             this.baseUrl = baseUrl;

@@ -1,4 +1,4 @@
-package dk.sdu.AGVConnection;
+package dk.sdu.AGV;
 import java.io.*;
 import org.json.JSONObject;
 import java.net.HttpURLConnection;
@@ -9,17 +9,15 @@ public class AGVConnection {
     public static volatile int currentState;
     public static volatile int battery = 100;
     public static boolean isConnected = true;
-
+    public static HttpURLConnection con1;
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
        /* SendRequestPUT("http://localhost:8082/v1/status/", "{\"Program name\":\"MoveToAssemblyOperation\",\"State\":1}");
        SendRequestPUT("http://localhost:8082/v1/status/", "{\"State\":2}");
         GetRequest("http://localhost:8082/v1/status/");*/
-//        AGVLoop("http://localhost:8082/v1/status/");
-        AGVMovement Agv = new AGVMovement();
-        Agv.getRequest();
-        Agv.sendRequest("1");
+        //AGVLoop("http://localhost:8082/v1/status/");
+
 
 
 
@@ -56,7 +54,7 @@ public class AGVConnection {
 
     public static void SendRequestPUT(String URLStr, String Operation) throws IOException, InterruptedException {
         AGVConnectionManager connectionManager = AGVConnectionManager.getInstance();
-        HttpURLConnection con1 = null;
+
         try {
             con1 = connectionManager.createConnection();
             con1.setRequestMethod("PUT");
@@ -78,6 +76,7 @@ public class AGVConnection {
                 Thread.sleep(3000);
                 GetRequest(URLStr); // Refresh actual currentState from server
             }
+
 
 
             int responseCode = con1.getResponseCode();

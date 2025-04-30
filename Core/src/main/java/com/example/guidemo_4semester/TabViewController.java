@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
-import dk.sdu.AGVConnection.AGVConnection;
+import dk.sdu.AGV.AGVConnection;
 public class TabViewController {
     @FXML private Label agvStatusLabel;
     @FXML private Circle agvStatusCircle;
