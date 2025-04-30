@@ -1,3 +1,3 @@
 module CommonAGV {
-    exports dk.sdu;
+    exports dk.sdu.CommonAGV;
 }
