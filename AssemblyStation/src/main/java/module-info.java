@@ -4,5 +4,6 @@ module AssemblyStation {
     requires com.fasterxml.jackson.databind;
     requires Core;
     requires CommonAssemblyStation;
+    requires org.json;
 
 }
