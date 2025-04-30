@@ -54,7 +54,6 @@ public class AGVConnection {
 
     public static void SendRequestPUT(String URLStr, String Operation) throws IOException, InterruptedException {
         AGVConnectionManager connectionManager = AGVConnectionManager.getInstance();
-
         try {
             con1 = connectionManager.createConnection();
             con1.setRequestMethod("PUT");

@@ -4,6 +4,9 @@ import dk.sdu.CommonAGV.AGVPI;
 import org.json.JSONObject;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class AGVMovement implements AGVPI {
 
@@ -11,9 +14,17 @@ public class AGVMovement implements AGVPI {
     private int currentState = 0;
     private static volatile int battery = 100;
     private static int lastStatusCode;
-
-    public AGVMovement() {}
-
+    private static String status;
+    private List<String> carriedItems = new ArrayList<>();
+    private final int MAX_ITEMS_CAPACITY = 10;
+    @Override
+    public int getStatus() {
+        return lastStatusCode;
+    }
+    @Override
+    public String getErrorcode(){
+        return status;
+    }
     @Override
     public void connectionAGV(String url) throws IOException {
         connectionManager.setBaseUrl(url);
@@ -33,12 +44,19 @@ public class AGVMovement implements AGVPI {
         }
 
         lastStatusCode = connection.getResponseCode();
+        status = connection.getResponseMessage();
         connection.disconnect();
         // This is needed if the request isn't able to be recieved
-        if (currentState == 2) {
-            Thread.sleep(5000);
-            getRequest();
-            sendRequest(operationJson);
+        while(true) {
+            if (currentState == 2) {
+                System.out.println("Busy");
+                Thread.sleep(5000);
+                getRequest();
+                sendRequest(operationJson);
+            }
+            else {
+                break;
+            }
         }
 
     }
@@ -69,9 +87,41 @@ public class AGVMovement implements AGVPI {
 
         connection.disconnect();
     }
+    @Override
+    public void pickItem(String itemId) throws IOException, InterruptedException {
+        if (carriedItems.size() >= MAX_ITEMS_CAPACITY) {
+            throw new IllegalStateException("AGV cannot carry more items");
+        }
+
+        JSONObject pickOperation = new JSONObject();
+        pickOperation.put("operation", "pick");
+        pickOperation.put("itemId", itemId);
+
+        sendRequest(pickOperation.toString());
+        carriedItems.add(itemId);
+    }
 
     @Override
-    public int getStatus() {
-        return lastStatusCode;
+    public void putItem(String itemId) throws IOException, InterruptedException {
+        if (!carriedItems.contains(itemId)) {
+            throw new IllegalArgumentException("Item not carried by AGV");
+        }
+
+        JSONObject putOperation = new JSONObject();
+        putOperation.put("operation", "drop");
+        putOperation.put("itemId", itemId);
+
+        sendRequest(putOperation.toString());
+        carriedItems.remove(itemId);
+    }
+
+    @Override
+    public List<String> getCarriedItems() {
+        return Collections.unmodifiableList(carriedItems);
+    }
+
+    @Override
+    public boolean canCarryMoreItems() {
+        return carriedItems.size() < MAX_ITEMS_CAPACITY;
     }
 }
