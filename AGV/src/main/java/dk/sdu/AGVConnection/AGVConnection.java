@@ -10,15 +10,48 @@ public class AGVConnection {
     public static volatile int battery = 100;
     public static boolean isConnected = true;
 
+
     public static void main(String[] args) throws IOException, InterruptedException {
 
        /* SendRequestPUT("http://localhost:8082/v1/status/", "{\"Program name\":\"MoveToAssemblyOperation\",\"State\":1}");
        SendRequestPUT("http://localhost:8082/v1/status/", "{\"State\":2}");
         GetRequest("http://localhost:8082/v1/status/");*/
-        AGVConnectionManager.getInstance().setBaseUrl("http://localhost:8082/v1/status/");
-        AGVLoop("http://localhost:8082/v1/status/");
+//        AGVLoop("http://localhost:8082/v1/status/");
+        AGVMovement Agv = new AGVMovement();
+        Agv.getRequest();
+        Agv.sendRequest("1");
+
+
 
     }
+
+
+
+    //Bevægelse()
+    // this can move to different locations, and will have the operations of the AGV
+
+    //getStatus()
+    //Which state are we in, needed for UI
+
+    //If you want to add more AGV's set new baseIRL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public static void SendRequestPUT(String URLStr, String Operation) throws IOException, InterruptedException {
