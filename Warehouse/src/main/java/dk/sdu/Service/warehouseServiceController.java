@@ -17,16 +17,19 @@ public class warehouseServiceController {
         this.soapWarehouseService = soapWarehouseService;
     }
 
+    //GET all inventory
     @GetMapping("/inventory")
     public String getInventory() {
         return soapWarehouseService.getInventory();
     }
 
+    //(POST)sæt et item ind i inventory tray
     @PostMapping("/insert")
     public String insertItem(@RequestParam int trayId, @RequestParam String itemName) {
         return soapWarehouseService.insertItem(trayId, itemName);
     }
 
+    //(POST) vælg et tray og fjern item
     @PostMapping("/pick")
     public String pickItem(@RequestParam int trayId) {
         return soapWarehouseService.pickItem(trayId);

@@ -18,14 +18,17 @@ public class soapWarehouseService {
         this.servicePort = servicePort;
     }
 
+    //returnere en string som er inventory
     public String getInventory() {
         return servicePort.getInventory();
     }
 
+    //Handler at kunne indsætte items på trays
     public String insertItem(int trayId, String itemName) {
         return servicePort.insertItem(trayId, itemName);
     }
 
+    //Kan finde/fjerne inventory i bestemt tray
     public String pickItem(int trayId) {
         return servicePort.pickItem(trayId);
     }
