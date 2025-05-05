@@ -6,6 +6,7 @@ import dk.sdu.InventoryItems;
 import dk.sdu.InventoryRepos;
 import org.springframework.stereotype.Service;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @ConfigurationProperties("service")
@@ -14,18 +15,13 @@ import java.util.List;
 public class soapWarehouseService {
     private final InventoryRepos inventoryRepos;
     private final IEmulatorService servicePort;
-
+@Autowired
     public soapWarehouseService(InventoryRepos inventoryRepos) {
         this.inventoryRepos = inventoryRepos;
         IEmulatorService_Service service = new IEmulatorService_Service();
         this.servicePort = service.getBasicHttpBindingIEmulatorService();
     }
 
-
-    public soapWarehouseService(InventoryRepos inventoryRepos, IEmulatorService servicePort) {
-        this.inventoryRepos = inventoryRepos;
-        this.servicePort = servicePort;
-    }
 
     //returnere inventory
     public List<InventoryItems> getInventory(){
