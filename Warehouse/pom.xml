@@ -4,9 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>dk.sdu</groupId>
-        <artifactId>Semesterproject</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.5</version> <!-- latest stable -->
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
     <artifactId>warehouse-spring-soap</artifactId>
@@ -27,14 +28,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>3.3.4</version>
+            <!--<version>3.3.4</version>-->
         </dependency>
 
         <!-- Spring Web Services (SOAP) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web-services</artifactId>
-            <version>3.3.4</version>
+           <!-- <version>3.3.4</version>-->
         </dependency>
 
         <!-- JAXB for XML (marshalling/unmarshalling) -->
@@ -80,7 +81,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test</artifactId>
-            <version>3.3.5</version>
+            <!--<version>3.3.5</version>-->
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
@@ -102,7 +103,7 @@
         <dependency>
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-ws-core</artifactId>
-            <version>4.0.11</version>
+            <!--<version>4.0.11</version>-->
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
@@ -127,7 +128,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>RELEASE</version>
+            <!--<version>RELEASE</version>-->
             <scope>compile</scope>
         </dependency>
 
@@ -156,6 +157,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.flywaydb</groupId>

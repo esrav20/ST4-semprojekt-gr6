@@ -2,3 +2,4 @@
 /mods-mvn/javafx-base-21.0.2-win.jar filter=lfs diff=lfs merge=lfs -text
 /mods-mvn/javafx-controls-21.0.2-win.jar filter=lfs diff=lfs merge=lfs -text
 /mods-mvn/javafx-graphics-21.0.2-win.jar filter=lfs diff=lfs merge=lfs -text
+/Warehouse/target/warehouse-spring-soap-1.0.0.jar filter=lfs diff=lfs merge=lfs -text
