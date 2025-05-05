@@ -6,7 +6,7 @@ import dk.sdu.Common.IMqttService;
 public class MqttServiceProvider {
     private static final IMqttService mqttService = new MqttService();
 
-    private static IMqttService getMqttService() {
+    public static IMqttService getMqttService() {
         return mqttService;
     }
 }
