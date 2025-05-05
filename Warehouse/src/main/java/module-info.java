@@ -10,4 +10,5 @@ module Warehouse {
     requires javax.jws;
     requires java.xml.ws;
     requires jakarta.persistence;
+    requires spring.data.jpa;
 }

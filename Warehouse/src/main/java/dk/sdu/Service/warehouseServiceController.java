@@ -1,7 +1,10 @@
 package dk.sdu.Service;
 
+import dk.sdu.InventoryItems;
 import dk.sdu.Service.soapWarehouseService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/warehouse")
@@ -19,13 +22,13 @@ public class warehouseServiceController {
 
     //GET all inventory
     @GetMapping("/inventory")
-    public String getInventory() {
+    public List<InventoryItems> getInventory() {
         return soapWarehouseService.getInventory();
     }
 
     //(POST)sæt et item ind i inventory tray
     @PostMapping("/insert")
-    public String insertItem(@RequestParam int trayId, @RequestParam String itemName) {
+    public InventoryItems insertItem(@RequestParam int trayId, @RequestParam String itemName) {
         return soapWarehouseService.insertItem(trayId, itemName);
     }
 
