@@ -5,13 +5,19 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import dk.sdu.Common.IMqttConnection;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Objects;
 
 import org.json.JSONObject;
+import com.google.gson.*;
 
 public class MqttMethods implements IMqttConnection {
     private  MqttClient client;
+    private boolean health;
+    private int state;
 
 
     @Override
@@ -25,18 +31,22 @@ public class MqttMethods implements IMqttConnection {
                 cause.printStackTrace();
             }
 
+
+
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                String payload = new String(message.getPayload(), "UTF-8");
-
-                JSONObject json = new JSONObject(payload);
-
-                System.out.println("Received message on topic: " + topic);
-                Iterator<String> keys = json.keys();  // Hent alle nøgler i JSON-objektet
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    System.out.println(key + ": " + json.get(key));
+                String json = message.toString();
+                if(topic.equals("emulator/status")){
+                    JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
+                    state = obj.get("State").getAsInt();
+                    System.out.println("State: " + state);
+                } else if(topic.equals("emulator/checkhealth")){
+                    json = json.substring(1, json.length()-1);
+                    JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
+                    health = obj.get("IsHealthy").getAsBoolean();
+                    System.out.println("IsHealthy: " + health);
                 }
+
             }
 
 
@@ -79,6 +89,7 @@ public class MqttMethods implements IMqttConnection {
     public void publish(String topic, String payload, int qos) throws MqttException {
         try {
             MqttMessage message = new MqttMessage(payload.getBytes());
+            System.out.println(message);
             message.setQos(qos);
             client.publish(topic,message);
         } catch (MqttException e){
