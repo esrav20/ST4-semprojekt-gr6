@@ -1,9 +1,6 @@
 package dk.sdu.Common;
 
-import dk.sdu.MessageHandler;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttTopic;
 
 public interface IMqttConnection {
 
