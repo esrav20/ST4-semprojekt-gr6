@@ -9,4 +9,5 @@ module Warehouse {
     requires java.xml.bind;
     requires javax.jws;
     requires java.xml.ws;
+    requires jakarta.persistence;
 }
