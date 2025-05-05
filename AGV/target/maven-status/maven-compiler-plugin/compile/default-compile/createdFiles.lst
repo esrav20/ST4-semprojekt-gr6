@@ -1,4 +1,3 @@
+module-info.class
 dk\sdu\AGV\AGVMovement.class
 dk\sdu\AGV\AGVConnectionManager.class
-module-info.class
-dk\sdu\AGV\AGVConnection.class

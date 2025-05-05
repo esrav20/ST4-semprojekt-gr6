@@ -9,14 +9,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class AGVMovement implements AGVPI {
-
     private AGVConnectionManager connectionManager = AGVConnectionManager.getInstance();
-    private int currentState = 0;
+    private int currentState;
     private static volatile int battery = 100;
     private static int lastStatusCode;
     private static String status;
     private List<String> carriedItems = new ArrayList<>();
     private final int MAX_ITEMS_CAPACITY = 10;
+    private final int battery_treshold = 20;
+    private boolean connected;
+
     @Override
     public int getStatus() {
         return lastStatusCode;
@@ -26,8 +28,43 @@ public class AGVMovement implements AGVPI {
         return status;
     }
     @Override
+    public int getCurrentstate(){
+        return currentState;
+    }
+    @Override
+    public int getBatteryLevel() {
+        return battery;
+    }
+
+    @Override
+    public void needsCharging() throws IOException, InterruptedException {
+        if(battery < battery_treshold){
+            charge();
+        };
+    }
+
+    @Override
+    public void charge() throws IOException, InterruptedException {
+        System.out.println("Low battery (" + battery + "%), moving to charger");
+
+        // Move to charger
+        sendRequest("{\"Program name\":\"MoveToChargerOperation\",\"State\":1}");
+        Thread.sleep(1000);
+
+        // Start charging
+        sendRequest("{\"State\":2}");
+        Thread.sleep(10000);
+
+        System.out.println("Charging complete. Battery level: " + battery + "%");
+    }
+    @Override
     public void connectionAGV(String url) throws IOException {
         connectionManager.setBaseUrl(url);
+        connected = true;
+    }
+    @Override
+    public boolean isConnected(){
+        return connected;
     }
     @Override
     public void sendRequest(String operationJson) throws IOException, InterruptedException {
@@ -45,6 +82,7 @@ public class AGVMovement implements AGVPI {
 
         lastStatusCode = connection.getResponseCode();
         status = connection.getResponseMessage();
+        getRequest();
         connection.disconnect();
         // This is needed if the request isn't able to be recieved
         while(true) {
@@ -58,6 +96,7 @@ public class AGVMovement implements AGVPI {
                 break;
             }
         }
+        connected = true;
 
     }
 
