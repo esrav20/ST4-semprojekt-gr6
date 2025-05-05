@@ -8,44 +8,138 @@
         <artifactId>Semesterproject</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-        <groupId>com.example</groupId>
-        <artifactId>warehouse-spring-soap</artifactId>
-        <version>1.0.0</version>
-        <packaging>jar</packaging>
+    <groupId>com.example</groupId>
+    <artifactId>warehouse-spring-soap</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
 
-        <properties>
-            <java.version>17</java.version>
-        </properties>
+    <properties>
+        <java.version>17</java.version>
 
-        <dependencies>
+        <flyway.user>databaseUser</flyway.user>
+        <flyway.password>databasePassword</flyway.password>
+        <flyway.schemas>schemaName</flyway.schemas>
+    </properties>
 
-            <!-- Spring Boot -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>3.3.4</version>
-            </dependency>
+    <dependencies>
 
-            <!-- Spring Web Services (SOAP) -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web-services</artifactId>
-                <version>3.3.4</version>
-            </dependency>
+        <!-- Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>3.3.4</version>
+        </dependency>
 
-            <!-- JAXB for XML (marshalling/unmarshalling) -->
-            <dependency>
-                <groupId>jakarta.xml.bind</groupId>
-                <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>3.0.1</version>
-            </dependency>
+        <!-- Spring Web Services (SOAP) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web-services</artifactId>
+            <version>3.3.4</version>
+        </dependency>
+
+        <!-- JAXB for XML (marshalling/unmarshalling) -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>3.0.1</version>
+        </dependency>
 
 
-            <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-runtime</artifactId>
-                <version>3.0.1</version>
-                <!--<executions>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>3.0.1</version>
+            <!--<executions>
+                <execution>
+                    <goals>
+                        <goal>wsimport</goal>
+                    </goals>
+                    <configuration>
+                        <wsdlUrls>
+                            <wsdlUrl>http://localhost:8081/Service.asmx?WSDL</wsdlUrl>
+                        </wsdlUrls>
+                        <packageName>warehouseclient</packageName>
+                    </configuration>
+                </execution>
+            </executions>-->
+        </dependency>
+
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <version>3.3.5</version>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.9.1</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.2</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-ws-core</artifactId>
+            <version>4.0.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.jws</groupId>
+            <artifactId>javax.jws-api</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.ws</groupId>
+            <artifactId>jaxws-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>9.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
                     <execution>
                         <goals>
                             <goal>wsimport</goal>
@@ -54,108 +148,20 @@
                             <wsdlUrls>
                                 <wsdlUrl>http://localhost:8081/Service.asmx?WSDL</wsdlUrl>
                             </wsdlUrls>
-                            <packageName>warehouseclient</packageName>
+                            <packageName>com.example.generated</packageName> <!-- whatever you want -->
                         </configuration>
                     </execution>
-                </executions>-->
-            </dependency>
-
-
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.12</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter</artifactId>
-                <version>RELEASE</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-test</artifactId>
-                <version>3.3.5</version>
-            </dependency>
-            <dependency>
-                <groupId>xerces</groupId>
-                <artifactId>xercesImpl</artifactId>
-                <version>2.9.1</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.xml.bind</groupId>
-                <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>4.0.2</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.xml.bind</groupId>
-                <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>2.3.3</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.xml.ws</groupId>
-                <artifactId>jakarta.xml.ws-api</artifactId>
-                <version>4.0.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.ws</groupId>
-                <artifactId>spring-ws-core</artifactId>
-                <version>4.0.11</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-runtime</artifactId>
-                <version>3.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.jws</groupId>
-                <artifactId>javax.jws-api</artifactId>
-                <version>1.1</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.xml.ws</groupId>
-                <artifactId>jaxws-api</artifactId>
-                <version>2.3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mysql</groupId>
-                <artifactId>mysql-connector-j</artifactId>
-                <version>9.2.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-jpa</artifactId>
-                <version>RELEASE</version>
-                <scope>compile</scope>
-            </dependency>
-
-        </dependencies>
-
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>jaxws-maven-plugin</artifactId>
-                    <version>2.6</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>wsimport</goal>
-                            </goals>
-                            <configuration>
-                                <wsdlUrls>
-                                    <wsdlUrl>http://localhost:8081/Service.asmx?WSDL</wsdlUrl>
-                                </wsdlUrls>
-                                <packageName>com.example.generated</packageName> <!-- whatever you want -->
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                </plugin>
-            </plugins>
-        </build>
-    </project>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>11.8.0</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>

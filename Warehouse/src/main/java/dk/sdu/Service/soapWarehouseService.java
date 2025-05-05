@@ -5,10 +5,10 @@ import com.example.generated.IEmulatorService_Service;
 import dk.sdu.InventoryItems;
 import dk.sdu.InventoryRepos;
 import org.springframework.stereotype.Service;
-
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.List;
 
-
+@ConfigurationProperties("service")
 //connector vores repository til resten af applikationen
 @Service
 public class soapWarehouseService {
