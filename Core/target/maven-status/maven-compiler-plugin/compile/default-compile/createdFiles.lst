@@ -4,5 +4,4 @@ com\example\guidemo_4semester\HelloController.class
 com\example\guidemo_4semester\TabViewController.class
 module-info.class
 com\example\guidemo_4semester\HelloApplication.class
-dk\sdu\IMqttConnection.class
 dk\sdu\MessageHandler.class
