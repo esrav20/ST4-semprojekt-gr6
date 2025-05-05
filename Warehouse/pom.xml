@@ -16,12 +16,18 @@
 
     <properties>
         <java.version>17</java.version>
-
-        <flyway.user>databaseUser</flyway.user>
-        <flyway.password>databasePassword</flyway.password>
-        <flyway.schemas>schemaName</flyway.schemas>
+        <start-class>dk.sdu.Main</start-class>
     </properties>
-
+<repositories>
+    <repository>
+        <id>glassfish-repo</id>
+        <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+        <repository>
+            <id>oracle-repo</id>
+            <url>https://maven.oracle.com</url>
+        </repository>
+    </repositories>
     <dependencies>
 
         <!-- Spring Boot -->
@@ -30,7 +36,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <!--<version>3.3.4</version>-->
         </dependency>
-
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>2.3.2</version> <!-- or a version that fits your needs -->
+        </dependency>
         <!-- Spring Web Services (SOAP) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -105,11 +115,7 @@
             <artifactId>spring-ws-core</artifactId>
             <!--<version>4.0.11</version>-->
         </dependency>
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>3.0.1</version>
-        </dependency>
+
         <dependency>
             <groupId>javax.jws</groupId>
             <artifactId>javax.jws-api</artifactId>
@@ -123,7 +129,11 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>9.2.0</version>
+            <version>8.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -157,9 +167,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
+
             </plugin>
             <plugin>
                 <groupId>org.flywaydb</groupId>
