@@ -20,7 +20,7 @@ public class AGVConnectionManager {
         return instance;
     }
 
-    //What is this for? when you in the constructor is calling what baseUrl you should use?
+    // Allows overriding the default baseUrl set in the constructor, if a valid value is provided.
     public void setBaseUrl(String baseUrl) {
         if (baseUrl != null && !baseUrl.isEmpty()) {
             this.baseUrl = baseUrl;
