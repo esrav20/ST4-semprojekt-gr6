@@ -84,17 +84,12 @@ public class AGVMovement implements AGVPI {
         status = connection.getResponseMessage();
         getRequest();
         connection.disconnect();
-        // This is needed if the request isn't able to be recieved
-        while(true) {
-            if (currentState == 2) {
-                System.out.println("Busy");
-                Thread.sleep(5000);
-                getRequest();
-                sendRequest(operationJson);
-            }
-            else {
-                break;
-            }
+        // Retry mechanism if the request isn't able to be received
+        while (currentState == 2) {
+            System.out.println("Busy");
+            Thread.sleep(5000);
+            getRequest();
+            // Retry logic continues until currentState is no longer 2
         }
         connected = true;
 
