@@ -1,7 +1,7 @@
 package dk.sdu.Service;
 
-import com.example.generated.IEmulatorService;
-import com.example.generated.IEmulatorService_Service;
+//import com.example.generated.IEmulatorService;
+//import com.example.generated.IEmulatorService_Service;
 import dk.sdu.InventoryItems;
 import dk.sdu.InventoryRepos;
 import org.springframework.stereotype.Service;
@@ -14,12 +14,12 @@ import java.util.List;
 @Service
 public class soapWarehouseService {
     private final InventoryRepos inventoryRepos;
-    private final IEmulatorService servicePort;
+    //private final IEmulatorService servicePort;
 @Autowired
     public soapWarehouseService(InventoryRepos inventoryRepos) {
         this.inventoryRepos = inventoryRepos;
-        IEmulatorService_Service service = new IEmulatorService_Service();
-        this.servicePort = service.getBasicHttpBindingIEmulatorService();
+        //IEmulatorService_Service service = new IEmulatorService_Service();
+        //this.servicePort = service.getBasicHttpBindingIEmulatorService();
     }
 
 
