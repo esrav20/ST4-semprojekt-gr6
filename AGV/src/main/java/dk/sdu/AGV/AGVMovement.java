@@ -16,7 +16,7 @@ public class AGVMovement implements AGVPI {
     private static String status;
     private List<String> carriedItems = new ArrayList<>();
     private final int MAX_ITEMS_CAPACITY = 10;
-    private final int battery_treshold = 20;
+    private final int battery_threshold = 20;
     private boolean connected;
 
     @Override
