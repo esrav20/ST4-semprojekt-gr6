@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mqtt:
     image: thmork/st4-mqtt:latest
@@ -31,7 +29,7 @@ services:
     networks:
       - spring-network
 
-  mysql:
+  warehouse-db:
     image: mysql:8.0
     container_name: mysql-db
     restart: always
@@ -43,17 +41,38 @@ services:
     networks:
       - spring-network
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8083:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: kodeord1
+    depends_on:
+      - warehouse-db
+    networks:
+      - spring-network
+
   spring-app:
     build: .
     container_name: spring-app
     ports:
-      - "8080:8080"
+      - "8085:8080"
     depends_on:
-      - mysql
+      - warehouse-db
     environment:
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:mysql://warehouse-db:3306/warehouse_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: kodeord1
     networks:
       - spring-network
 
 networks:
   spring-network:
+    driver: bridge
+
+volumes:
+  mysql:
