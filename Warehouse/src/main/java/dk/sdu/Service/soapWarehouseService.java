@@ -4,6 +4,7 @@ package dk.sdu.Service;
 //import com.example.generated.IEmulatorService_Service;
 import dk.sdu.InventoryItems;
 import dk.sdu.InventoryRepos;
+import dk.sdu.WarehousePI;
 import org.springframework.stereotype.Service;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,10 @@ import java.util.List;
 @ConfigurationProperties("service")
 //connector vores repository til resten af applikationen
 @Service
-public class soapWarehouseService {
+public class soapWarehouseService implements WarehousePI {
     private final InventoryRepos inventoryRepos;
     //private final IEmulatorService servicePort;
-@Autowired
+    @Autowired
     public soapWarehouseService(InventoryRepos inventoryRepos) {
         this.inventoryRepos = inventoryRepos;
         //IEmulatorService_Service service = new IEmulatorService_Service();
