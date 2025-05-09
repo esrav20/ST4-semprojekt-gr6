@@ -1,0 +1,7 @@
+create database inventory_table
+CREATE TABLE inventory_item (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    tray_id INT NOT NULL,
+    item_name VARCHAR(255) NOT NULL,
+    quantity INT NOT NULL
+);
