@@ -1,7 +1,7 @@
 package com.example.guidemo_4semester;
 
 import dk.sdu.Common.IMqttService;
-import dk.sdu.MqttServiceProvider;
+import dk.sdu.AssemblyStation.MqttService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,7 +14,7 @@ public class AssemblyController {
     @FXML private Button checkHealthButton;
     @FXML private TextField processIdInput;
 
-    private final IMqttService mqttService = MqttServiceProvider.getMqttService();
+    private final IMqttService mqttService = MqttService.getMqttService();
 
     @FXML
     public void initialize() throws MqttException {
