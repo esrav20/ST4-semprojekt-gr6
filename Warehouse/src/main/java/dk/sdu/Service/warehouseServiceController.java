@@ -22,7 +22,7 @@ public class warehouseServiceController {
         this.soapWarehouseService = soapWarehouseService;
     }
 
-    //GET all inventory
+    //GET alt i inventory
     @GetMapping("/inventory")
     public List<InventoryItems> getInventory() {
         return soapWarehouseService.getInventory();
