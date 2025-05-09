@@ -1,11 +1,13 @@
-package dk.sdu.AssemblyStation;
+package dk.sdu.AssemblyStation.Services;
 
 
 import dk.sdu.Common.IMqttService;
 import org.eclipse.paho.client.mqttv3.*;
 
 import com.google.gson.*;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MqttService implements IMqttService {
     private MqttClient client;
 

@@ -7,19 +7,33 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.IOException;
-
+@SpringBootApplication(scanBasePackages = {"com.example", "dk.sdu.AGV", "dk.sdu.AssemblyStation", "dk.sdu"})
 public class HelloApplication extends Application {
+
+    private ConfigurableApplicationContext springContext;
+
+    @Override
+    public void init() {
+        springContext =
+                new SpringApplicationBuilder(HelloApplication.class)
+                        .web(WebApplicationType.NONE)
+                        .headless(false)
+                        .run();
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
 
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/views/TabView.fxml"));
+        fxmlLoader.setControllerFactory(springContext::getBean);
         Parent root = fxmlLoader.load();
-        TabViewController controller = fxmlLoader.getController();
-        AGVPI agv = new AGVMovement();
-        controller.setAGV(agv);
-
 
         Scene scene = new Scene(root, 320, 240);
         stage.setTitle("Hello!");
@@ -28,6 +42,6 @@ public class HelloApplication extends Application {
     }
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 }

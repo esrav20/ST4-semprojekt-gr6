@@ -1,2 +1,4 @@
-dk\sdu\Main.class
+dk\sdu\AssemblyStation\Services\MqttService.class
 module-info.class
+dk\sdu\AssemblyStation\Services\MqttService$1.class
+dk\sdu\AssemblyStation\Services\MqttServiceProvider.class
