@@ -1,4 +1,4 @@
-package dk.sdu;
+package dk.sdu.CommonAGV;
 
 public class Main {
     public static void main(String[] args) {
