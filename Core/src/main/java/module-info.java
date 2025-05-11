@@ -12,7 +12,7 @@ module Core {
     requires AssemblyStation;
     requires AGV;
 
-    opens com.example.guidemo_4semester to javafx.fxml;
+    opens com.example.guidemo_4semester;
     exports com.example.guidemo_4semester;
 }
 

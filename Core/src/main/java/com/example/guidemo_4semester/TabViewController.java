@@ -21,11 +21,14 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 
 import java.io.IOException;
 
+@Component
 public class TabViewController {
     @FXML private Label agvStatusLabel;
     @FXML private Circle agvStatusCircle;
@@ -41,19 +44,17 @@ public class TabViewController {
 
     private Timeline updateTimer;
     private int status;
-    private AGVPI agv;
-    private IMqttService iMqttService;
+    private final AGVPI agv;
+    private final IMqttService iMqttService;
 
 
-    public TabViewController() {
-    }
-
-
-    public void setDependencies(AGVPI agv, IMqttService iMqttService) throws MqttException {
+    // vi skal ikke have en setDepencies metode - da Spring ikke kan starte programmet uden Constructor-based DI.
+    @Autowired
+    public TabViewController(AGVPI agv, IMqttService iMqttService) throws MqttException {
         this.agv = agv;
         this.iMqttService = iMqttService;
-        setupMqtt();
     }
+
 
     private void appendMessageBoard(String text) {
         Platform.runLater(() -> {
@@ -63,7 +64,8 @@ public class TabViewController {
     }
 
     @FXML
-    public void initialize() {
+    public void initialize() throws MqttException {
+        setupMqtt();
         startAGVUpdates();
         startProdButton.setOnAction(event -> {
             int processId = Integer.parseInt(processIdInput.getText());
@@ -154,9 +156,11 @@ public class TabViewController {
         System.out.println(agv.isConnected());
 
         Platform.runLater(() -> {
+            agvStatusLabel.textProperty().unbind(); // Vi får en runtimeException, når vi kører appen og denne er bound i forvejen.
             agvStatusLabel.setText(statusText);
             agvStatusCircle.setFill(Color.valueOf(circleColor));
             agvConnectionCircle.setFill(Color.valueOf(connectionStatus));
+            agvParameterLabel.textProperty().unbind(); // samme som l.159.
             agvParameterLabel.setText("Battery: " + agv.getBatteryLevel() + "%");
         });
 
