@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,9 +17,12 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.IOException;
-@SpringBootApplication(scanBasePackages = {"com.example", "dk.sdu.AGV", "dk.sdu.AssemblyStation", "dk.sdu"})
+
+
+@SpringBootApplication(scanBasePackages = {"dk.sdu.AGV", "dk.sdu.AssemblyStation", "dk.sdu", "com.example"})
 public class HelloApplication extends Application {
 
+    @Autowired
     private ConfigurableApplicationContext springContext;
 
     @Override
@@ -36,11 +40,6 @@ public class HelloApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/views/TabView.fxml"));
         fxmlLoader.setControllerFactory(springContext::getBean);
         Parent root = fxmlLoader.load();
-
-        //Injecting non-Spring dependencies:
-        TabViewController controller = fxmlLoader.getController();
-        controller.setDependencies(springContext.getBean(AGVPI.class), springContext.getBean(IMqttService.class));
-
         Scene scene = new Scene(root, 320, 240);
         stage.setTitle("Hello!");
         stage.setScene(scene);
