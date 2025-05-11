@@ -14,6 +14,7 @@ public class MqttService implements IMqttService {
     private MqttClient client;
     private MqttCallback callback;
 
+
     public MqttService() {
         try {
             client = new MqttClient("tcp://localhost:9001", MqttClient.generateClientId());
@@ -23,10 +24,12 @@ public class MqttService implements IMqttService {
     }
 
 
+
+
     @Override
     public void connect() {
         try {
-            if (client != null && client.isConnected()) {
+            if (client != null && !client.isConnected()) {
                 if (callback != null) {
                     client.setCallback(callback);
                 }
@@ -34,9 +37,11 @@ public class MqttService implements IMqttService {
             client.connect();
             client.subscribe("emulator/status", 1);
             client.subscribe("emulator/checkhealth", 1);
+
             }
         } catch (MqttException e) {
             e.printStackTrace();
+            System.err.println("MQTT: Connection failed");
         }
     }
 
@@ -60,7 +65,12 @@ public class MqttService implements IMqttService {
         }
     }
 
-        @Override
+    @Override
+    public boolean isConnected() {
+        return client != null && client.isConnected();
+    }
+
+    @Override
     public void initPublish(int processId) throws MqttException {
         String payload = String.format("{\"processId\":%d}", processId);
         publish("emulator/operation", payload);
@@ -74,7 +84,10 @@ public class MqttService implements IMqttService {
                 MqttMessage message = new MqttMessage(payload.getBytes());
                 message.setQos(1);
                 client.publish(topic, message);
+                System.out.println("MQTT: Published to topic '" + topic + "' with payload: " + payload);
+
             } else {
+
                 System.err.println("Not connected to MQTT. Cannot publish.");
             }
         } catch (MqttException e) {

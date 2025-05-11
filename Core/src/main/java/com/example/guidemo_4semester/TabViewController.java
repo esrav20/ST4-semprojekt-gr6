@@ -1,5 +1,7 @@
 package com.example.guidemo_4semester;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dk.sdu.CommonAGV.AGVPI;
 import dk.sdu.Common.IMqttService;
 import javafx.animation.Animation;
@@ -36,16 +38,21 @@ public class TabViewController {
     @FXML private Circle assemblyConnectionCircle;
     @FXML private Circle assemblyStatusCircle;
     @FXML private Label assemblyStatusLabel;
+
     @FXML private Label agvParameterLabel;
     @FXML private Button startProdButton;
     @FXML private TextFlow messageBoard;
     @FXML private TextField processIdInput;
     @FXML private Button checkHealthButton;
+    @FXML private Label HealthyLabel;
+
 
     private Timeline updateTimer;
     private int status;
     private final AGVPI agv;
     private final IMqttService iMqttService;
+    private boolean health;
+    private int state;
 
 
     // vi skal ikke have en setDepencies metode - da Spring ikke kan starte programmet uden Constructor-based DI.
@@ -56,66 +63,27 @@ public class TabViewController {
     }
 
 
-    private void appendMessageBoard(String text) {
-        Platform.runLater(() -> {
-            Text msg = new Text(text + "\n");
-            messageBoard.getChildren().add(msg);
-        });
-    }
 
     @FXML
     public void initialize() throws MqttException {
-        setupMqtt();
+
+
+        iMqttService.setCallback(createMqttCallback());
+
         startAGVUpdates();
-        startProdButton.setOnAction(event -> {
-            int processId = Integer.parseInt(processIdInput.getText());
-            try {
-                iMqttService.initPublish(processId);
-            } catch (MqttException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        iMqttService.connect();
+        System.out.println(iMqttService.isConnected());
+
 
         startProdButton.setOnMouseClicked(event -> {
             try {
                 setStartProdButton();
-            } catch (IOException | InterruptedException e) {
+                iMqttService.publish("emulator/operation",  "{\"ProcessID\": 12345}");
+            } catch (IOException | InterruptedException | MqttException e) {
                 e.printStackTrace();
             }
         });
     }
-
-    private void setupMqtt() throws MqttException {
-        MqttCallback mqttCallback = new MqttCallback() {
-            @Override
-            public void connectionLost(Throwable cause) {
-                appendMessageBoard("MQTT Connection lost: " + cause.getMessage());
-                updateConnectionStatus(false);
-            }
-
-            @Override
-            public void messageArrived(String topic, MqttMessage message) {
-                String msg = new String(message.getPayload());
-                appendMessageBoard("MQTT message on [" + topic + "]: " + msg);
-            }
-
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken token) {
-                appendMessageBoard("MQTT Delivery complete");
-            }
-        };
-
-        iMqttService.setCallback(mqttCallback); // Set the callback
-        iMqttService.connect();
-        updateConnectionStatus(true);
-    }
-
-    private void updateConnectionStatus(boolean connected) {
-        Platform.runLater(() ->
-                assemblyConnectionCircle.setFill(Color.valueOf(connected ? "#1fff25" : "RED"))
-        );
-    }
-
 
 
     private void setStartProdButton() throws IOException, InterruptedException {
@@ -125,11 +93,82 @@ public class TabViewController {
     }
     private void startAGVUpdates() {
         updateTimer = new Timeline(
-                new KeyFrame(Duration.seconds(0.5), e -> updateAGVDisplay())
+                new KeyFrame(Duration.seconds(0.5), e ->{
+                    updateAGVDisplay();
+                    updateAssemblyConnectionStatus();
+                })
         );
         updateTimer.setCycleCount(Animation.INDEFINITE);
         updateTimer.play();
     }
+    private MqttCallback createMqttCallback() {
+
+        return new MqttCallback() {
+            @Override
+            public void connectionLost(Throwable cause) {
+                System.err.println("MQTT: Connection lost - " + cause.getMessage());
+            }
+            @Override
+            public void messageArrived(String topic, MqttMessage message) {
+                String json = message.toString();
+                if(topic.equals("emulator/status")){
+                    JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
+                    state = obj.get("State").getAsInt();
+
+                    String Assemblystate;
+                    switch (state) {
+                        case 1:
+                            Assemblystate = "Running";
+                            break;
+                        case 0:
+                            Assemblystate = "Idle";
+                            break;
+                        default:
+                            Assemblystate = "Unknown";
+                    }
+                    Platform.runLater(() -> {
+                        assemblyStatusLabel.textProperty().unbind();
+                        assemblyStatusLabel.setText(Assemblystate);
+                    });
+                } else if(topic.equals("emulator/checkhealth")){
+                    json = json.substring(1, json.length()-1);
+                    JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
+                    health = obj.get("IsHealthy").getAsBoolean();
+
+                    Platform.runLater(() -> {
+                        HealthyLabel.textProperty().unbind();
+                        HealthyLabel.setText(String.valueOf(health));
+
+                        String AssemblyStatus = iMqttService.isConnected() ? "#1fff25" : "RED";
+                        assemblyConnectionCircle.setFill(Color.valueOf(AssemblyStatus));
+                        });
+                }
+            }
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+                try {
+                    System.out.println("MQTT: Delivery complete for message: " + token.getMessage());
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
+
+    private void updateAssemblyConnectionStatus() {
+        boolean connected = iMqttService.isConnected();
+        Platform.runLater(() -> {
+            if (connected) {
+                assemblyConnectionCircle.setFill(Color.valueOf("#1fff25"));
+            } else {
+                assemblyConnectionCircle.setFill(Color.RED);
+                assemblyStatusCircle.setFill(Color.RED);
+                assemblyStatusLabel.textProperty().unbind();
+                assemblyStatusLabel.setText("Error");
+            }
+        });
+    }
+
 
     private void updateAGVDisplay() {
         String statusText;
@@ -152,8 +191,9 @@ public class TabViewController {
                 circleColor = "RED";
         }
 
+
         String connectionStatus = agv.isConnected() ? "#1fff25" : "RED";
-        System.out.println(agv.isConnected());
+
 
         Platform.runLater(() -> {
             agvStatusLabel.textProperty().unbind(); // Vi får en runtimeException, når vi kører appen og denne er bound i forvejen.

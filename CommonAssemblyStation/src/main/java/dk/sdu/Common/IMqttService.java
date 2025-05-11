@@ -10,4 +10,5 @@ public interface  IMqttService {
     void initPublish(int processId) throws MqttException;
     void publish(String topic, String payload) throws MqttException;
     void setCallback(MqttCallback mqttCallback) throws MqttException;
+    boolean isConnected();
 }
