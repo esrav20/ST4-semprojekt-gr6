@@ -6,5 +6,6 @@ module AssemblyStation {
     requires CommonAssemblyStation;
     requires com.google.gson;
     requires spring.context;
+    requires spring.beans;
 
 }

@@ -43,13 +43,12 @@ public class TabViewController {
     private int status;
     private AGVPI agv;
     private IMqttService iMqttService;
-    private MqttCallback mqttCallback;
 
 
     public TabViewController() {
     }
 
-    @Autowired
+
     public void setDependencies(AGVPI agv, IMqttService iMqttService) throws MqttException {
         this.agv = agv;
         this.iMqttService = iMqttService;
@@ -85,7 +84,7 @@ public class TabViewController {
     }
 
     private void setupMqtt() throws MqttException {
-        mqttCallback = new MqttCallback() {
+        MqttCallback mqttCallback = new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
                 appendMessageBoard("MQTT Connection lost: " + cause.getMessage());
@@ -157,7 +156,7 @@ public class TabViewController {
         Platform.runLater(() -> {
             agvStatusLabel.setText(statusText);
             agvStatusCircle.setFill(Color.valueOf(circleColor));
-            agvConnectionCircle.setFill(javafx.scene.paint.Color.valueOf(connectionStatus));
+            agvConnectionCircle.setFill(Color.valueOf(connectionStatus));
             agvParameterLabel.setText("Battery: " + agv.getBatteryLevel() + "%");
         });
 
