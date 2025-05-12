@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@SpringBootApplication(scanBasePackages = "dk.sdu.Service")
+@SpringBootApplication(scanBasePackages = "dk.sdu.CommonInventory.Service")
 @RestController
 @RequestMapping("/warehouse")
 public class warehouseServiceController {

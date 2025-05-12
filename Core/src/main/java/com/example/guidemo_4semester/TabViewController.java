@@ -3,7 +3,6 @@ package com.example.guidemo_4semester;
 import dk.sdu.CommonAGV.AGVPI;
 import dk.sdu.Common.IMqttService;
 import dk.sdu.CommonInventory.InventoryItems;
-import dk.sdu.CommonInventory.InventoryRepos;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -31,32 +30,32 @@ import java.io.IOException;
 
 @Component
 public class TabViewController {
+
     // vi skal ikke have en setDepencies metode - da Spring ikke kan starte programmet uden Constructor-based DI.
     @Autowired
-    public TabViewController(AGVPI agv, IMqttService iMqttService, InventoryRepos inventoryRepos ) throws MqttException {
+    public TabViewController(WarehouseClient warehouseClient, AGVPI agv, IMqttService iMqttService) throws MqttException {
+        this.warehouseClient = warehouseClient;
         this.agv = agv;
         this.iMqttService = iMqttService;
-        this.inventoryRepos = inventoryRepos;
     }
 
     //Warehouse/Inventory:
 
-    private final InventoryRepos inventoryRepos;
+    private final WarehouseClient warehouseClient;
 
     @FXML private TableView<InventoryItems> inventoryTable;
-    @FXML private TableColumn<InventoryItems, Long> ID;
-    @FXML private TableColumn<InventoryItems, String> item;
-    @FXML private TableColumn<InventoryItems, Integer> available;
-    @FXML private TableColumn<InventoryItems, Integer> inStock;
+    @FXML private TableColumn<InventoryItems, Long> IDColumn;
+    @FXML private TableColumn<InventoryItems, String> itemColumn;
+    @FXML private TableColumn<InventoryItems, Integer> availableColumn;
+    @FXML private TableColumn<InventoryItems, Integer> inStockColumn;
     @FXML private ChoiceBox<String> warehouseDropdown;
 
     private ObservableList<InventoryItems> inventoryData = FXCollections.observableArrayList();
 
     private void setupTable() {
-        ID.setCellValueFactory(new PropertyValueFactory<>("id"));
-        item.setCellValueFactory(new PropertyValueFactory<>("itemName"));
-        available.setCellValueFactory(new PropertyValueFactory<>("available"));
-        inStock.setCellValueFactory(new PropertyValueFactory<>("inStock"));
+        IDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        itemColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
+        availableColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         inventoryTable.setItems(inventoryData);
     }
 
@@ -66,8 +65,13 @@ public class TabViewController {
     }
 
     private void loadInventory() {
-        inventoryData.clear();
-        inventoryData.addAll(inventoryRepos.findAll());
+        try{
+            inventoryData.clear();
+            inventoryData.addAll(warehouseClient.getInventory());
+        } catch (Exception e){
+            e.printStackTrace();
+            System.out.println("Jeg kan love dig for load Inventory fejler du");
+        }
     }
 
     @FXML
@@ -77,11 +81,11 @@ public class TabViewController {
 
     @FXML
     private void handleRemoveButton() {
-        InventoryItems selected = inventoryTable.getSelectionModel().getSelectedItem();
+        /*InventoryItems selected = inventoryTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
             inventoryRepos.delete(selected);
             loadInventory();
-        }
+        }*/
     }
 
     //---------------------------
