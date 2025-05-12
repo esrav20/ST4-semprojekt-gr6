@@ -22,12 +22,37 @@
             <artifactId>spring-data-jpa</artifactId>
             <version>3.4.5</version>
         </dependency>
-        <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>warehouse-spring-soap</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>jaxws-maven-plugin</artifactId>
+            <version>2.6</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>wsimport</goal>
+                    </goals>
+                    <configuration>
+                        <wsdlUrls>
+                            <wsdlUrl>http://localhost:8081/Service.asmx?WSDL</wsdlUrl>
+                        </wsdlUrls>
+                        <packageName>com.example.generated</packageName> <!-- whatever you want -->
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
 
+        </plugin>
+        <plugin>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-maven-plugin</artifactId>
+            <version>11.8.0</version>
+        </plugin>
+    </plugins>
+</build>
 </project>

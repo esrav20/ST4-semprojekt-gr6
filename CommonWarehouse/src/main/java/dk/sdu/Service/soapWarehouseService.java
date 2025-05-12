@@ -2,7 +2,7 @@ package dk.sdu.Service;
 
 //import com.example.generated.IEmulatorService;
 //import com.example.generated.IEmulatorService_Service;
-import dk.sdu.InventoryItems;
+import InventoryItems;
 import dk.sdu.InventoryRepos;
 import dk.sdu.WarehousePI;
 import org.springframework.stereotype.Service;
