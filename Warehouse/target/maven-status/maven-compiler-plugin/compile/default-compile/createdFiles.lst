@@ -1,15 +1,5 @@
 dk\sdu\Main.class
-com\example\generated\InsertItemResponse.class
-dk\sdu\Service\warehouseServiceController.class
-dk\sdu\Service\soapWarehouseService.class
-dk\sdu\InventoryRepos.class
-com\example\generated\PickItem.class
-com\example\generated\PickItemResponse.class
 com\example\generated\package-info.class
 com\example\generated\IEmulatorService_Service.class
-com\example\generated\GetInventory.class
+com\example\generated\PickItemResponse.class
 com\example\generated\IEmulatorService.class
-com\example\generated\InsertItem.class
-com\example\generated\GetInventoryResponse.class
-com\example\generated\ObjectFactory.class
-dk\sdu\InventoryItems.class
