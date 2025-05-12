@@ -4,4 +4,5 @@ module CommonWarehouse {
     requires spring.boot.autoconfigure;
     requires spring.web;
     requires jakarta.persistence;
+
 }

@@ -1,6 +1,6 @@
 package dk.sdu.Service;
 
-import dk.sdu.InventoryItems;
+import InventoryItems;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 

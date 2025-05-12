@@ -2,7 +2,7 @@ package com.example.guidemo_4semester;
 
 import dk.sdu.CommonAGV.AGVPI;
 import dk.sdu.Common.IMqttService;
-import dk.sdu.InventoryItems;
+import InventoryItems;
 import dk.sdu.InventoryRepos;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -24,9 +24,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 
 
 import java.io.IOException;
