@@ -22,11 +22,12 @@ public class TabViewController {
     @FXML private Circle agvConnectionCircle;
     @FXML private Label agvParameterLabel;
     @FXML private Button startProdButton;
-
+    @FXML private Button emergencyStopButton;
     private Timeline updateTimer;
     private int status;
     private AGVPI agv;
     private IMqttService iMqttService;
+    private boolean emergencyActive = false;
 
 
     public TabViewController(AGVPI agv, IMqttService iMqttService) {
@@ -40,14 +41,69 @@ public class TabViewController {
 
         // Button event setup should happen once
         startProdButton.setOnMouseClicked(event -> {
-            try {
-                setStartProdButton();
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
+            if(!emergencyActive) {
+                try {
+                    setStartProdButton();
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
+
+        emergencyStopButton.setOnMouseClicked(event -> {
+            if(!emergencyActive){
+                handleEmergencyStop();
+            }else {
+                handleEmergencyReset();
+            }
+        } );
     }
 
+    private void handleEmergencyStop(){
+        emergencyActive = true;
+
+        Platform.runLater(() -> {
+            agvStatusLabel.setText("Emergency Stop");
+            agvStatusCircle.setFill(Color.RED);
+
+            emergencyStopButton.setText("Reset Emergency button");
+            startProdButton.setDisable(true);
+
+        });
+
+        new Thread(() -> {
+        try{
+            agv.sendRequest("EmergencyStop");
+
+            if (iMqttService != null && agv.isConnected()) {
+                try{
+                    iMqttService.publish("system/emergency", "Emergency stop activated");
+                }catch (Exception e){
+                    System.err.println("MQTT Error: Failed to publish emergency message" + e.getMessage());
+                }
+            }
+        }catch (Exception e){
+            System.err.println("AGV Error: Failed to send emergencystop to AGV " + e.getMessage());
+        }
+        }).start();
+    }
+
+    private void handleEmergencyReset(){
+        Platform.runLater(()-> {
+            emergencyStopButton.setText("Emergency stop");
+            emergencyStopButton.setStyle(""); // sets to default css style
+            startProdButton.setDisable(false);
+        });
+
+        new Thread(()-> {
+            try{
+                agv.sendRequest("ResetEmergency");
+                emergencyActive = false;
+            }catch (Exception e){
+                System.err.println("Error: Failed to reset emergency state " + e.getMessage());
+            }
+        }).start();
+    }
 
 
     private void setStartProdButton() throws IOException, InterruptedException {
@@ -64,6 +120,15 @@ public class TabViewController {
     }
 
     private void updateAGVDisplay() {
+
+        if(emergencyActive){
+            Platform.runLater(()-> {
+                agvStatusLabel.setText("Emergency stop");
+                agvStatusCircle.setFill(Color.RED);
+            });
+            return;
+        }
+
         String statusText;
         String circleColor;
         switch (agv.getCurrentstate()) {
@@ -94,4 +159,6 @@ public class TabViewController {
             agvParameterLabel.setText("Battery: " + agv.getBatteryLevel() + "%");
         });
     }
+
+
 }
