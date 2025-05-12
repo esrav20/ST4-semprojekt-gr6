@@ -1,7 +1,7 @@
 dk\sdu\Main.class
-dk\sdu\IAssemblyStation.class
 com\example\guidemo_4semester\HelloController.class
+dk\sdu\MqttServiceProvider.class
 com\example\guidemo_4semester\TabViewController.class
 module-info.class
 com\example\guidemo_4semester\HelloApplication.class
-dk\sdu\MessageHandler.class
+com\example\guidemo_4semester\AssemblyController.class

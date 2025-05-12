@@ -1,2 +1,2 @@
 module-info.class
-dk\sdu\Common\IMqttConnection.class
+dk\sdu\Common\IMqttService.class
