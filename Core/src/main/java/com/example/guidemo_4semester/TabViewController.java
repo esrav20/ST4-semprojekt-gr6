@@ -30,6 +30,13 @@ import java.io.IOException;
 
 @Component
 public class TabViewController {
+
+    //Warehouse/Inventory:
+
+
+
+
+    //---------------------------
     @FXML private Label agvStatusLabel;
     @FXML private Circle agvStatusCircle;
     @FXML private Circle agvConnectionCircle;
@@ -50,7 +57,7 @@ public class TabViewController {
 
     // vi skal ikke have en setDepencies metode - da Spring ikke kan starte programmet uden Constructor-based DI.
     @Autowired
-    public TabViewController(AGVPI agv, IMqttService iMqttService) throws MqttException {
+    public TabViewController(AGVPI agv, IMqttService iMqttService, ) throws MqttException {
         this.agv = agv;
         this.iMqttService = iMqttService;
     }
