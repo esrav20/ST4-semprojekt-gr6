@@ -11,6 +11,7 @@ module Core {
     requires spring.beans;
     requires AssemblyStation;
     requires AGV;
+    requires CommonWarehouse;
 
     opens com.example.guidemo_4semester;
     exports com.example.guidemo_4semester;

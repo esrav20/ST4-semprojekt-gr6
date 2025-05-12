@@ -1,8 +1,6 @@
 package dk.sdu.Service;
 
 import dk.sdu.InventoryItems;
-import dk.sdu.Service.soapWarehouseService;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 
