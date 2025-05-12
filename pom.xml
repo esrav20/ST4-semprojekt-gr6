@@ -121,7 +121,6 @@
         <module>Core</module>
         <module>AGV</module>
         <module>AssemblyStation</module>
-        <module>Warehouse</module>
         <module>CommonAGV</module>
         <module>CommonAssemblyStation</module>
         <module>CommonWarehouse</module>

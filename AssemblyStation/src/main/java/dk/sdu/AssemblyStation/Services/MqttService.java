@@ -1,12 +1,9 @@
 package dk.sdu.AssemblyStation.Services;
 
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import dk.sdu.Common.IMqttService;
 import org.eclipse.paho.client.mqttv3.*;
 
-import com.google.gson.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component

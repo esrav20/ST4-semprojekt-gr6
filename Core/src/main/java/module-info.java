@@ -1,6 +1,7 @@
 module Core {
     requires javafx.controls;
     requires javafx.fxml;
+    requires CommonWarehouse;
     requires CommonAGV;
     requires CommonAssemblyStation;
     requires org.eclipse.paho.client.mqttv3;
@@ -11,7 +12,7 @@ module Core {
     requires spring.beans;
     requires AssemblyStation;
     requires AGV;
-    requires CommonWarehouse;
+
 
     opens com.example.guidemo_4semester;
     exports com.example.guidemo_4semester;

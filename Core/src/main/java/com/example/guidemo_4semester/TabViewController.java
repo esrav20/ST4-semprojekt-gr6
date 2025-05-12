@@ -2,8 +2,8 @@ package com.example.guidemo_4semester;
 
 import dk.sdu.CommonAGV.AGVPI;
 import dk.sdu.Common.IMqttService;
-import InventoryItems;
-import dk.sdu.InventoryRepos;
+import dk.sdu.CommonInventory.InventoryItems;
+import dk.sdu.CommonInventory.InventoryRepos;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -31,6 +31,13 @@ import java.io.IOException;
 
 @Component
 public class TabViewController {
+    // vi skal ikke have en setDepencies metode - da Spring ikke kan starte programmet uden Constructor-based DI.
+    @Autowired
+    public TabViewController(AGVPI agv, IMqttService iMqttService, InventoryRepos inventoryRepos ) throws MqttException {
+        this.agv = agv;
+        this.iMqttService = iMqttService;
+        this.inventoryRepos = inventoryRepos;
+    }
 
     //Warehouse/Inventory:
 
@@ -96,13 +103,6 @@ public class TabViewController {
     private final IMqttService iMqttService;
 
 
-    // vi skal ikke have en setDepencies metode - da Spring ikke kan starte programmet uden Constructor-based DI.
-    @Autowired
-    public TabViewController(AGVPI agv, IMqttService iMqttService, InventoryRepos inventoryRepos ) throws MqttException {
-        this.agv = agv;
-        this.iMqttService = iMqttService;
-        this.inventoryRepos = inventoryRepos;
-    }
 
 
     private void appendMessageBoard(String text) {
