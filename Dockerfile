@@ -8,7 +8,7 @@ WORKDIR /app
 VOLUME /tmp
 
 # Copy the packaged Spring Boot application JAR file into the container
-COPY Warehouse/target/warehouse-spring-soap-1.0.0.jar app.jar
+COPY CommonWarehouse/target/CommonWarehouse-1.0-SNAPSHOT.jar app.jar
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
