@@ -1,184 +1,195 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.TextFlow?>
 
-<AnchorPane fx:controller="com.example.guidemo_4semester.TabViewController"
-            prefHeight="600.0" prefWidth="703.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="703.0" stylesheets="@../styles.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
-    <tabs>
-        <Tab text="Production">
-            <content>
-                <AnchorPane fx:id="productionAnchor" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                  <children>
-                        <TableView layoutX="346.0" layoutY="28.0" prefHeight="507.0" prefWidth="342.0" styleClass="tableView">
-                            <columns>
-                        <TableColumn fx:id="batchID" prefWidth="57.3333740234375" styleClass="column" text="Batch ID" />
-                           <TableColumn fx:id="productQueue" minWidth="4.0" prefWidth="99.33331298828125" styleClass="column" text="Product" />
-                                <TableColumn fx:id="quantityQueue" maxWidth="119.3333740234375" prefWidth="76.66668701171875" styleClass="column" text="Quantity" />
-                                <TableColumn fx:id="priorityQueue" minWidth="0.0" prefWidth="54.6666259765625" styleClass="column" text="Priority" />
-                                <TableColumn fx:id="statusQueue" maxWidth="138.66668701171875" prefWidth="50.6666259765625" styleClass="column" text="Status" />
-                            </columns>
-                        </TableView>
-                     <Label layoutX="488.0" text="Queue">
-                        <font>
-                           <Font name="System Bold" size="18.0" />
-                        </font>
-                     </Label>
-                      <Button fx:id="editQueueButton" layoutX="630.0" layoutY="515.0" prefHeight="35.0" prefWidth="53.0" styleClass="editButton" />
-                     <Label layoutX="66.0" layoutY="30.0" prefHeight="20.0" prefWidth="219.0" text="Add new production to queue">
-                        <font>
-                           <Font name="System Bold" size="14.0" />
-                        </font>
-                     </Label>
-                     <Label layoutX="14.0" layoutY="74.0" text="Quantity">
-                        <font>
-                           <Font name="System Bold" size="12.0" />
-                        </font>
-                     </Label>
-                     <Label layoutX="13.0" layoutY="137.0" prefHeight="17.0" prefWidth="53.0" text="Product">
-                        <font>
-                           <Font name="System Bold" size="12.0" />
-                        </font>
-                     </Label>
-                     <Label layoutX="13.0" layoutY="201.0" prefHeight="17.0" prefWidth="53.0" text="Priority">
-                        <font>
-                           <Font name="System Bold" size="12.0" />
-                        </font>
-                     </Label>
-                     <TextField fx:id="quantityInput" layoutX="14.0" layoutY="91.0" style="-fx-border-color: lightgrey;" />
-                     <ChoiceBox fx:id="productChoice" layoutX="14.0" layoutY="154.0" prefWidth="150.0" style="-fx-background-color: white;" />
-                     <RadioButton fx:id="normalPriorityButton" layoutX="14.0" layoutY="226.0" mnemonicParsing="false" text="Normal" />
-                     <Button fx:id="addQueueButton" layoutX="15.0" layoutY="293.0" prefHeight="30.0" prefWidth="50.0" styleClass="addButton" text="Add" wrapText="true" />
-                     <RadioButton fx:id="highPriorityButton" layoutX="14.0" layoutY="255.0" mnemonicParsing="false" text="High" />
-                     <Button fx:id="startProdButton" layoutX="346.0" layoutY="537.0" prefHeight="20.0" prefWidth="200.0" styleClass="startProdButton" text="Start Production" wrapText="true" />
-                     <TextFlow fx:id="messageBoard" layoutX="13.0" layoutY="352.0" lineSpacing="1.0" prefHeight="181.0" prefWidth="325.0" style="-fx-border-color: lightgrey; -fx-background-color: white;">
-                        <effect>
-                           <Blend />
-                        </effect>
-                     </TextFlow>
-                     <Label layoutX="13.0" layoutY="335.0" text="Messages">
-                        <font>
-                           <Font name="System Bold" size="13.0" />
-                        </font>
-                     </Label>
-                        <ImageView fx:id="editQueuePicButton" fitHeight="30" fitWidth="30" layoutX="657.0" layoutY="537.0">
-                            <Image url="@../com/example/guidemo_4semester/editButtonImage.png" />
-                        </ImageView>
-                     <Separator layoutY="57.0" prefHeight="10.0" prefWidth="348.0" />
-                     <Separator layoutY="330.0" prefHeight="10.0" prefWidth="348.0" />
-                  </children></AnchorPane>
-            </content>
-        </Tab>
-        <Tab text="Status">
-            <content>
-                <AnchorPane fx:id="statusAnchor" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                  <children>
-                     <Label layoutX="14.0" layoutY="14.0" prefHeight="23.0" prefWidth="166.0" text="Current production status:">
-                        <font>
-                           <Font name="System Bold" size="12.0" />
-                        </font>
-                     </Label>
-                     <ProgressBar layoutX="180.0" layoutY="17.0" prefWidth="200.0" progress="0.0" />
-                     <Label layoutX="272.0" layoutY="17.0" text="0%" />
-                     <Separator layoutY="45.0" prefHeight="15.0" prefWidth="703.0" />
-                     <Separator layoutX="233.0" layoutY="51.0" orientation="VERTICAL" prefHeight="537.0" prefWidth="7.0" />
-                     <Separator layoutX="466.0" layoutY="51.0" orientation="VERTICAL" prefHeight="537.0" prefWidth="7.0" />
-                     <Label layoutX="7.0" layoutY="60.0" prefHeight="20.0" prefWidth="47.0" text="AGV 1">
-                        <font>
-                           <Font name="System Bold" size="14.0" />
-                        </font>
-                     </Label>
-                     <Label layoutX="240.0" layoutY="60.0" text="Assembly Station 1">
-                        <font>
-                           <Font name="System Bold" size="14.0" />
-                        </font>
-                     </Label>
-                     <Label layoutX="473.0" layoutY="60.0" text="Warehouse 1">
-                        <font>
-                           <Font name="System Bold" size="14.0" />
-                        </font>
-                     </Label>
-                      <Button fx:id="addComponentButton" layoutX="613.0" layoutY="11.0" prefHeight="30.0" prefWidth="50.0" styleClass="addButton" text="Add" wrapText="true" />
-                     <HBox layoutX="5.0" layoutY="90.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
+<AnchorPane prefHeight="600.0" prefWidth="703.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.guidemo_4semester.TabViewController">
+    <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="703.0" stylesheets="@../styles.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+        <tabs>
+            <Tab text="Production">
+                <content>
+                    <AnchorPane fx:id="productionAnchor" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                         <children>
-                           <Label text="Current Status:" />
-                            <Circle fx:id="agvStatusCircle" fill="DODGERBLUE" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
-                            <Label fx:id="agvStatusLabel" text="Idle" />
-                        </children>
-                     </HBox>
-                     <HBox layoutX="242.0" layoutY="90.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
+                            <TableView fx:id="productionQueueTable" layoutX="346.0" layoutY="28.0" prefHeight="507.0" prefWidth="342.0" styleClass="tableView">
+                                <columns>
+                                    <TableColumn fx:id="batchIDColumn" prefWidth="57.3333740234375" styleClass="column" text="Batch ID" />
+                                    <TableColumn fx:id="productQueueColumn" minWidth="4.0" prefWidth="99.33331298828125" styleClass="column" text="Product" />
+                                    <TableColumn fx:id="quantityQueueColumn" maxWidth="119.3333740234375" prefWidth="76.66668701171875" styleClass="column" text="Quantity" />
+                                    <TableColumn fx:id="priorityQueueColumn" minWidth="0.0" prefWidth="54.6666259765625" styleClass="column" text="Priority" />
+                                    <TableColumn fx:id="statusQueueColumn" maxWidth="138.66668701171875" prefWidth="50.6666259765625" styleClass="column" text="Status" />
+                                </columns>
+                            </TableView>
+                            <Label layoutX="488.0" text="Queue">
+                                <font>
+                                    <Font name="System Bold" size="18.0" />
+                                </font>
+                            </Label>
+                            <Button fx:id="editQueueButton" layoutX="630.0" layoutY="515.0" prefHeight="35.0" prefWidth="53.0" styleClass="editButton" />
+                            <Label layoutX="66.0" layoutY="30.0" prefHeight="20.0" prefWidth="219.0" text="Add new production to queue">
+                                <font>
+                                    <Font name="System Bold" size="14.0" />
+                                </font>
+                            </Label>
+                            <Label layoutX="14.0" layoutY="74.0" text="Quantity">
+                                <font>
+                                    <Font name="System Bold" size="12.0" />
+                                </font>
+                            </Label>
+                            <Label layoutX="13.0" layoutY="137.0" prefHeight="17.0" prefWidth="53.0" text="Product">
+                                <font>
+                                    <Font name="System Bold" size="12.0" />
+                                </font>
+                            </Label>
+                            <Label layoutX="13.0" layoutY="201.0" prefHeight="17.0" prefWidth="53.0" text="Priority">
+                                <font>
+                                    <Font name="System Bold" size="12.0" />
+                                </font>
+                            </Label>
+                            <TextField fx:id="quantityInput" layoutX="14.0" layoutY="91.0" style="-fx-border-color: lightgrey;" />
+                            <ChoiceBox fx:id="productChoice" layoutX="14.0" layoutY="154.0" prefWidth="150.0" style="-fx-background-color: white;" />
+                            <RadioButton fx:id="normalPriorityButton" layoutX="14.0" layoutY="226.0" mnemonicParsing="false" text="Normal" />
+                            <Button fx:id="addQueueButton" layoutX="15.0" layoutY="293.0" prefHeight="30.0" prefWidth="50.0" styleClass="addButton" text="Add" wrapText="true" />
+                            <RadioButton fx:id="highPriorityButton" layoutX="14.0" layoutY="255.0" mnemonicParsing="false" text="High" />
+                            <Button fx:id="startProdButton" layoutX="346.0" layoutY="537.0" prefHeight="20.0" prefWidth="200.0" styleClass="startProdButton" text="Start Production" wrapText="true" />
+                            <TextFlow fx:id="messageBoard" layoutX="13.0" layoutY="352.0" lineSpacing="1.0" prefHeight="181.0" prefWidth="325.0" style="-fx-border-color: lightgrey; -fx-background-color: white;">
+                                <effect>
+                                    <Blend />
+                                </effect>
+                            </TextFlow>
+                            <Label layoutX="13.0" layoutY="335.0" text="Messages">
+                                <font>
+                                    <Font name="System Bold" size="13.0" />
+                                </font>
+                            </Label>
+                            <ImageView fx:id="editQueuePicButton" fitHeight="30" fitWidth="30" layoutX="657.0" layoutY="537.0">
+                                <Image url="@../com/example/guidemo_4semester/editButtonImage.png" />
+                            </ImageView>
+                            <Separator layoutY="57.0" prefHeight="10.0" prefWidth="348.0" />
+                            <Separator layoutY="330.0" prefHeight="10.0" prefWidth="348.0" />
+                        </children></AnchorPane>
+                </content>
+            </Tab>
+            <Tab text="Status">
+                <content>
+                    <AnchorPane fx:id="statusAnchor" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                         <children>
-                           <Label text="Current Status:" />
-                           <Circle fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
-                           <Label text="Running" />
-                        </children>
-                     </HBox>
-                     <HBox layoutX="473.0" layoutY="90.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
+                            <Label layoutX="14.0" layoutY="14.0" prefHeight="23.0" prefWidth="166.0" text="Current production status:">
+                                <font>
+                                    <Font name="System Bold" size="12.0" />
+                                </font>
+                            </Label>
+                            <ProgressBar layoutX="180.0" layoutY="17.0" prefWidth="200.0" progress="0.0" />
+                            <Label layoutX="272.0" layoutY="17.0" text="0%" />
+                            <Separator layoutY="45.0" prefHeight="15.0" prefWidth="703.0" />
+                            <Separator layoutX="233.0" layoutY="51.0" orientation="VERTICAL" prefHeight="537.0" prefWidth="7.0" />
+                            <Separator layoutX="466.0" layoutY="51.0" orientation="VERTICAL" prefHeight="537.0" prefWidth="7.0" />
+                            <Label layoutX="7.0" layoutY="60.0" prefHeight="20.0" prefWidth="47.0" text="AGV 1">
+                                <font>
+                                    <Font name="System Bold" size="14.0" />
+                                </font>
+                            </Label>
+                            <Label layoutX="240.0" layoutY="60.0" text="Assembly Station 1">
+                                <font>
+                                    <Font name="System Bold" size="14.0" />
+                                </font>
+                            </Label>
+                            <Label layoutX="473.0" layoutY="60.0" text="Warehouse 1">
+                                <font>
+                                    <Font name="System Bold" size="14.0" />
+                                </font>
+                            </Label>
+                            <Button fx:id="addComponentButton" layoutX="613.0" layoutY="11.0" prefHeight="30.0" prefWidth="50.0" styleClass="addButton" text="Add" wrapText="true" />
+                            <HBox layoutX="5.0" layoutY="90.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
+                                <children>
+                                    <Label text="Current Status:" />
+                                    <Circle fx:id="agvStatusCircle" fill="DODGERBLUE" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
+                                    <Label fx:id="agvStatusLabel" text="${tabViewController.agvStatusText.value}" />  </children>
+                            </HBox>
+                            <HBox layoutX="242.0" layoutY="90.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
+                                <children>
+                                    <Label text="Current Status:" />
+                                    <Circle fx:id="assemblyStatusCircle" fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
+                                    <Label fx:id="assemblyStatusLabel" text="${tabViewController.assemblyStatusText.value}" />
+                           <Label fx:id="AssemblyStatus" />  </children>
+                            </HBox>
+                            <HBox layoutX="473.0" layoutY="90.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
+                                <children>
+                                    <Label text="Current Status:" />
+                                    <Circle fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
+                                    <Label text="Running" />
+                                </children>
+                            </HBox>
+                            <HBox layoutX="5.0" layoutY="139.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
+                                <children>
+                                    <Label text="Connection:" />
+                                    <Circle fx:id="agvConnectionCircle" fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
+                                </children>
+                            </HBox>
+                            <HBox layoutX="242.0" layoutY="139.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
+                                <children>
+                                    <Label text="Connection:" />
+                                    <Circle fx:id="assemblyConnectionCircle" fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
+                                </children>
+                            </HBox>
+                            <HBox layoutX="473.0" layoutY="139.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
+                                <children>
+                                    <Label text="Connection:" />
+                                    <Circle fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
+                                </children>
+                            </HBox>
+                            <Label fx:id="agvParameterLabel" layoutX="7.0" layoutY="188.0" text="${tabViewController.agvParameterLabelText.value}" />  <Label layoutX="240.0" layoutY="188.0" text="Healthy:" />
+                            <Label layoutX="470.0" layoutY="188.0" text="Current Parameter: " />
+                            <Separator layoutY="217.0" prefHeight="15.0" prefWidth="703.0" />
+                     <Label fx:id="HealthyLabel" layoutX="289.0" layoutY="188.0" />
+                        </children></AnchorPane>
+                </content>
+            </Tab>
+            <Tab text="Inventory">
+                <content>
+                    <AnchorPane fx:id="inventoryAnchor" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                         <children>
-                           <Label text="Current Status:" />
-                           <Circle fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
-                           <Label text="Running" />
+                            <TableView fx:id="inventoryTable" layoutX="26.0" layoutY="40.0" prefHeight="429.0" prefWidth="647.0" styleClass="tableView">
+                                <columns>
+                                    <TableColumn fx:id="IDColumn" prefWidth="50.0" styleClass="column" text="ID" />
+                                    <TableColumn fx:id="itemColumn" prefWidth="424.0000228881836" styleClass="column" text="Item" />
+                                    <TableColumn fx:id="availableColumn" minWidth="0.0" prefWidth="92.66665649414062" styleClass="column" text="Available" />
+                                    <TableColumn fx:id="inStockColumn" prefWidth="79.33333333333337" styleClass="column" text="In stock" />
+                                </columns>
+                            </TableView>
+                            <Label layoutX="27.0" layoutY="13.0" styleClass="labels" text="Warehouse:">
+                            </Label>
+                            <ChoiceBox fx:id="warehouseDropdown" layoutX="114.0" layoutY="10.0" prefWidth="150.0" styleClass="warehouseChoice" />
+                            <Button fx:id="editButton" layoutX="14.0" layoutY="460.0" prefHeight="35.0" prefWidth="53.0" styleClass="editButton">
+                                <graphic>
+                                    <ImageView fx:id="editInventoryButton" fitHeight="30" fitWidth="30">
+                                        <Image url="@../com/example/guidemo_4semester/editButtonImage.png" />
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                            <Button fx:id="addButton" layoutX="80.0" layoutY="482.0" prefHeight="30.0" prefWidth="50.0" styleClass="addButton" text="Add" wrapText="true" />
+                            <Button fx:id="removeButton" layoutX="149.0" layoutY="482.0" prefHeight="30.0" prefWidth="50.0" styleClass="removeButton" text="Remove" wrapText="true" />
                         </children>
-                     </HBox>
-                     <HBox layoutX="5.0" layoutY="139.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
-                        <children>
-                           <Label text="Connection:" />
-                            <Circle fx:id="agvConnectionCircle" fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE"/>
-                        </children>
-                     </HBox>
-                     <HBox layoutX="242.0" layoutY="139.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
-                        <children>
-                           <Label text="Connection:" />
-                           <Circle fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
-                        </children>
-                     </HBox>
-                     <HBox layoutX="473.0" layoutY="139.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
-                        <children>
-                           <Label text="Connection:" />
-                           <Circle fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
-                        </children>
-                     </HBox>
-                      <Label fx:id="agvParameterLabel" layoutX="7.0" layoutY="188.0" text="Current Parameter: " />
-                     <Label layoutX="242.0" layoutY="188.0" text="Current Parameter: " />
-                     <Label layoutX="470.0" layoutY="188.0" text="Current Parameter: " />
-                     <Separator layoutY="217.0" prefHeight="15.0" prefWidth="703.0" />
-                  </children></AnchorPane>
-            </content>
-        </Tab>
-        <Tab text="Inventory">
-            <content>
-                <AnchorPane fx:id="inventoryAnchor" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                    <children>
-                        <TableView layoutX="26.0" layoutY="40.0" prefHeight="429.0" prefWidth="647.0" styleClass="tableView">
-                            <columns>
-                                <TableColumn fx:id="ID" prefWidth="50.0" styleClass="column" text="ID" />
-                                <TableColumn fx:id="item" prefWidth="424.0000228881836" styleClass="column" text="Item" />
-                                <TableColumn fx:id="available" minWidth="0.0" prefWidth="92.66665649414062" styleClass="column" text="Available" />
-                                <TableColumn fx:id="inStock" prefWidth="79.33333333333337" styleClass="column" text="In stock" />
-                            </columns>
-                        </TableView>
-                        <Label layoutX="27.0" layoutY="13.0" styleClass="labels" text="Warehouse:">
-                        </Label>
-                        <ChoiceBox fx:id="warehouseDropdown" layoutX="114.0" layoutY="10.0" prefWidth="150.0" styleClass="warehouseChoice" />
-                        <Button fx:id="editButton" layoutX="14.0" layoutY="460.0" prefHeight="35.0" prefWidth="53.0" styleClass="editButton">
-                            <graphic>
-                                <ImageView fx:id="editInventoryButton" fitHeight="30" fitWidth="30">
-                                    <Image url="@../com/example/guidemo_4semester/editButtonImage.png" />
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="addButton" layoutX="80.0" layoutY="482.0" prefHeight="30.0" prefWidth="50.0" styleClass="addButton" text="Add" wrapText="true" />
-                        <Button fx:id="removeButton" layoutX="149.0" layoutY="482.0" prefHeight="30.0" prefWidth="50.0" styleClass="removeButton" text="Remove" wrapText="true" />
-                    </children>
-                </AnchorPane>
-            </content>
-        </Tab>
-    </tabs>
-</TabPane>
-   <Button fx:id="emergencyStopButton" layoutX="508.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="195.0" styleClass="emergencyButton" text="EMERGENCY STOP" wrapText="true" />
+                    </AnchorPane>
+                </content>
+            </Tab>
+        </tabs>
+    </TabPane>
+    <Button fx:id="emergencyStopButton" layoutX="508.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="195.0" styleClass="emergencyButton" text="EMERGENCY STOP" wrapText="true" />
 </AnchorPane>

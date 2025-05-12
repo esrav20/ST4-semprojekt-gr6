@@ -2,12 +2,15 @@ package dk.sdu.AGV;
 
 import dk.sdu.CommonAGV.AGVPI;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Component
 public class AGVMovement implements AGVPI {
     private AGVConnectionManager connectionManager = AGVConnectionManager.getInstance();
     private int currentState;
@@ -38,7 +41,7 @@ public class AGVMovement implements AGVPI {
 
     @Override
     public void needsCharging() throws IOException, InterruptedException {
-        if(battery < battery_treshold){
+        if(battery < battery_threshold){
             charge();
         };
     }
