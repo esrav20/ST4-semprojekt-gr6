@@ -7,18 +7,17 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:controller="com.example.guidemo_4semester.TabViewController"
-            prefHeight="600.0" prefWidth="703.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="600.0" prefWidth="703.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.guidemo_4semester.TabViewController">
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="703.0" stylesheets="@../styles.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
     <tabs>
         <Tab text="Production">
             <content>
                 <AnchorPane fx:id="productionAnchor" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                   <children>
-                        <TableView layoutX="346.0" layoutY="28.0" prefHeight="507.0" prefWidth="342.0" styleClass="tableView">
+                        <TableView fx:id="queueView" layoutX="346.0" layoutY="28.0" prefHeight="507.0" prefWidth="342.0" styleClass="tableView">
                             <columns>
-                        <TableColumn fx:id="batchID" prefWidth="57.3333740234375" styleClass="column" text="Batch ID" />
-                           <TableColumn fx:id="productQueue" minWidth="4.0" prefWidth="99.33331298828125" styleClass="column" text="Product" />
+                                <TableColumn fx:id="batchID" prefWidth="57.3333740234375" styleClass="column" text="Batch ID" />
+                                <TableColumn fx:id="productQueue" minWidth="4.0" prefWidth="99.33331298828125" styleClass="column" text="Product" />
                                 <TableColumn fx:id="quantityQueue" maxWidth="119.3333740234375" prefWidth="76.66668701171875" styleClass="column" text="Quantity" />
                                 <TableColumn fx:id="priorityQueue" minWidth="0.0" prefWidth="54.6666259765625" styleClass="column" text="Priority" />
                                 <TableColumn fx:id="statusQueue" maxWidth="138.66668701171875" prefWidth="50.6666259765625" styleClass="column" text="Status" />
@@ -52,9 +51,12 @@
                      </Label>
                      <TextField fx:id="quantityInput" layoutX="14.0" layoutY="91.0" style="-fx-border-color: lightgrey;" />
                      <ChoiceBox fx:id="productChoice" layoutX="14.0" layoutY="154.0" prefWidth="150.0" style="-fx-background-color: white;" />
-                     <RadioButton fx:id="normalPriorityButton" layoutX="14.0" layoutY="226.0" mnemonicParsing="false" text="Normal" />
-                     <Button fx:id="addQueueButton" layoutX="15.0" layoutY="293.0" prefHeight="30.0" prefWidth="50.0" styleClass="addButton" text="Add" wrapText="true" />
-                     <RadioButton fx:id="highPriorityButton" layoutX="14.0" layoutY="255.0" mnemonicParsing="false" text="High" />
+                     <RadioButton fx:id="normalPriorityButton" layoutX="14.0" layoutY="226.0" mnemonicParsing="false" text="Normal">
+                        <toggleGroup>
+                           <ToggleGroup fx:id="Priority" />
+                        </toggleGroup></RadioButton>
+                      <RadioButton fx:id="highPriorityButton" layoutX="14.0" layoutY="255.0" mnemonicParsing="false" text="High" toggleGroup="$Priority" />
+                     <Button fx:id="addQueueButton" layoutX="15.0" layoutY="293.0" onAction="#addQueue" prefHeight="30.0" prefWidth="50.0" styleClass="addButton" text="Add" wrapText="true" />
                      <Button fx:id="startProdButton" layoutX="346.0" layoutY="537.0" prefHeight="20.0" prefWidth="200.0" styleClass="startProdButton" text="Start Production" wrapText="true" />
                      <TextFlow fx:id="messageBoard" layoutX="13.0" layoutY="352.0" lineSpacing="1.0" prefHeight="181.0" prefWidth="325.0" style="-fx-border-color: lightgrey; -fx-background-color: white;">
                         <effect>
@@ -128,7 +130,7 @@
                      <HBox layoutX="5.0" layoutY="139.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
                         <children>
                            <Label text="Connection:" />
-                            <Circle fx:id="agvConnectionCircle" fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE"/>
+                            <Circle fx:id="agvConnectionCircle" fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
                         </children>
                      </HBox>
                      <HBox layoutX="242.0" layoutY="139.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">

@@ -1,13 +1,10 @@
 package com.example.guidemo_4semester;
 
-import dk.sdu.AGV.AGVMovement;
-import dk.sdu.CommonAGV.AGVPI;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -35,7 +32,7 @@ public class HelloApplication extends Application {
         fxmlLoader.setControllerFactory(springContext::getBean);
         Parent root = fxmlLoader.load();
 
-        Scene scene = new Scene(root, 320, 240);
+        Scene scene = new Scene(root, 700, 600);
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
