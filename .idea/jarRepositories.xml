@@ -7,9 +7,19 @@
       <option name="url" value="https://repo.eclipse.org/content/repositories/paho-releases/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="junit-platform" />
+      <option name="name" value="junit-platform" />
+      <option name="url" value="https://mvnrepository.com/artifact/org.junit.platform/junit-platform-commons" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="https://repo.maven.apache.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="eclipse-ee4j" />
+      <option name="name" value="eclipse-ee4j" />
+      <option name="url" value="https://repo.eclipse.org/content/groups/ee4j/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="mojo" />
@@ -25,6 +35,11 @@
       <option name="id" value="oracle-repo" />
       <option name="name" value="oracle-repo" />
       <option name="url" value="https://maven.oracle.com" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="junit-platform" />
+      <option name="name" value="junit-platform" />
+      <option name="url" value="https://mvnrepository.com/artifact/org.junit.platform/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="glassfish-repo" />

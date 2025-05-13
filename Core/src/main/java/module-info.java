@@ -15,10 +15,15 @@ module Core {
     requires java.net.http;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
+    requires spring.web;
+    requires spring.data.jpa;
+    requires spring.tx;
 
 
-    opens com.example.guidemo_4semester;
+    opens com.example.guidemo_4semester to javafx.fxml, spring.core, spring.beans, spring.context;
+
     exports com.example.guidemo_4semester;
+
 }
 
 

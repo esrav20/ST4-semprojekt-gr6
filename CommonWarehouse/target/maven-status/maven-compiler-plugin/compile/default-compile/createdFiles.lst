@@ -7,9 +7,9 @@ com\example\generated\IEmulatorService_Service.class
 com\example\generated\GetInventory.class
 module-info.class
 dk\sdu\CommonInventory\Service\warehouseServiceController.class
+dk\sdu\CommonInventory\Service\SoapWarehouseService.class
 com\example\generated\IEmulatorService.class
 com\example\generated\InsertItem.class
 com\example\generated\GetInventoryResponse.class
 com\example\generated\ObjectFactory.class
-dk\sdu\CommonInventory\Service\soapWarehouseService.class
 dk\sdu\CommonInventory\InventoryRepos.class
