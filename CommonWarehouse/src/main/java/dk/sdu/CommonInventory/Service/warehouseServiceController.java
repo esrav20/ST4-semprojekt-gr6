@@ -5,18 +5,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@SpringBootApplication(scanBasePackages = "dk.sdu.CommonInventory.Service")
+//@SpringBootApplication(scanBasePackages = "dk.sdu.CommonInventory.Service")
 @RestController
 @RequestMapping("/warehouse")
 public class warehouseServiceController {
 
-    private soapWarehouseService soapWarehouseService;
+    private SoapWarehouseService soapWarehouseService;
 
-    public void WarehouseController(soapWarehouseService soapWarehouseService) {
+   /* public void WarehouseController(SoapWarehouseService soapWarehouseService) {
         this.soapWarehouseService = soapWarehouseService;
-    }
+    }*/
 
-    public warehouseServiceController(dk.sdu.CommonInventory.Service.soapWarehouseService soapWarehouseService) {
+    public warehouseServiceController(SoapWarehouseService soapWarehouseService) {
         this.soapWarehouseService = soapWarehouseService;
     }
 

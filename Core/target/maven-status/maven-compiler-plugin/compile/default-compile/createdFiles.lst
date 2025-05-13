@@ -1,5 +1,8 @@
+com\example\guidemo_4semester\MySpringBoot.class
 com\example\guidemo_4semester\HelloController.class
 com\example\guidemo_4semester\TabViewController.class
+com\example\guidemo_4semester\WarehouseClient$1.class
+com\example\guidemo_4semester\WarehouseClient.class
 com\example\guidemo_4semester\AppConfig.class
 module-info.class
 com\example\guidemo_4semester\HelloApplication.class

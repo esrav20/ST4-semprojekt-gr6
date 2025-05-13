@@ -7,7 +7,7 @@ C:\Users\mille\Documents\GitHub\ST4-semprojekt-gr6\CommonWarehouse\target\genera
 C:\Users\mille\Documents\GitHub\ST4-semprojekt-gr6\CommonWarehouse\src\main\java\dk\sdu\CommonInventory\Service\warehouseServiceController.java
 C:\Users\mille\Documents\GitHub\ST4-semprojekt-gr6\CommonWarehouse\target\generated-sources\wsimport\com\example\generated\PickItem.java
 C:\Users\mille\Documents\GitHub\ST4-semprojekt-gr6\CommonWarehouse\src\main\java\module-info.java
-C:\Users\mille\Documents\GitHub\ST4-semprojekt-gr6\CommonWarehouse\src\main\java\dk\sdu\CommonInventory\Service\soapWarehouseService.java
+C:\Users\mille\Documents\GitHub\ST4-semprojekt-gr6\CommonWarehouse\src\main\java\dk\sdu\CommonInventory\Service\SoapWarehouseService.java
 C:\Users\mille\Documents\GitHub\ST4-semprojekt-gr6\CommonWarehouse\target\generated-sources\wsimport\com\example\generated\GetInventory.java
 C:\Users\mille\Documents\GitHub\ST4-semprojekt-gr6\CommonWarehouse\target\generated-sources\wsimport\com\example\generated\InsertItemResponse.java
 C:\Users\mille\Documents\GitHub\ST4-semprojekt-gr6\CommonWarehouse\target\generated-sources\wsimport\com\example\generated\IEmulatorService.java

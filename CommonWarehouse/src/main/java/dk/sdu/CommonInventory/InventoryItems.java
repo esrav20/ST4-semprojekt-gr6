@@ -16,6 +16,7 @@ public class InventoryItems {
     private String itemName;
     private int quantity;
 
+
     //getter og setters
     public Long getId(){
         return id;
