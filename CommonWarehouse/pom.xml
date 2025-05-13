@@ -145,24 +145,19 @@
             <version>2.6</version>
             <executions>
                 <execution>
+                    <id>wsimport</id>
                     <goals>
                         <goal>wsimport</goal>
                     </goals>
                     <configuration>
-                        <wsdlUrls>
-                            <wsdlUrl>http://localhost:8081/Service.asmx?WSDL</wsdlUrl>
-                        </wsdlUrls>
-                        <packageName>com.example.generated</packageName> <!-- whatever you want -->
+                        <wsdlDirectory>src/main/resources</wsdlDirectory>
+                        <wsdlFiles>
+                            <wsdlFile>Service.wsdl</wsdlFile>
+                        </wsdlFiles>
+                        <packageName>com.example.generated</packageName>
                     </configuration>
                 </execution>
             </executions>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sun.xml.ws</groupId>
-                    <artifactId>jaxws-tools</artifactId>
-                    <version>2.3.2</version>
-                </dependency>
-            </dependencies>
         </plugin>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>

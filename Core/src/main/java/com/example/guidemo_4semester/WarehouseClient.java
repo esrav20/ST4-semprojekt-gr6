@@ -11,12 +11,12 @@ import java.util.List;
 
 @Component
 public class WarehouseClient {
-    private static final String BASE_URL = "http://localhost:3306/warehouse";
+    private final String BASE_URL = "http://localhost:3306/warehouse";
 
-    private static final HttpClient client = HttpClient.newHttpClient();
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private final HttpClient client = HttpClient.newHttpClient();
+    private final ObjectMapper mapper = new ObjectMapper();
 
-    public static List<InventoryItems> getInventory() throws Exception{
+    public List<InventoryItems> getInventory() throws Exception{
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL+ "/inventory"))
                 .GET()
@@ -25,7 +25,7 @@ public class WarehouseClient {
         return mapper.readValue(response.body(), new TypeReference<List<InventoryItems>>() {});
     }
 
-    public static InventoryItems insertItem(int trayId, String itemName) throws Exception{
+    public InventoryItems insertItem(int trayId, String itemName) throws Exception{
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/insert?trayId=" + trayId + "&itemName=" + itemName))
                 .POST(HttpRequest.BodyPublishers.noBody())
@@ -33,7 +33,7 @@ public class WarehouseClient {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         return mapper.readValue(response.body(), InventoryItems.class);
     }
-    public static String pickItem(int trayId) throws Exception {
+    public String pickItem(int trayId) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/pick?trayId=" + trayId))
                 .POST(HttpRequest.BodyPublishers.noBody())

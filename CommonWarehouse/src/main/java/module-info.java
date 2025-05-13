@@ -14,8 +14,8 @@ module CommonWarehouse {
     requires spring.boot.test;
     //requires org.junit.platform.commons;
 
-    opens dk.sdu.CommonInventory to spring.core, spring.beans, spring.data.jpa;
-    opens dk.sdu.CommonInventory.Service to spring.core, spring.beans, spring.data.jpa;
+    opens dk.sdu.CommonInventory to spring.core, spring.beans, spring.data.jpa, javafx.fxml;
+    opens dk.sdu.CommonInventory.Service to spring.core, spring.beans, spring.data.jpa, javafx.fxml;
 
     exports dk.sdu.CommonInventory;
     exports dk.sdu.CommonInventory.Service;
