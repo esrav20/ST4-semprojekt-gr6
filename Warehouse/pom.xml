@@ -9,8 +9,8 @@
         <version>3.2.5</version> <!-- latest stable -->
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-<groupId>com.example</groupId>
-<artifactId>warehouse-spring-soap</artifactId>
-<version>1.0.0</version>
+<groupId>dk.sdu</groupId>
+<artifactId>Warehouse</artifactId>
+<version>1.0-SNAPSHOT</version>
 <packaging>jar</packaging>
 </project>
