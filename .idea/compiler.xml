@@ -25,6 +25,13 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="AGV" options="-parameters" />
+      <module name="AssemblyStation" options="-parameters" />
+      <module name="CommonAGV" options="-parameters" />
+      <module name="CommonAssemblyStation" options="-parameters" />
+      <module name="CommonWarehouse" options="-parameters" />
+      <module name="Core" options="-parameters" />
+      <module name="Semesterproject" options="-parameters" />
       <module name="Warehouse" options="-parameters" />
       <module name="warehouse-spring-soap" options="-parameters" />
       <module name="warehouse-spring-soap (1)" options="-parameters" />
