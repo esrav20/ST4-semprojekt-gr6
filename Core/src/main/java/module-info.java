@@ -18,11 +18,13 @@ module Core {
     requires spring.web;
     requires spring.data.jpa;
     requires spring.tx;
+    requires spring.core;
 
 
     opens com.example.guidemo_4semester to javafx.fxml, spring.core, spring.beans, spring.context;
+    //opens views to javafx.fxml, spring.core, spring.beans, spring.context;
+            exports com.example.guidemo_4semester;
 
-    exports com.example.guidemo_4semester;
 
 }
 
