@@ -49,6 +49,7 @@ public class TabViewController {
     @FXML private TableColumn<InventoryItems, Integer> availableColumn;
     @FXML private TableColumn<InventoryItems, Integer> inStockColumn;
     @FXML private ChoiceBox<String> warehouseDropdown;
+    @FXML private Circle databaseConnectionCircle;
 
     private ObservableList<InventoryItems> inventoryData = FXCollections.observableArrayList();
 
@@ -87,6 +88,31 @@ public class TabViewController {
             loadInventory();
         }*/
     }
+    private void updateDatabaseConnectionStatus(boolean connected) {
+        Platform.runLater(() -> {
+            databaseConnectionCircle.setFill(Color.valueOf(connected ? "#1fff25" : "RED"));
+        });
+    }
+
+    private void checkDatabaseConnection() {
+        boolean isConnected = false;
+        try {
+            // To check connection
+            warehouseClient.getInventory(); // If this succeeds, we're connected
+            isConnected = true;
+        } catch (Exception e) {
+            isConnected = false;
+        }
+        updateDatabaseConnectionStatus(isConnected);
+    }
+
+    private void startDatabaseConnectionChecks() {
+        Timeline dbCheckTimer = new Timeline(
+                new KeyFrame(Duration.seconds(30), e -> checkDatabaseConnection())
+        );
+        dbCheckTimer.setCycleCount(Animation.INDEFINITE);
+        dbCheckTimer.play();
+    }
 
     //---------------------------
     @FXML private Label agvStatusLabel;
@@ -120,6 +146,8 @@ public class TabViewController {
     public void initialize() throws MqttException {
         setupMqtt();
         startAGVUpdates();
+        checkDatabaseConnection();
+        startDatabaseConnectionChecks();
         startProdButton.setOnAction(event -> {
             int processId = Integer.parseInt(processIdInput.getText());
             try {
