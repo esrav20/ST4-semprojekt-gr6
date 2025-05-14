@@ -1,17 +1,13 @@
 module Core {
     requires javafx.controls;
     requires javafx.fxml;
-    requires CommonWarehouse;
-    requires CommonAGV;
-    requires CommonAssemblyStation;
+
     requires org.eclipse.paho.client.mqttv3;
     requires spring.boot;
     requires spring.boot.autoconfigure;
     requires jdk.compiler;
     requires spring.context;
     requires spring.beans;
-    requires AssemblyStation;
-    requires AGV;
     requires java.net.http;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
@@ -19,7 +15,11 @@ module Core {
     requires spring.data.jpa;
     requires spring.tx;
     requires spring.core;
+    requires java.sql;
 
+    requires CommonWarehouse;
+    requires CommonAGV;
+    requires CommonAssemblyStation;
 
     opens com.example.guidemo_4semester to javafx.fxml, spring.core, spring.beans, spring.context;
     //opens views to javafx.fxml, spring.core, spring.beans, spring.context;

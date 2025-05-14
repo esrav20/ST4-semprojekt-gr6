@@ -40,6 +40,8 @@ services:
       - "3306:3306"
     networks:
       - spring-network
+    volumes:
+      - mysql:/var/lib/mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

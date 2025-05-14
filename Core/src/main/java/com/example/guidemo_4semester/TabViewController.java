@@ -2,7 +2,9 @@ package com.example.guidemo_4semester;
 
 import dk.sdu.CommonAGV.AGVPI;
 import dk.sdu.Common.IMqttService;
-import dk.sdu.CommonInventory.InventoryItems;
+import dk.sdu.CommonInventory.WarehousePI;
+
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -33,7 +35,7 @@ public class TabViewController {
 
     // vi skal ikke have en setDepencies metode - da Spring ikke kan starte programmet uden Constructor-based DI.
     @Autowired
-    public TabViewController(WarehouseClient warehouseClient, AGVPI agv, IMqttService iMqttService) throws MqttException {
+    public TabViewController(WarehousePI warehouseClient, AGVPI agv, IMqttService iMqttService) throws MqttException {
         this.warehouseClient = warehouseClient;
         this.agv = agv;
         this.iMqttService = iMqttService;
@@ -41,36 +43,36 @@ public class TabViewController {
 
     //Warehouse/Inventory:
 
-    private final WarehouseClient warehouseClient;
+    private final WarehousePI warehouseClient;
 
-    @FXML private TableView<InventoryItems> inventoryTable;
-    @FXML private TableColumn<InventoryItems, Long> IDColumn;
-    @FXML private TableColumn<InventoryItems, String> itemColumn;
-    @FXML private TableColumn<InventoryItems, Integer> availableColumn;
-    @FXML private TableColumn<InventoryItems, Integer> inStockColumn;
-    @FXML private ChoiceBox<String> warehouseDropdown;
+    //@FXML private TableView<InventoryItems> inventoryTable;
+    //@FXML private TableColumn<InventoryItems, Long> IDColumn;
+    //@FXML private TableColumn<InventoryItems, String> itemColumn;
+    //@FXML private TableColumn<InventoryItems, Integer> availableColumn;
+    //@FXML private TableColumn<InventoryItems, Integer> inStockColumn;
+    //@FXML private ChoiceBox<String> warehouseDropdown;
 
-    private ObservableList<InventoryItems> inventoryData = FXCollections.observableArrayList();
+    //private ObservableList<InventoryItems> inventoryData = FXCollections.observableArrayList();
 
-    private void setupTable() {
-        IDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        itemColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
-        availableColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        inventoryTable.setItems(inventoryData);
-    }
+    //private void setupTable() {
+    //    IDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+    //    itemColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
+    //    availableColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+    //    inventoryTable.setItems(inventoryData);
+    //}
 
-    private void setupWarehouseDropdown() {
-        warehouseDropdown.setItems(FXCollections.observableArrayList("Warehouse1", "Warehouse2"));
-        warehouseDropdown.setOnAction(event -> loadInventory());
-    }
+    //private void setupWarehouseDropdown() {
+    //    warehouseDropdown.setItems(FXCollections.observableArrayList("Warehouse1", "Warehouse2"));
+    //    warehouseDropdown.setOnAction(event -> loadInventory());
+    //}
 
     private void loadInventory() {
         try{
-            inventoryData.clear();
-            inventoryData.addAll(warehouseClient.getInventory());
+            // inventoryData.clear();
+            //  inventoryData.addAll(warehouseClient.getInventory());
         } catch (Exception e){
-            e.printStackTrace();
-            System.out.println("Jeg kan love dig for load Inventory fejler du");
+            //  e.printStackTrace();
+            //  System.out.println("Jeg kan love dig for load Inventory fejler du");
         }
     }
 
@@ -81,11 +83,11 @@ public class TabViewController {
 
     @FXML
     private void handleRemoveButton() {
-        /*InventoryItems selected = inventoryTable.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            inventoryRepos.delete(selected);
-            loadInventory();
-        }*/
+        //    InventoryItems selected = inventoryTable.getSelectionModel().getSelectedItem();
+        //    if (selected != null) {
+        //        inventoryRepos.delete(selected);
+        //        loadInventory();
+        //    }*/
     }
 
     //---------------------------
@@ -120,17 +122,6 @@ public class TabViewController {
     public void initialize() throws MqttException {
         setupMqtt();
         startAGVUpdates();
-        startProdButton.setOnAction(event -> {
-            int processId = Integer.parseInt(processIdInput.getText());
-            try {
-                iMqttService.initPublish(processId);
-            } catch (MqttException e) {
-                throw new RuntimeException(e);
-            }
-            setupTable();
-            setupWarehouseDropdown();
-            loadInventory();
-        });
 
         startProdButton.setOnMouseClicked(event -> {
             try {
@@ -176,8 +167,11 @@ public class TabViewController {
 
     private void setStartProdButton() throws IOException, InterruptedException {
 
-        agv.sendRequest("MoveToStorageOperation");
-        updateAGVDisplay();
+        //agv.sendRequest("MoveToStorageOperation");
+        //updateAGVDisplay();
+
+        String t = warehouseClient.insertItem(2,"hej");
+        System.out.println(t);
     }
     private void startAGVUpdates() {
         updateTimer = new Timeline(
