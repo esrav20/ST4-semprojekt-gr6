@@ -40,17 +40,19 @@
             <artifactId>javafx-graphics</artifactId>
             <version>17.0.2</version>
         </dependency>
+        <!-- Data JPA starter includes javax.sql.DataSource and Hibernate -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <scope>compile</scope>
         </dependency>
+
+        <!-- MySQL JDBC driver -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>8.4.0</version>
             <scope>runtime</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -89,7 +91,11 @@
             <groupId>dk.sdu</groupId>
             <artifactId>CommonWarehouse</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>dk.sdu</groupId>
+            <artifactId>Warehouse</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 <build>

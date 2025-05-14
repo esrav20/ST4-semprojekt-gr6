@@ -1,15 +1,2 @@
-C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\src\main\java\dk\sdu\CommonInventory\InventoryItems.java
-C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\target\generated-sources\wsimport\com\example\generated\IEmulatorService_Service.java
-C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\target\generated-sources\wsimport\com\example\generated\InsertItemResponse.java
 C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\src\main\java\module-info.java
-C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\target\generated-sources\wsimport\com\example\generated\GetInventoryResponse.java
-C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\src\main\java\dk\sdu\CommonInventory\Service\warehouseServiceController.java
-C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\target\generated-sources\wsimport\com\example\generated\InsertItem.java
-C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\target\generated-sources\wsimport\com\example\generated\PickItemResponse.java
-C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\src\main\java\dk\sdu\CommonInventory\InventoryRepos.java
-C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\target\generated-sources\wsimport\com\example\generated\package-info.java
-C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\target\generated-sources\wsimport\com\example\generated\PickItem.java
-C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\target\generated-sources\wsimport\com\example\generated\IEmulatorService.java
-C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\target\generated-sources\wsimport\com\example\generated\ObjectFactory.java
-C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\src\main\java\dk\sdu\CommonInventory\Service\SoapWarehouseService.java
-C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\target\generated-sources\wsimport\com\example\generated\GetInventory.java
+C:\Users\benja\IdeaProjects\ST4-semprojekt-gr6\CommonWarehouse\src\main\java\dk\sdu\CommonInventory\WarehousePI.java

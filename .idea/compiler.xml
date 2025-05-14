@@ -7,8 +7,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="AGV" />
-        <module name="Warehouse" />
         <module name="warehouse-spring-soap" />
+        <module name="Warehouse" />
         <module name="CommonWarehouse" />
         <module name="AssemblyStation" />
         <module name="CommonAGV" />

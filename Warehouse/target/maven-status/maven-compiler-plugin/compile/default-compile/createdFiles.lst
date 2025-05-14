@@ -1,0 +1,5 @@
+dk\sdu\Warehouse\Service\warehouseServiceController.class
+module-info.class
+dk\sdu\Warehouse\Service\SoapWarehouseService.class
+dk\sdu\Warehouse\InventoryItems.class
+dk\sdu\Warehouse\InventoryRepos.class
