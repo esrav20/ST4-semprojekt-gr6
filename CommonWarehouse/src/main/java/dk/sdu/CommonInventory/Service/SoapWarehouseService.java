@@ -2,6 +2,8 @@ package dk.sdu.CommonInventory.Service;
 
 import dk.sdu.CommonInventory.InventoryItems;
 import dk.sdu.CommonInventory.InventoryRepos;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,7 @@ public class SoapWarehouseService {
 
     //private final IEmulatorService servicePort;
     @Autowired
-    public SoapWarehouseService(InventoryRepos inventoryRepos) {
+    public SoapWarehouseService(@Lazy InventoryRepos inventoryRepos) {
         this.inventoryRepos = inventoryRepos;
     }
 

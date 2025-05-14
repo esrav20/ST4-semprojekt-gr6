@@ -4,6 +4,8 @@ com\example\guidemo_4semester\TabViewController.class
 com\example\guidemo_4semester\WarehouseClient$1.class
 com\example\guidemo_4semester\WarehouseClient.class
 com\example\guidemo_4semester\AppConfig.class
+com\example\guidemo_4semester\stageListener.class
 module-info.class
 com\example\guidemo_4semester\HelloApplication.class
+com\example\guidemo_4semester\HelloApplication$StageReady.class
 com\example\guidemo_4semester\TabViewController$1.class

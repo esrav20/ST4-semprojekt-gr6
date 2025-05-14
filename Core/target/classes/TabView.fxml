@@ -8,8 +8,8 @@
 <?import javafx.scene.text.*?>
 
 <AnchorPane fx:controller="com.example.guidemo_4semester.TabViewController"
-            prefHeight="600.0" prefWidth="703.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
-    <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="703.0" stylesheets="@../styles.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+            prefHeight="600.0" prefWidth="703.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="703.0" stylesheets="@styles.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
         <tabs>
             <Tab text="Production">
                 <content>
@@ -67,7 +67,7 @@
                                 </font>
                             </Label>
                             <ImageView fx:id="editQueuePicButton" fitHeight="30" fitWidth="30" layoutX="657.0" layoutY="537.0">
-                                <Image url="@../com/example/guidemo_4semesterres/editButtonImage.png" />
+                                <Image url="@com/example/guidemo_4semesterres/editButtonImage.png" />
                             </ImageView>
                             <Separator layoutY="57.0" prefHeight="10.0" prefWidth="348.0" />
                             <Separator layoutY="330.0" prefHeight="10.0" prefWidth="348.0" />
@@ -165,7 +165,7 @@
                             <Button fx:id="editButton" layoutX="14.0" layoutY="460.0" prefHeight="35.0" prefWidth="53.0" styleClass="editButton">
                                 <graphic>
                                     <ImageView fx:id="editInventoryButton" fitHeight="30" fitWidth="30">
-                                        <Image url="@../com/example/guidemo_4semesterres/editButtonImage.png" />
+                                        <Image url="@com/example/guidemo_4semesterres/editButtonImage.png" />
                                     </ImageView>
                                 </graphic>
                             </Button>
