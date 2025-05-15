@@ -1,5 +1,6 @@
 package com.example.guidemo_4semester;
 
+import com.example.guidemo_4semester.Queue.Batch;
 import dk.sdu.CommonAGV.AGVPI;
 import dk.sdu.Common.IMqttService;
 import dk.sdu.CommonInventory.InventoryView;
@@ -11,6 +12,8 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 
 import java.io.IOException;
+import java.util.Comparator;
 
 @Component
 public class TabViewController {
@@ -90,15 +94,59 @@ public class TabViewController {
     @FXML private TextField processIdInput;
     @FXML private Button checkHealthButton;
     @FXML private Label HealthyLabel;
+    @FXML private RadioButton normalPriorityButton;
+    @FXML private RadioButton highPriorityButton;
+    @FXML private TextField quantityInput;
+    @FXML private ChoiceBox productChoice;
+    @FXML private TableView<Batch> queueView;
+    @FXML private TableColumn<Batch, Integer> batchID;
+    @FXML private TableColumn<Batch, String> productQueue;
+    @FXML private TableColumn<Batch, String> quantityQueue;
+    @FXML private TableColumn<Batch, Integer> priorityQueue;
+    @FXML private TableColumn<Batch, String> statusQueue;
+    private int batchCounter = 1;
+    String[] productList = {"Toy Cars1", "Toy Cars2"};
+    private ObservableList<Batch> batchList = FXCollections.observableArrayList();
+    private SortedList<Batch> sortedList;
 
     private Timeline updateTimer;
     private int status;
 
+    @FXML
+    private void addQueue(ActionEvent event) {
+        int queuePriority = normalPriorityButton.isSelected() ? 5 : (highPriorityButton.isSelected() ? 10 : 0);
+        String queueQuantity = quantityInput.getText();
+        String queueProduct = productChoice.getValue().toString();
 
+        if (queueQuantity.isEmpty() || queueProduct == null || queuePriority == 0) {
+            System.out.println("Please fill all inputs correctly.");
+            return;
+        }
+
+        Batch newBatch = new Batch(batchCounter++, queueProduct, queueQuantity, queuePriority, "Pending");
+        batchList.add(newBatch);
+
+        System.out.println("QueueQuantity: " + queueQuantity + ", QueueProduct: " + queueProduct + ", QueuePriority: " + queuePriority);
+        quantityInput.clear();
+    }
 
 
     @FXML
     public void initialize() throws MqttException {
+        batchID.setCellValueFactory(new PropertyValueFactory<>("batchID"));
+        productQueue.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        quantityQueue.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        priorityQueue.setCellValueFactory(new PropertyValueFactory<>("priority"));
+        statusQueue.setCellValueFactory(new PropertyValueFactory<>("status"));
+        sortedList = new SortedList<>(batchList);
+        // Comparator: High priority (10) come before Normal (5)
+        sortedList.setComparator(
+                Comparator.comparingInt(Batch::getPriority).reversed()
+                        .thenComparingInt(Batch::getBatchID)
+        );
+        queueView.setItems(sortedList);
+
+        productChoice.setItems(FXCollections.observableArrayList(productList));
         iMqttService.setMessagehandler((state,health) -> {
             Platform.runLater(() -> {
                 if (state != null) {
