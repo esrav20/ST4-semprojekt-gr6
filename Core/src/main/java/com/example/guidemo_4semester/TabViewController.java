@@ -174,7 +174,8 @@ public class TabViewController {
         loadInventory();
         startProdButton.setOnMouseClicked(event -> {
             try {
-                setStartProdButton();
+                agv.sendRequest("MoveToStorageOperation");
+                updateAGVDisplay();
                 iMqttService.publish("emulator/operation",  "{\"ProcessID\": 12345}");
             } catch (IOException | InterruptedException | MqttException e) {
                 e.printStackTrace();
@@ -184,16 +185,6 @@ public class TabViewController {
 
     }
 
-
-
-    private void setStartProdButton() throws IOException, InterruptedException {
-
-        agv.sendRequest("MoveToStorageOperation");
-        updateAGVDisplay();
-
-        String t = warehouseClient.insertItem(2,"hej");
-        System.out.println(t);
-    }
     private void startAGVUpdates() {
         updateTimer = new Timeline(
                 new KeyFrame(Duration.seconds(0.5), e ->{
@@ -241,7 +232,6 @@ public class TabViewController {
         }
 
         String connectionStatus = agv.isConnected() ? "#1fff25" : "RED";
-        System.out.println(agv.isConnected());
 
         Platform.runLater(() -> {
             agvStatusLabel.textProperty().unbind(); // Vi får en runtimeException, når vi kører appen og denne er bound i forvejen.
