@@ -17,7 +17,7 @@ public class MqttService implements IMqttService {
     private int state;
     private boolean health;
 
-
+    // Her erklæres klienten, vi fortæller klienten hvad den skal forbinde til og at den skal generere et unikt ID.
     public MqttService() {
         try {
             client = new MqttClient("tcp://localhost:9001", MqttClient.generateClientId());
@@ -26,10 +26,8 @@ public class MqttService implements IMqttService {
         }
     }
 
-
-
-
-
+    // her tjekker vi om klienten er forbundet i forvejen - hvis ikke så forbinder vi
+    // vi subscriber også til relevante topics.
     @Override
     public void connect() {
         try {
@@ -49,6 +47,7 @@ public class MqttService implements IMqttService {
         }
     }
 
+    //disconnect metode.
     @Override
     public void disconnect() {
         try {
@@ -61,6 +60,8 @@ public class MqttService implements IMqttService {
         }
     }
 
+    // denne metode bestemmer, hvordan beskeder modtaget af serveren skal håndteres.
+
     @Override
     public void setCallback(MqttCallback callback) throws MqttException {
         client.setCallback(new MqttCallback() {
@@ -70,6 +71,8 @@ public class MqttService implements IMqttService {
             }
 
             @Override
+            // messageArrived konverterer MQTTmessage objektet til en læsbar String i UI.
+            // den spytter også state ud som en variabel, som kan hentes senere af messageHandler.
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 String json = message.toString();
                 if(topic.equals("emulator/status")){
@@ -94,21 +97,25 @@ public class MqttService implements IMqttService {
             }
 
             @Override
+            //vi spytter en deliveryToken ud, så vi sikrer at vi ikke modtager samme besked flere gange.
             public void deliveryComplete(IMqttDeliveryToken token) {
             }
         });
     }
 
+    //clean code boolean.
     @Override
     public boolean isConnected() {
         return client != null && client.isConnected();
     }
 
+    //messagehandler håndterer state og checkhealth, så de kan hentes af JavaFX UI.
     @Override
     public void setMessagehandler(BiConsumer<Integer, Boolean> handler) {
         this.messageHandler = handler;
     }
 
+    //For at tjekke
     @Override
     public void initPublish(int processId) throws MqttException {
         String payload = String.format("{\"processId\":%d}", processId);
