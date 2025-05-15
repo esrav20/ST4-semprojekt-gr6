@@ -1,4 +1,5 @@
 com\example\guidemo_4semester\MySpringBoot.class
+com\example\guidemo_4semester\Queue\Batch.class
 com\example\guidemo_4semester\HelloController.class
 com\example\guidemo_4semester\TabViewController.class
 com\example\guidemo_4semester\HeadlessMain.class

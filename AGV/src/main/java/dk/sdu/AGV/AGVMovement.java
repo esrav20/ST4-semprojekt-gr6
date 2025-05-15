@@ -61,7 +61,7 @@ public class AGVMovement implements AGVPI {
         System.out.println("Charging complete. Battery level: " + battery + "%");
     }
     @Override
-    public void connectionAGV(String url) throws IOException {
+    public void connectionAGV(String url) {
         connectionManager.setBaseUrl(url);
         connected = true;
     }
