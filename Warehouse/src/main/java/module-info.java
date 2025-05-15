@@ -6,4 +6,6 @@ module Warehouse {
     requires spring.web;
     requires spring.beans;
     requires CommonWarehouse;
+
+
 }

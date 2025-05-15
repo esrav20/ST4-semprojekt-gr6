@@ -144,6 +144,7 @@
                             <Label fx:id="agvParameterLabel" layoutX="7.0" layoutY="188.0" text="${tabViewController.agvParameterLabelText.value}" />  <Label layoutX="242.0" layoutY="188.0" text="Current Parameter: " />
                             <Label layoutX="470.0" layoutY="188.0" text="Current Parameter: " />
                             <Separator layoutY="217.0" prefHeight="15.0" prefWidth="703.0" />
+                            <Label fx:id="HealthyLabel" layoutX="289.0" layoutY="188.0" />
                         </children></AnchorPane>
                 </content>
             </Tab>
