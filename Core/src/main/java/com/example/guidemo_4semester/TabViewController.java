@@ -2,8 +2,8 @@ package com.example.guidemo_4semester;
 
 import dk.sdu.CommonAGV.AGVPI;
 import dk.sdu.Common.IMqttService;
+import dk.sdu.CommonInventory.InventoryView;
 import dk.sdu.CommonInventory.WarehousePI;
-
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -16,14 +16,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +28,11 @@ import java.io.IOException;
 
 @Component
 public class TabViewController {
+
+    private final AGVPI agv;
+    private final IMqttService iMqttService;
+    private final WarehousePI warehouseClient;
+
 
     // vi skal ikke have en setDepencies metode - da Spring ikke kan starte programmet uden Constructor-based DI.
     @Autowired
@@ -43,51 +44,37 @@ public class TabViewController {
 
     //Warehouse/Inventory:
 
-    private final WarehousePI warehouseClient;
 
-    //@FXML private TableView<InventoryItems> inventoryTable;
-    //@FXML private TableColumn<InventoryItems, Long> IDColumn;
-    //@FXML private TableColumn<InventoryItems, String> itemColumn;
-    //@FXML private TableColumn<InventoryItems, Integer> availableColumn;
-    //@FXML private TableColumn<InventoryItems, Integer> inStockColumn;
-    //@FXML private ChoiceBox<String> warehouseDropdown;
 
-    //private ObservableList<InventoryItems> inventoryData = FXCollections.observableArrayList();
+    @FXML private TableView<InventoryView> inventoryTable;
+    @FXML private TableColumn<InventoryView, Long> IDColumn;
+    @FXML private TableColumn<InventoryView, String> itemColumn;
+    @FXML private TableColumn<InventoryView, Integer> availableColumn;
+    @FXML private TableColumn<InventoryView, Integer> inStockColumn;
+    @FXML private ChoiceBox<String> warehouseDropdown;
 
-    //private void setupTable() {
-    //    IDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-    //    itemColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
-    //    availableColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-    //    inventoryTable.setItems(inventoryData);
-    //}
+    private ObservableList<InventoryView> inventoryData = FXCollections.observableArrayList();
 
-    //private void setupWarehouseDropdown() {
-    //    warehouseDropdown.setItems(FXCollections.observableArrayList("Warehouse1", "Warehouse2"));
-    //    warehouseDropdown.setOnAction(event -> loadInventory());
-    //}
+    private void setupTable() {
+        IDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        itemColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
+        availableColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        inventoryTable.setItems(inventoryData);
+    }
+
+    private void setupWarehouseDropdown() {
+        warehouseDropdown.setItems(FXCollections.observableArrayList("Warehouse1", "Warehouse2"));
+        warehouseDropdown.setOnAction(event -> loadInventory());
+    }
 
     private void loadInventory() {
         try{
-            // inventoryData.clear();
-            //  inventoryData.addAll(warehouseClient.getInventory());
+             inventoryData.clear();
+              inventoryData.addAll(warehouseClient.getInventory());
         } catch (Exception e){
-            //  e.printStackTrace();
-            //  System.out.println("Jeg kan love dig for load Inventory fejler du");
+              e.printStackTrace();
+              System.out.println("Jeg kan love dig for load Inventory fejler du");
         }
-    }
-
-    @FXML
-    private void handleAddButton() {
-        // Handle add
-    }
-
-    @FXML
-    private void handleRemoveButton() {
-        //    InventoryItems selected = inventoryTable.getSelectionModel().getSelectedItem();
-        //    if (selected != null) {
-        //        inventoryRepos.delete(selected);
-        //        loadInventory();
-        //    }*/
     }
 
     //---------------------------
@@ -102,83 +89,86 @@ public class TabViewController {
     @FXML private TextFlow messageBoard;
     @FXML private TextField processIdInput;
     @FXML private Button checkHealthButton;
+    @FXML private Label HealthyLabel;
 
     private Timeline updateTimer;
     private int status;
-    private final AGVPI agv;
-    private final IMqttService iMqttService;
 
 
 
-
-    private void appendMessageBoard(String text) {
-        Platform.runLater(() -> {
-            Text msg = new Text(text + "\n");
-            messageBoard.getChildren().add(msg);
-        });
-    }
 
     @FXML
     public void initialize() throws MqttException {
-        setupMqtt();
-        startAGVUpdates();
+        iMqttService.setMessagehandler((state,health) -> {
+            Platform.runLater(() -> {
+                if (state != null) {
+                    String text = switch (state) {
+                        case 1 -> "Running";
+                        case 0 -> "Idle";
+                        default -> "Unknown";
+                    };
+                    assemblyStatusLabel.textProperty().unbind();
+                    assemblyStatusLabel.setText(text);
+                    assemblyStatusCircle.setFill(text.equals("Running") ? Color.valueOf("#1fff25"): Color.DODGERBLUE);
+                }
 
+                if (health != null) {
+                    HealthyLabel.textProperty().unbind();
+                    HealthyLabel.setText(String.valueOf(health));
+                }
+            });
+        });
+
+        startAGVUpdates();
+        iMqttService.connect();
+        setupTable();
+        setupWarehouseDropdown();
+        loadInventory();
         startProdButton.setOnMouseClicked(event -> {
             try {
                 setStartProdButton();
-            } catch (IOException | InterruptedException e) {
+                iMqttService.publish("emulator/operation",  "{\"ProcessID\": 12345}");
+            } catch (IOException | InterruptedException | MqttException e) {
                 e.printStackTrace();
             }
         });
-    }
 
-    private void setupMqtt() throws MqttException {
-        MqttCallback mqttCallback = new MqttCallback() {
-            @Override
-            public void connectionLost(Throwable cause) {
-                appendMessageBoard("MQTT Connection lost: " + cause.getMessage());
-                updateConnectionStatus(false);
-            }
 
-            @Override
-            public void messageArrived(String topic, MqttMessage message) {
-                String msg = new String(message.getPayload());
-                appendMessageBoard("MQTT message on [" + topic + "]: " + msg);
-            }
-
-            @Override
-            public void deliveryComplete(IMqttDeliveryToken token) {
-                appendMessageBoard("MQTT Delivery complete");
-            }
-        };
-
-        iMqttService.setCallback(mqttCallback); // Set the callback
-        iMqttService.connect();
-        updateConnectionStatus(true);
-    }
-
-    private void updateConnectionStatus(boolean connected) {
-        Platform.runLater(() ->
-                assemblyConnectionCircle.setFill(Color.valueOf(connected ? "#1fff25" : "RED"))
-        );
     }
 
 
 
     private void setStartProdButton() throws IOException, InterruptedException {
 
-        //agv.sendRequest("MoveToStorageOperation");
-        //updateAGVDisplay();
+        agv.sendRequest("MoveToStorageOperation");
+        updateAGVDisplay();
 
         String t = warehouseClient.insertItem(2,"hej");
         System.out.println(t);
     }
     private void startAGVUpdates() {
         updateTimer = new Timeline(
-                new KeyFrame(Duration.seconds(0.5), e -> updateAGVDisplay())
+                new KeyFrame(Duration.seconds(0.5), e ->{
+                    updateAGVDisplay();
+                    updateAssemblyConnectionStatus();
+                })
         );
         updateTimer.setCycleCount(Animation.INDEFINITE);
         updateTimer.play();
+    }
+
+    private void updateAssemblyConnectionStatus() {
+        boolean connected = iMqttService.isConnected();
+        Platform.runLater(() -> {
+            if (connected) {
+                assemblyConnectionCircle.setFill(Color.valueOf("#1fff25"));
+            } else {
+                assemblyConnectionCircle.setFill(Color.RED);
+                assemblyStatusCircle.setFill(Color.RED);
+                assemblyStatusLabel.textProperty().unbind();
+                assemblyStatusLabel.setText("Error");
+            }
+        });
     }
 
     private void updateAGVDisplay() {

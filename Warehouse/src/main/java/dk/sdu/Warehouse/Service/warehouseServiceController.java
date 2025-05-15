@@ -1,9 +1,7 @@
 package dk.sdu.Warehouse.Service;
 
-import dk.sdu.Warehouse.InventoryItems;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 //@SpringBootApplication(scanBasePackages = "dk.sdu.CommonInventory.dk.sdu.Warehouse.Service")
 @RestController
 @RequestMapping("/warehouse")
@@ -20,8 +18,8 @@ public class warehouseServiceController {
     }
 
     //GET alt i inventory
-    @GetMapping("/inventory")
-    public List<InventoryItems> getInventory() {
+    /* @GetMapping("/inventory")
+    public List<InventoryView> getInventory() {
         return soapWarehouseService.getInventory();
     }
 
@@ -32,8 +30,8 @@ public class warehouseServiceController {
     }*/
 
     //(POST) vælg et tray og fjern item
-    @PostMapping("/pick")
+    /*@PostMapping("/pick")
     public String pickItem(@RequestParam int trayId) {
         return soapWarehouseService.pickItem(trayId);
-    }
+    }*/
 }
