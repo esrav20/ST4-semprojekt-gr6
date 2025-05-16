@@ -15,11 +15,14 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
@@ -28,7 +31,9 @@ import org.springframework.stereotype.Component;
 
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Comparator;
+import javafx.scene.image.ImageView;
 
 @Component
 public class TabViewController {
@@ -79,6 +84,7 @@ public class TabViewController {
               e.printStackTrace();
               System.out.println("Jeg kan love dig for load Inventory fejler du");
         }
+
     }
 
     //---------------------------
@@ -104,6 +110,10 @@ public class TabViewController {
     @FXML private TableColumn<Batch, Integer> quantityQueue;
     @FXML private TableColumn<Batch, Integer> priorityQueue;
     @FXML private TableColumn<Batch, String> statusQueue;
+    @FXML private Button addButton;
+    @FXML private Button removeButton;
+    @FXML private ImageView editInventoryButton;
+
     private int batchCounter = 1;
     String[] productList = {"Toy Cars1", "Toy Cars2"};
     private ObservableList<Batch> batchList = FXCollections.observableArrayList();
@@ -184,7 +194,7 @@ public class TabViewController {
         });
     }
 
-    @FXML
+    /*@FXML
     public void startProd() throws IOException, InterruptedException, MqttException {
         if (!batchList.isEmpty()) {
         queueValue = Integer.valueOf(queueView.getItems().get(0).getQuantity());
@@ -222,7 +232,7 @@ public class TabViewController {
         startProd();
         }
     }
-
+*/
     private void startAGVUpdates() {
         updateTimer = new Timeline(
                 new KeyFrame(Duration.seconds(0.5), e ->{
@@ -247,6 +257,8 @@ public class TabViewController {
             }
         });
     }
+
+
 
     private void updateAGVDisplay() {
         String statusText;
@@ -279,8 +291,28 @@ public class TabViewController {
             agvParameterLabel.textProperty().unbind(); // samme som l.159.
             agvParameterLabel.setText("Battery: " + agv.getBatteryLevel() + "%");
         });
+    }
+
+    @FXML
+    private void additem(){
 
 
+        addButton.setOnMouseClicked(event -> {
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/AddItemView.fxml"));
+
+                AddItemController controller = new AddItemController(warehouseClient);
+                fxmlLoader.setController(controller);
+
+                Scene scene = new Scene(fxmlLoader.load());
+                Stage stage = new Stage();
+                stage.setTitle("Add Item");
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 }

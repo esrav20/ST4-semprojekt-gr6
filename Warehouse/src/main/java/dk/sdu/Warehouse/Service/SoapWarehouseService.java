@@ -31,11 +31,11 @@ public class SoapWarehouseService implements WarehousePI {
 
     //Handler at kunne indsætte items på trays
     @Override
-    public String insertItem(int trayId, String itemName) {
+    public String insertItem(int trayId, String itemName,int quantity) {
         InventoryItems item = new InventoryItems();
         item.setTrayId(trayId);
         item.setItemName(itemName);
-        item.setQuantity(1);
+        item.setQuantity(quantity);
         inventoryRepos.save(item);
         return "Done";
     }
