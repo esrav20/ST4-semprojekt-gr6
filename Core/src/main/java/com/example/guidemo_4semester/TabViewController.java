@@ -57,6 +57,31 @@ public class TabViewController {
     @FXML private TableColumn<InventoryView, Integer> inStockColumn;
     @FXML private ChoiceBox<String> warehouseDropdown;
 
+    private boolean checkStock(int quantity) {
+
+        inventoryData.setAll(warehouseClient.getInventory());
+        int wheelCount = 0;
+        int chassisCount = 0;
+
+        for (InventoryView item : inventoryData) {
+            String name = item.getItemName().toLowerCase();
+            switch (name) {
+                case "wheel" -> wheelCount = item.getQuantity();
+                case "chassis" -> chassisCount = item.getQuantity();
+            }
+        }
+        int requiredWheels = quantity*4;
+        int requiredChassis = quantity;
+
+        if (wheelCount < requiredWheels || chassisCount < requiredChassis) {
+            System.out.println("Not enough materials");
+            System.out.println("Required: " + requiredWheels + " wheels, " + requiredChassis + " chassis");
+            System.out.println("Available: " + wheelCount + " wheels, " + chassisCount + " chassis");
+            return false;
+        }
+        return true;
+    }
+
     private ObservableList<InventoryView> inventoryData = FXCollections.observableArrayList();
 
     private void setupTable() {
@@ -187,7 +212,12 @@ public class TabViewController {
     @FXML
     public void startProd() throws IOException, InterruptedException, MqttException {
         if (!batchList.isEmpty()) {
-        queueValue = Integer.valueOf(queueView.getItems().get(0).getQuantity());
+            int requestedQuantity = Integer.parseInt(queueView.getItems().get(0).getQuantity());
+            if (!checkStock(requestedQuantity)) {
+                System.out.println("Production cannot start due to insufficient materials");
+                return;
+            }
+            queueValue = requestedQuantity;
         while(queueValue > 0) {
             warehouseClient.pickItem();
             if (warehouseClient.value()) {
