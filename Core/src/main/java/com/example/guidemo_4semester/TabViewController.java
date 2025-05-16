@@ -56,9 +56,54 @@ public class TabViewController {
     @FXML private TableColumn<InventoryView, Integer> availableColumn;
     @FXML private TableColumn<InventoryView, Integer> inStockColumn;
     @FXML private ChoiceBox<String> warehouseDropdown;
+    @FXML private Circle databaseConnectionCircle;
+    @FXML private Circle warehouseStateCircle;
+    @FXML private Label warehouseStateLabel;
 
     private ObservableList<InventoryView> inventoryData = FXCollections.observableArrayList();
 
+    private void updateDatabaseConnectionStatus() {
+        boolean isConnected = warehouseClient.isConnected(); // Assuming this method exists
+        Platform.runLater(() -> {
+            if (isConnected) {
+                databaseConnectionCircle.setFill(Color.valueOf("#1fff25"));
+            } else {
+                databaseConnectionCircle.setFill(Color.RED);
+            }
+        });
+    }
+    private void startDatabaseConnectionCheck() {
+        Timeline connectionCheckTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(2), e -> updateDatabaseConnectionStatus())
+        );
+        connectionCheckTimeline.setCycleCount(Animation.INDEFINITE);
+        connectionCheckTimeline.play();
+    }
+
+    private void updateWarehouseState() {
+        int state = warehouseClient.getWarehouseState();
+
+        Platform.runLater(() -> {
+            switch (state) {
+                case 0 -> {
+                    warehouseStateLabel.setText("Idle");
+                    warehouseStateCircle.setFill(Color.DODGERBLUE);
+                }
+                case 1 -> {
+                    warehouseStateLabel.setText("Executing");
+                    warehouseStateCircle.setFill(Color.valueOf("#1fff25"));
+                }
+                case 2 -> {
+                    warehouseStateLabel.setText("Error");
+                    warehouseStateCircle.setFill(Color.RED);
+                }
+                default -> {
+                    warehouseStateLabel.setText("Unknown");
+                    warehouseStateCircle.setFill(Color.GRAY);
+                }
+            }
+        });
+    }
     private void setupTable() {
         IDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         itemColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
@@ -104,6 +149,7 @@ public class TabViewController {
     @FXML private TableColumn<Batch, Integer> quantityQueue;
     @FXML private TableColumn<Batch, Integer> priorityQueue;
     @FXML private TableColumn<Batch, String> statusQueue;
+    @FXML private Button emergencyStopButton;
     private int batchCounter = 1;
     String[] productList = {"Toy Cars1", "Toy Cars2"};
     private ObservableList<Batch> batchList = FXCollections.observableArrayList();
@@ -112,7 +158,7 @@ public class TabViewController {
 
     private Timeline updateTimer;
     private int status;
-
+    private boolean emergencyActive = false;
     @FXML
     private void addQueue(ActionEvent event) {
         int queuePriority = normalPriorityButton.isSelected() ? 5 : (highPriorityButton.isSelected() ? 10 : 0);
@@ -182,37 +228,125 @@ public class TabViewController {
                 e.printStackTrace();
             }
         });
+        startProdButton.setOnMouseClicked(event -> {
+            if(!emergencyActive) {
+                try {
+                    startProd();
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        emergencyStopButton.setOnMouseClicked(event -> {
+            if(!emergencyActive){
+                handleEmergencyStop();
+            }else {
+                handleEmergencyReset();
+            }
+        } );
     }
+
+    private void handleEmergencyStop(){
+        emergencyActive = true;
+
+        Platform.runLater(() -> {
+            agvStatusLabel.setText("Emergency Stop");
+            agvStatusCircle.setFill(Color.RED);
+
+            emergencyStopButton.setText("Reset Emergency button");
+            startProdButton.setDisable(true);
+
+        });
+
+        new Thread(() -> {
+            try{
+                agv.sendRequest("EmergencyStop");
+
+                if (iMqttService != null && agv.isConnected()) {
+                    try{
+                        iMqttService.publish("system/emergency", "Emergency stop activated");
+                    }catch (Exception e){
+                        System.err.println("MQTT Error: Failed to publish emergency message" + e.getMessage());
+                    }
+                }
+            }catch (Exception e){
+                System.err.println("AGV Error: Failed to send emergencystop to AGV " + e.getMessage());
+            }
+        }).start();
+    }
+
+    private void handleEmergencyReset(){
+        Platform.runLater(()-> {
+            emergencyStopButton.setText("Emergency stop");
+            emergencyStopButton.setStyle(""); // sets to default css style
+            startProdButton.setDisable(false);
+        });
+
+        new Thread(()-> {
+            try{
+                agv.sendRequest("ResetEmergency");
+                emergencyActive = false;
+            }catch (Exception e){
+                System.err.println("Error: Failed to reset emergency state " + e.getMessage());
+            }
+        }).start();
+    }
+
 
     @FXML
     public void startProd() throws IOException, InterruptedException, MqttException {
         if (!batchList.isEmpty()) {
         queueValue = Integer.valueOf(queueView.getItems().get(0).getQuantity());
         while(queueValue > 0) {
-            warehouseClient.pickItem();
-            if (warehouseClient.value()) {
+            warehouseClient.pickItem(1);
+            if (warehouseClient.getWarehouseState() == 0) {
                 agv.sendRequest("{\"Program name\":\"MoveToStorageOperation\",\"State\":1}");
                 agv.sendRequest("{\"State\":2}");
             }
-            if (agv.getCurrentstate() == 1) {
+            if (warehouseClient.getWarehouseState() == 0 && agv.getCurrentstate() == 1) {
+                agv.sendRequest("{\"Program name\":\"PickWarehouseOperation\",\"State\":1}");
+                agv.sendRequest("{\"State\":2}");
+                agv.pickItem("");
+            }
 
-                agv.pickItem();
+            if (agv.getCurrentstate() == 1) {
                 agv.sendRequest("{\"Program name\":\"MoveToStorageAssembly\",\"State\":1}");
                 agv.sendRequest("{\"State\":2}");
             }
-            if (agv.getCurrentstate() == 1 || iMqttService.getAssemblyCurrentstate() == 0) {
+
+            if (iMqttService.getAssemblyCurrentstate() == 0 && agv.getCurrentstate() == 1) {
+                agv.sendRequest("{\"Program name\":\"PutAssemblyOperation\",\"State\":1}");
+                agv.sendRequest("{\"State\":2}");
+                agv.putItem("");
+            }
+
+            if (agv.getCurrentstate() == 1 || iMqttService.getAssemblyCurrentstate() == 1) {
                 iMqttService.publish("emulator/operation", "{\"ProcessID\": 12345}");
                 while(iMqttService.getAssemblyCurrentstate() == 1) {
                     iMqttService.wait();
                 }
             }
-            if (iMqttService.getAssemblyCurrentstate() == 0) {
-                agv.pickItem();
+
+            if (iMqttService.getAssemblyCurrentstate() == 0 && agv.getCurrentstate() == 1) {
+                agv.sendRequest("{\"Program name\":\"PickAssemblyOperation\",\"State\":1}");
+                agv.sendRequest("{\"State\":2}");
+                agv.pickItem("");
+            }
+
+            if (agv.getCurrentstate() == 1) {
                 agv.sendRequest("{\"Program name\":\"MoveToStorageOperation\",\"State\":1}");
                 agv.sendRequest("{\"State\":2}");
+               /* warehouseClient.insertItem(0);*/
             }
-            if (agv.getCurrentstate() == 1) {
-                warehouseClient.putItem();
+
+            if (agv.getCurrentstate() == 1 && warehouseClient.getWarehouseState() == 0) {
+                agv.sendRequest("{\"Program name\":\"PutWarehouseOperation\",\"State\":1}");
+                agv.sendRequest("{\"State\":2}");
+                agv.putItem("");
+                warehouseClient.pickItem(1);
             }
 
             System.out.println(queueValue);
@@ -228,6 +362,7 @@ public class TabViewController {
                 new KeyFrame(Duration.seconds(0.5), e ->{
                     updateAGVDisplay();
                     updateAssemblyConnectionStatus();
+                    updateWarehouseState();
                 })
         );
         updateTimer.setCycleCount(Animation.INDEFINITE);
