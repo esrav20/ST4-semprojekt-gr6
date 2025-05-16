@@ -36,7 +36,7 @@ public class TabViewController {
     private final AGVPI agv;
     private final IMqttService iMqttService;
     private final WarehousePI warehouseClient;
-
+    private boolean emergencyActive = false;
 
     // vi skal ikke have en setDepencies metode - da Spring ikke kan starte programmet uden Constructor-based DI.
     @Autowired
@@ -56,6 +56,7 @@ public class TabViewController {
     @FXML private TableColumn<InventoryView, Integer> availableColumn;
     @FXML private TableColumn<InventoryView, Integer> inStockColumn;
     @FXML private ChoiceBox<String> warehouseDropdown;
+    @FXML private Button emergencyStopButton;
 
     private ObservableList<InventoryView> inventoryData = FXCollections.observableArrayList();
 
@@ -182,8 +183,62 @@ public class TabViewController {
             }
         });
 
+        emergencyStopButton.setOnMouseClicked(event -> {
+            if(!emergencyActive){
+                handleEmergencyStop();
+            }else {
+                handleEmergencyReset();
+            }
+        } );
 
     }
+
+    private void handleEmergencyStop(){
+        emergencyActive = true;
+
+        Platform.runLater(() -> {
+            agvStatusLabel.setText("Emergency Stop");
+            agvStatusCircle.setFill(Color.RED);
+
+            emergencyStopButton.setText("Reset Emergency button");
+            startProdButton.setDisable(true);
+
+        });
+
+        new Thread(() -> {
+            try{
+                agv.sendRequest("");
+
+                if (iMqttService != null && agv.isConnected()) {
+                    try{
+                        iMqttService.publish("system/emergency", "Emergency stop activated");
+                    }catch (Exception e){
+                        System.err.println("MQTT Error: Failed to publish emergency message" + e.getMessage());
+                    }
+                }
+            }catch (Exception e){
+                System.err.println("AGV Error: Failed to send emergencystop to AGV " + e.getMessage());
+            }
+        }).start();
+    }
+
+    private void handleEmergencyReset(){
+        Platform.runLater(()-> {
+            emergencyStopButton.setText("Emergency stop");
+            emergencyStopButton.setStyle(""); // sets to default css style
+            startProdButton.setDisable(false);
+        });
+
+        new Thread(()-> {
+            try{
+                agv.sendRequest("");
+                emergencyActive = false;
+            }catch (Exception e){
+                System.err.println("Error: Failed to reset emergency state " + e.getMessage());
+            }
+        }).start();
+    }
+
 
     private void startAGVUpdates() {
         updateTimer = new Timeline(
