@@ -5,7 +5,6 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox alignment="CENTER" prefHeight="200" prefWidth="300" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <TextField fx:id="Tray_ID" promptText="Tray_ID" />
 
 
     <TextField fx:id="Item" promptText="Name" />

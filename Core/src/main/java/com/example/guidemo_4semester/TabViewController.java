@@ -31,7 +31,6 @@ import org.springframework.stereotype.Component;
 
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Comparator;
 import javafx.scene.image.ImageView;
 
@@ -295,13 +294,12 @@ public class TabViewController {
 
     @FXML
     private void additem(){
-
-
         addButton.setOnMouseClicked(event -> {
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/AddItemView.fxml"));
 
                 AddItemController controller = new AddItemController(warehouseClient);
+                controller.setOnSubmitSuccess(this::loadInventory);
                 fxmlLoader.setController(controller);
 
                 Scene scene = new Scene(fxmlLoader.load());
@@ -313,6 +311,42 @@ public class TabViewController {
                 e.printStackTrace();
             }
         });
+    }
+    @FXML
+    private void removeitem(){
+        InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            Long id = selected.getId();
+            String result = warehouseClient.deleteitems(id);
+            System.out.println(result);
+            loadInventory();
+        }else{
+            System.out.println("Item not found");
+        }
+
+    }
+
+    @FXML
+    private void editbutton() {
+        InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/Editbutton.fxml"));
+
+                EditItemController controller = new EditItemController(warehouseClient,selected);
+                controller.setOnEditSuccess(this::loadInventory);
+                fxmlLoader.setController(controller);
+
+                Scene scene = new Scene(fxmlLoader.load());
+                Stage stage = new Stage();
+                stage.setTitle("Edit item");
+                stage.setScene(scene);
+                stage.show();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
