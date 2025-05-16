@@ -66,7 +66,12 @@ public class SoapWarehouseService implements WarehousePI {
             return "Insert Failed:" + e.getMessage();
         }
         finally {
-            currentState = 0;
+            new Thread(() -> {
+                try {
+                    Thread.sleep(2000); // 2 sec delay to simulate processing
+                } catch (InterruptedException ignored) {}
+                currentState = 0;
+            }).start();
         }
     }
 
