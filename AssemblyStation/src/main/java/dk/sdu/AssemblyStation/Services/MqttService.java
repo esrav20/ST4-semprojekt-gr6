@@ -16,7 +16,7 @@ public class MqttService implements IMqttService {
     private BiConsumer<Integer, Boolean> messageHandler;
     private int state;
     private boolean health;
-
+    private int currentState = -1;
     // Her erklæres klienten, vi fortæller klienten hvad den skal forbinde til og at den skal generere et unikt ID.
     public MqttService() {
         try {
@@ -25,7 +25,10 @@ public class MqttService implements IMqttService {
             throw new RuntimeException(e);
         }
     }
-
+    @Override
+    public int getAssemblyCurrentstate() {
+        return currentState;
+    }
     // her tjekker vi om klienten er forbundet i forvejen - hvis ikke så forbinder vi
     // vi subscriber også til relevante topics.
     @Override
@@ -77,7 +80,8 @@ public class MqttService implements IMqttService {
                 String json = message.toString();
                 if(topic.equals("emulator/status")){
                     JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
-                    state = obj.get("State").getAsInt();
+                    currentState = obj.get("State").getAsInt();
+                    state = currentState;
 
 
                     if(messageHandler !=null){

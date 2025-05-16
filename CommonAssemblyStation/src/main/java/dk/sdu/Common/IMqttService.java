@@ -14,4 +14,5 @@ public interface  IMqttService {
     void setCallback(MqttCallback mqttCallback) throws MqttException;
     boolean isConnected();
     void setMessagehandler(BiConsumer<Integer, Boolean> handler);
+    int getAssemblyCurrentstate();
 }
