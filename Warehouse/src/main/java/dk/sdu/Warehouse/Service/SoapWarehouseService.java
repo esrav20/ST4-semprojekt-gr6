@@ -37,8 +37,7 @@ public class SoapWarehouseService implements WarehousePI {
     @Override
     public boolean isConnected() {
         try {
-            // Attempt a simple operation to check if the database is accessible
-            return inventoryRepos.count() >= 0;  // Check if repository is accessible
+            return inventoryRepos.count() >= 0;
         } catch (Exception e) {
             // If any exception occurs, return false (disconnected)
             e.printStackTrace();

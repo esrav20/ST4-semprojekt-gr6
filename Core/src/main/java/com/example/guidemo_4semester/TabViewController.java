@@ -96,6 +96,7 @@ public class TabViewController {
             }
         });
     }
+    // Bliver ikke brugt pt
     private void startDatabaseConnectionCheck() {
         Timeline connectionCheckTimeline = new Timeline(
                 new KeyFrame(Duration.seconds(2), e -> updateDatabaseConnectionStatus())
