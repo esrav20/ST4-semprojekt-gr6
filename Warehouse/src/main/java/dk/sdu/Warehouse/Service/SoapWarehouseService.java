@@ -40,7 +40,6 @@ public class SoapWarehouseService implements WarehousePI {
         return "Done";
     }
 
-
     //Kan finde/fjerne inventory i bestemt tray
     @Override
     public String pickItem(int trayId) {
@@ -56,6 +55,7 @@ public class SoapWarehouseService implements WarehousePI {
         } else {
             inventoryRepos.save(item);
             return "Item picked, remaining quantity: " + item.getQuantity();
+
         }
     }
 

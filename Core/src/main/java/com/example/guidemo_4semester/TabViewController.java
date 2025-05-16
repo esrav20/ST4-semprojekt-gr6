@@ -101,13 +101,14 @@ public class TabViewController {
     @FXML private TableView<Batch> queueView;
     @FXML private TableColumn<Batch, Integer> batchID;
     @FXML private TableColumn<Batch, String> productQueue;
-    @FXML private TableColumn<Batch, String> quantityQueue;
+    @FXML private TableColumn<Batch, Integer> quantityQueue;
     @FXML private TableColumn<Batch, Integer> priorityQueue;
     @FXML private TableColumn<Batch, String> statusQueue;
     private int batchCounter = 1;
     String[] productList = {"Toy Cars1", "Toy Cars2"};
     private ObservableList<Batch> batchList = FXCollections.observableArrayList();
     private SortedList<Batch> sortedList;
+    private Integer queueValue;
 
     private Timeline updateTimer;
     private int status;
@@ -181,8 +182,45 @@ public class TabViewController {
                 e.printStackTrace();
             }
         });
+    }
 
+    @FXML
+    public void startProd() throws IOException, InterruptedException, MqttException {
+        if (!batchList.isEmpty()) {
+        queueValue = Integer.valueOf(queueView.getItems().get(0).getQuantity());
+        while(queueValue > 0) {
+            warehouseClient.pickItem();
+            if (warehouseClient.value()) {
+                agv.sendRequest("{\"Program name\":\"MoveToStorageOperation\",\"State\":1}");
+                agv.sendRequest("{\"State\":2}");
+            }
+            if (agv.getCurrentstate() == 1) {
 
+                agv.pickItem();
+                agv.sendRequest("{\"Program name\":\"MoveToStorageAssembly\",\"State\":1}");
+                agv.sendRequest("{\"State\":2}");
+            }
+            if (agv.getCurrentstate() == 1 || iMqttService.getAssemblyCurrentstate() == 0) {
+                iMqttService.publish("emulator/operation", "{\"ProcessID\": 12345}");
+                while(iMqttService.getAssemblyCurrentstate() == 1) {
+                    iMqttService.wait();
+                }
+            }
+            if (iMqttService.getAssemblyCurrentstate() == 0) {
+                agv.pickItem();
+                agv.sendRequest("{\"Program name\":\"MoveToStorageOperation\",\"State\":1}");
+                agv.sendRequest("{\"State\":2}");
+            }
+            if (agv.getCurrentstate() == 1) {
+                warehouseClient.putItem();
+            }
+
+            System.out.println(queueValue);
+            queueValue--;
+        }
+        batchList.remove(0);
+        startProd();
+        }
     }
 
     private void startAGVUpdates() {
