@@ -8,3 +8,4 @@ com\example\guidemo_4semester\stageListener.class
 module-info.class
 com\example\guidemo_4semester\HelloApplication.class
 com\example\guidemo_4semester\HelloApplication$StageReady.class
+com\example\guidemo_4semester\TabViewController$1.class
