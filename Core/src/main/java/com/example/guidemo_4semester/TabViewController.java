@@ -396,7 +396,7 @@ public class TabViewController {
                             agv.sendRequest("{\"Program name\":\"PutWarehouseOperation\",\"State\":1}");
                             agv.sendRequest("{\"State\":2}");
                             agv.putItem("");
-                            warehouseClient.pickItem(1);
+                            warehouseClient.insertItem(1,"");
                             if (emergencyActive) {
                                 break;
                             }
