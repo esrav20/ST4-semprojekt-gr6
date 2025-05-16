@@ -16,6 +16,10 @@ import java.util.List;
 public class SoapWarehouseService implements WarehousePI {
     private final InventoryRepos inventoryRepos;
 
+    // 0 = Idle, 1 = Executing, 2 = Error
+    private volatile int currentState = 0;
+
+
     //private final IEmulatorService servicePort;
     @Autowired
     public SoapWarehouseService(@Lazy InventoryRepos inventoryRepos) {
@@ -29,35 +33,70 @@ public class SoapWarehouseService implements WarehousePI {
         return inventoryRepos.findAllBy();
     }
 
+
+    @Override
+    public boolean isConnected() {
+        try {
+            return inventoryRepos.count() >= 0;
+        } catch (Exception e) {
+            // If any exception occurs, return false (disconnected)
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public int getWarehouseState() {
+        return currentState;
+    }
+
     //Handler at kunne indsætte items på trays
     @Override
     public String insertItem(int trayId, String itemName) {
-        InventoryItems item = new InventoryItems();
-        item.setTrayId(trayId);
-        item.setItemName(itemName);
-        item.setQuantity(1);
-        inventoryRepos.save(item);
-        return "Done";
+        try {
+            currentState = 1;
+            InventoryItems item = new InventoryItems();
+            item.setTrayId(trayId);
+            item.setItemName(itemName);
+            item.setQuantity(1);
+            inventoryRepos.save(item);
+            return "Done";
+        } catch (Exception e){
+            currentState = 2;
+            return "Insert Failed:" + e.getMessage();
+        }
+        finally {
+            currentState = 0;
+        }
     }
+
+
 
     //Kan finde/fjerne inventory i bestemt tray
     @Override
     public String pickItem(int trayId) {
-        // fetch entity, not projection
-        InventoryItems item = (InventoryItems) inventoryRepos.findByTrayId(trayId)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
+        try {
+            currentState = 1;
 
-        item.setQuantity(item.getQuantity() - 1);
+            // fetch entity, not projection
+            InventoryItems item = (InventoryItems) inventoryRepos.findByTrayId(trayId)
+                    .orElseThrow(() -> new RuntimeException("Item not found"));
 
-        if (item.getQuantity() <= 0) {
-            inventoryRepos.delete(item);
-            return "Item picked and tray now empty";
-        } else {
-            inventoryRepos.save(item);
-            return "Item picked, remaining quantity: " + item.getQuantity();
+            item.setQuantity(item.getQuantity() - 1);
 
+            if (item.getQuantity() <= 0) {
+                inventoryRepos.delete(item);
+                return "Item picked and tray now empty";
+            } else {
+                inventoryRepos.save(item);
+                return "Item picked, remaining quantity: " + item.getQuantity();
+            }
+        } catch (Exception e) {
+            currentState = 2;
+            return "Pick Failed:" + e.getMessage();
+        } finally {
+            currentState = 0;
         }
     }
 
 }
-
