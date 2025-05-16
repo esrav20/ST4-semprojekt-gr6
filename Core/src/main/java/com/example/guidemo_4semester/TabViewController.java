@@ -301,19 +301,15 @@ public class TabViewController {
 
     @FXML
     public void startProd() {
-        // This method will be triggered when the "start production" button is clicked
         if (!batchList.isEmpty()) {
-            // Get the queue value from the first batch in the list
             queueValue = Integer.valueOf(queueView.getItems().get(0).getQuantity());
-
-            // Create a task to run the production process in the background thread
             Task<Void> task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
                     while (queueValue > 0) {
 
                         if (emergencyActive) {
-                            System.out.println("Emergency stop activated, halting production.");
+                            System.out.println("Emergency stop activated");
                             break;
                         }
 
