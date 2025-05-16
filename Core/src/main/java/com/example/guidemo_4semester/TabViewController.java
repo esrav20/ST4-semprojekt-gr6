@@ -56,6 +56,9 @@ public class TabViewController {
     @FXML private TableColumn<InventoryView, Integer> availableColumn;
     @FXML private TableColumn<InventoryView, Integer> inStockColumn;
     @FXML private ChoiceBox<String> warehouseDropdown;
+    @FXML private Circle databaseConnectionCircle;
+    @FXML private Circle warehouseStateCircle;
+    @FXML private Label warehouseStateLabel;
 
     private ObservableList<InventoryView> inventoryData = FXCollections.observableArrayList();
 
@@ -81,6 +84,50 @@ public class TabViewController {
         }
     }
 
+    // Warehouse Status
+
+    private void updateDatabaseConnectionStatus() {
+        boolean isConnected = warehouseClient.isConnected(); // Assuming this method exists
+        Platform.runLater(() -> {
+            if (isConnected) {
+                databaseConnectionCircle.setFill(Color.valueOf("#1fff25"));
+            } else {
+                databaseConnectionCircle.setFill(Color.RED);
+            }
+        });
+    }
+    private void startDatabaseConnectionCheck() {
+        Timeline connectionCheckTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(2), e -> updateDatabaseConnectionStatus())
+        );
+        connectionCheckTimeline.setCycleCount(Animation.INDEFINITE);
+        connectionCheckTimeline.play();
+    }
+
+    private void updateWarehouseState() {
+        int state = warehouseClient.getWarehouseState();
+
+        Platform.runLater(() -> {
+            switch (state) {
+                case 0 -> {
+                    warehouseStateLabel.setText("Idle");
+                    warehouseStateCircle.setFill(Color.DODGERBLUE);
+                }
+                case 1 -> {
+                    warehouseStateLabel.setText("Executing");
+                    warehouseStateCircle.setFill(Color.valueOf("#1fff25"));
+                }
+                case 2 -> {
+                    warehouseStateLabel.setText("Error");
+                    warehouseStateCircle.setFill(Color.RED);
+                }
+                default -> {
+                    warehouseStateLabel.setText("Unknown");
+                    warehouseStateCircle.setFill(Color.GRAY);
+                }
+            }
+        });
+    }
     //---------------------------
     @FXML private Label agvStatusLabel;
     @FXML private Circle agvStatusCircle;
@@ -190,6 +237,7 @@ public class TabViewController {
                 new KeyFrame(Duration.seconds(0.5), e ->{
                     updateAGVDisplay();
                     updateAssemblyConnectionStatus();
+                    updateWarehouseState();
                 })
         );
         updateTimer.setCycleCount(Animation.INDEFINITE);
