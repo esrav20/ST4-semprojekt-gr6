@@ -20,6 +20,7 @@ public class AddItemController {
         this.warehouseClient = warehouseClient;
     }
 
+        @FXML private TextField Id;
         @FXML private TextField Amount;
         @FXML private TextField Item;
 
@@ -27,9 +28,12 @@ public class AddItemController {
         private void handleSubmit() {
             String name = Item.getText();
             String amount = Amount.getText();
+            String id = Id.getText();
 
             System.out.println("Name: " + name);
             System.out.println("Amount: " + amount);
+            System.out.println("ID: " + id);
+
 
             int nextTrayId = warehouseClient.getInventory().stream()
                     .mapToInt(InventoryView::getTrayId)
@@ -37,7 +41,7 @@ public class AddItemController {
                     .orElse(0) + 1;
 
 
-            warehouseClient.insertItem(nextTrayId, name, Integer.parseInt(amount));
+            warehouseClient.insertItem(nextTrayId, Long.parseLong(id), name, Integer.parseInt(amount));
 
             System.out.println(warehouseClient.getInventory());
             if(onSubmitSuccess != null) {

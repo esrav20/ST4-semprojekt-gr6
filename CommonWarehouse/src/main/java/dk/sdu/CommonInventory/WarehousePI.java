@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface WarehousePI {
 
-    String insertItem(int trayId, String itemName, int quantity);
+    String insertItem(int trayId, long id, String itemName, int quantity);
     String pickItem(int trayId);
     List<InventoryView> getInventory();
     String deleteitems(Long id);

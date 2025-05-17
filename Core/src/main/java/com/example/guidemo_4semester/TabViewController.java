@@ -75,7 +75,7 @@ public class TabViewController {
         warehouseDropdown.setOnAction(event -> loadInventory());
     }
 
-    private void loadInventory() {
+    protected void loadInventory() {
         try{
              inventoryData.clear();
               inventoryData.addAll(warehouseClient.getInventory());
@@ -296,7 +296,7 @@ public class TabViewController {
     private void additem(){
         addButton.setOnMouseClicked(event -> {
             try {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/AddItemView.fxml"));
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/addItem.fxml"));
 
                 AddItemController controller = new AddItemController(warehouseClient);
                 controller.setOnSubmitSuccess(this::loadInventory);
@@ -314,7 +314,25 @@ public class TabViewController {
     }
     @FXML
     private void removeitem(){
-        InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
+            InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                try {
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/removeItem.fxml"));
+
+                    RemoveItemController controller = new RemoveItemController(warehouseClient, selected);
+                    controller.setOnRemoveSuccess(this::loadInventory);
+                    fxmlLoader.setController(controller);
+
+                    Scene scene = new Scene(fxmlLoader.load());
+                    Stage stage = new Stage();
+                    stage.setTitle("Remove Item");
+                    stage.setScene(scene);
+                    stage.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+       /* InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
             Long id = selected.getId();
             String result = warehouseClient.deleteitems(id);
@@ -322,9 +340,10 @@ public class TabViewController {
             loadInventory();
         }else{
             System.out.println("Item not found");
-        }
+        }*/
 
     }
+
 
     @FXML
     private void editbutton() {

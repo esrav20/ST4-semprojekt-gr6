@@ -34,8 +34,9 @@ public class SoapWarehouseService implements WarehousePI {
 
     //Handler at kunne indsætte items på trays
     @Override
-    public String insertItem(int trayId, String itemName,int quantity) {
+    public String insertItem(int trayId, long id, String itemName,int quantity) {
         InventoryItems item = new InventoryItems();
+        item.setId(id);
         item.setTrayId(trayId);
         item.setItemName(itemName);
         item.setQuantity(quantity);
@@ -76,6 +77,7 @@ public class SoapWarehouseService implements WarehousePI {
         Optional<InventoryItems> itemOpt = inventoryRepos.findById(id);
         if (itemOpt.isPresent()) {
             InventoryItems item = itemOpt.get();
+            item.setId(id);
             item.setItemName(itemName);
             item.setQuantity(quantity);
             inventoryRepos.save(item);
