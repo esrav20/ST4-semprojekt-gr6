@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.Box?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="293.0" prefWidth="338.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.guidemo_4semester.AddItem">
+<AnchorPane prefHeight="293.0" prefWidth="338.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Box depth="100.0" height="70.0" layoutX="169.0" layoutY="20.0" width="338.0" />
       <Label layoutX="85.0" layoutY="14.0" text="Add new item">
@@ -27,17 +27,17 @@
          <children>
             <Label text="ID" />
             <Label text="Item name" />
-            <Label text="Quantity" />
+            <Label text="Amount" />
          </children>
       </VBox>
       <VBox layoutX="114.0" layoutY="69.0" prefHeight="146.0" prefWidth="100.0" spacing="25.0">
          <children>
-            <TextField />
-            <TextField layoutX="10.0" layoutY="10.0" />
-            <TextField layoutX="10.0" layoutY="35.0" />
+            <TextField fx:id="Id" />
+            <TextField fx:id="Item" layoutX="10.0" layoutY="10.0" />
+            <TextField fx:id="Amount" layoutX="10.0" layoutY="35.0" />
          </children>
       </VBox>
-      <Button fx:id="itemAddButton" layoutX="29.0" layoutY="226.0" prefHeight="30.0" prefWidth="50.0" styleClass="addButton" text="Add" wrapText="true" />
+      <Button fx:id="SubmitDB" layoutX="29.0" layoutY="226.0" onAction="#handleSubmit" prefHeight="30.0" prefWidth="50.0" styleClass="addButton" text="Add" wrapText="true" />
       <Button fx:id="itemCancelButton" layoutX="98.0" layoutY="226.0" prefHeight="30.0" prefWidth="50.0" styleClass="removeButton" text="Cancel" wrapText="true" />
    </children>
 </AnchorPane>
