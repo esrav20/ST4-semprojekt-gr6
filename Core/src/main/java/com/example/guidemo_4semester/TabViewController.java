@@ -97,6 +97,25 @@ public class TabViewController {
         connectionCheckTimeline.play();
     }
 
+    private void updateDatabaseConnectionStatus() {
+        boolean isConnected = warehouseClient.isConnected(); // Assuming this method exists
+        Platform.runLater(() -> {
+            if (isConnected) {
+                databaseConnectionCircle.setFill(Color.valueOf("#1fff25"));
+            } else {
+                databaseConnectionCircle.setFill(Color.RED);
+            }
+        });
+    }
+    // Bliver ikke brugt pt
+    private void startDatabaseConnectionCheck() {
+        Timeline connectionCheckTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(2), e -> updateDatabaseConnectionStatus())
+        );
+        connectionCheckTimeline.setCycleCount(Animation.INDEFINITE);
+        connectionCheckTimeline.play();
+    }
+
     private void updateWarehouseState() {
         int state = warehouseClient.getWarehouseState();
 
@@ -135,70 +154,38 @@ public class TabViewController {
     }
 
     protected void loadInventory() {
-        try {
-            inventoryData.clear();
-            inventoryData.addAll(warehouseClient.getInventory());
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Jeg kan love dig for load Inventory fejler du");
+        try{
+             inventoryData.clear();
+              inventoryData.addAll(warehouseClient.getInventory());
+        } catch (Exception e){
+              e.printStackTrace();
+              System.out.println("Jeg kan love dig for load Inventory fejler du");
         }
     }
 
     //---------------------------
-    @FXML
-    private Label agvStatusLabel;
-    @FXML
-    private Circle agvStatusCircle;
-    @FXML
-    private Circle agvConnectionCircle;
-    @FXML
-    private Circle assemblyConnectionCircle;
-    @FXML
-    private Circle assemblyStatusCircle;
-    @FXML
-    private Label assemblyStatusLabel;
-    @FXML
-    private Label agvParameterLabel;
-    @FXML
-    private Button startProdButton;
-    @FXML
-    private TextFlow messageBoard;
-    @FXML
-    private TextField processIdInput;
-    @FXML
-    private Button checkHealthButton;
-    @FXML
-    private Label HealthyLabel;
-    @FXML
-    private RadioButton normalPriorityButton;
-    @FXML
-    private RadioButton highPriorityButton;
-    @FXML
-    private TextField quantityInput;
-    @FXML
-    private ChoiceBox productChoice;
-    @FXML
-    private TableView<Batch> queueView;
-    @FXML
-    private TableColumn<Batch, Integer> batchID;
-    @FXML
-    private TableColumn<Batch, String> productQueue;
-    @FXML
-    private TableColumn<Batch, Integer> quantityQueue;
-    @FXML
-    private TableColumn<Batch, Integer> priorityQueue;
-    @FXML
-    private TableColumn<Batch, String> statusQueue;
-    @FXML
-    private Button emergencyStopButton;
-    @FXML
-    private Button deleteButton;
-    @FXML
-    private Button addButton;
-    @FXML
-    private Button removeButton;
-    @FXML
-    private ImageView editInventoryButton;
+    @FXML private Label agvStatusLabel;
+    @FXML private Circle agvStatusCircle;
+    @FXML private Circle agvConnectionCircle;
+    @FXML private Circle assemblyConnectionCircle;
+    @FXML private Circle assemblyStatusCircle;
+    @FXML private Label assemblyStatusLabel;
+    @FXML private Label agvParameterLabel;
+    @FXML private Button startProdButton;
+    @FXML private TextFlow messageBoard;
+    @FXML private TextField processIdInput;
+    @FXML private Button checkHealthButton;
+    @FXML private Label HealthyLabel;
+    @FXML private RadioButton normalPriorityButton;
+    @FXML private RadioButton highPriorityButton;
+    @FXML private TextField quantityInput;
+    @FXML private ChoiceBox productChoice;
+    @FXML private TableView<Batch> queueView;
+    @FXML private TableColumn<Batch, Integer> batchID;
+    @FXML private TableColumn<Batch, String> productQueue;
+    @FXML private TableColumn<Batch, String> quantityQueue;
+    @FXML private TableColumn<Batch, Integer> priorityQueue;
+    @FXML private TableColumn<Batch, String> statusQueue;
     private int batchCounter = 1;
     String[] productList = {"Toy Cars1", "Toy Cars2"};
     private ObservableList<Batch> batchList = FXCollections.observableArrayList();
@@ -207,8 +194,7 @@ public class TabViewController {
     private boolean productionStarted = false;
 
     private Timeline updateTimer;
-
-    private boolean emergencyActive = false;
+    private int status;
 
     @FXML
     private void addQueue(ActionEvent event) {

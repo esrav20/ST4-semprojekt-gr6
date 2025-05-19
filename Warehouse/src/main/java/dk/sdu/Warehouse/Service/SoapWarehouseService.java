@@ -52,28 +52,13 @@ public class SoapWarehouseService implements WarehousePI {
 
     //Handler at kunne indsætte items på trays
     @Override
-    public String insertItem(int trayId, long id, String itemName, int quantity) {
-        try {
-            currentState = 1;
-            InventoryItems item = new InventoryItems();
-            item.setId(id);
-            item.setTrayId(trayId);
-            item.setItemName(itemName);
-            item.setQuantity(quantity);
-            inventoryRepos.save(item);
-            return "Done";
-        } catch (Exception e){
-            currentState = 2;
-            return "Insert Failed:" + e.getMessage();
-        }
-        finally {
-            new Thread(() -> {
-                try {
-                    Thread.sleep(2000); // 2 sec delay to simulate processing
-                } catch (InterruptedException ignored) {}
-                currentState = 0;
-            }).start();
-        }
+    public String insertItem(int trayId, String itemName) {
+        InventoryItems item = new InventoryItems();
+        item.setTrayId(trayId);
+        item.setItemName(itemName);
+        item.setQuantity(1);
+        inventoryRepos.save(item);
+        return "Done";
     }
 
 
@@ -88,7 +73,7 @@ public class SoapWarehouseService implements WarehousePI {
             InventoryItems item = inventoryRepos.findByTrayId(trayId)
                     .orElseThrow(() -> new RuntimeException("Item not found"));
 
-        item.setQuantity(item.getQuantity() - 1);
+            item.setQuantity(item.getQuantity() - 1);
 
             if (item.getQuantity() <= 0) {
                 inventoryRepos.delete(item);
