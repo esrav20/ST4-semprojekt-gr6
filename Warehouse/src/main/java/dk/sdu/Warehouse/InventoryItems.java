@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 @Table(name = "inventory_items")
 public class InventoryItems {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private int trayId;

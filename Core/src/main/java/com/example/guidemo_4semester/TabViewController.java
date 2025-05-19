@@ -35,6 +35,7 @@ import com.example.guidemo_4semester.AddItemController;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.Optional;
 
 @Component
 public class TabViewController {
@@ -504,15 +505,29 @@ public class TabViewController {
                             agv.sendRequest("{\"Program name\":\"PutWarehouseOperation\",\"State\":1}");
                             agv.sendRequest("{\"State\":2}");
                             agv.putItem("");
-                            int nextTrayId = warehouseClient.getInventory().stream()
-                                    .mapToInt(InventoryView::getTrayId)
-                                    .max()
-                                    .orElse(0)+1;
-                            Long nextId = warehouseClient.getInventory().stream()
-                                    .mapToLong(InventoryView::getId)
-                                    .max()
-                                    .orElse(0)+1;
-                            warehouseClient.insertItem(nextTrayId,nextId,"Car",1);
+
+                            Optional<InventoryView> existingItemOpt = warehouseClient.getInventory().stream()
+                                    .filter(item -> "Car".equals(item.getItemName()))
+                                    .findFirst();
+
+                            if (existingItemOpt.isPresent()) {
+                                // Item exists - increase quantity
+                                InventoryView existingItem = existingItemOpt.get();
+                                int newQuantity = existingItem.getQuantity() + 1; // increase by 1 or your desired amount
+                                warehouseClient.updateItem(existingItem.getId(),existingItem.getItemName(), newQuantity);
+                            } else {
+                                // Item does not exist - insert new item with new IDs
+                                int nextTrayId = warehouseClient.getInventory().stream()
+                                        .mapToInt(InventoryView::getTrayId)
+                                        .max()
+                                        .orElse(0) + 1;
+                                long nextId = warehouseClient.getInventory().stream()
+                                        .mapToLong(InventoryView::getId)
+                                        .max()
+                                        .orElse(0) + 1;
+                                warehouseClient.insertItem(nextTrayId, nextId, "Car", 1);
+                            }
+
                             if (emergencyActive) {
                                 break;
                             }
