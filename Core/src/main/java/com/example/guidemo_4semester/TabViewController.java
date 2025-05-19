@@ -307,7 +307,7 @@ public class TabViewController {
             case 1 -> {
                 statusText = "Idle";
                 circleColor = "DODGERBLUE";
-                }
+            }
             case 2 -> {
                 statusText = "Working";
                 circleColor = "#1fff25";
@@ -315,11 +315,11 @@ public class TabViewController {
             case 3 -> {
                 statusText = "Charging";
                 circleColor = "ORANGE";
-                }
+            }
             default -> {
                 statusText = "Error";
                 circleColor = "RED";
-                }
+            }
         }
 
         String connectionStatus = agv.isConnected() ? "#1fff25" : "RED";
@@ -332,47 +332,49 @@ public class TabViewController {
             agvParameterLabel.textProperty().unbind(); // samme som l.159.
             agvParameterLabel.setText("Battery: " + agv.getBatteryLevel() + "%");
         });
-        }
-        @FXML
-        private void additem(){
-            addButton.setOnMouseClicked(event -> {
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/addItem.fxml"));
+    }
 
-                    AddItemController controller = new AddItemController(warehouseClient);
-                    controller.setOnSubmitSuccess(this::loadInventory);
-                    fxmlLoader.setController(controller);
+    @FXML
+    private void additem() {
+        addButton.setOnMouseClicked(event -> {
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/addItem.fxml"));
 
-                    Scene scene = new Scene(fxmlLoader.load());
-                    Stage stage = new Stage();
-                    stage.setTitle("Add Item");
-                    stage.setScene(scene);
-                    stage.show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-        @FXML
-        private void removeitem(){
-            InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
-            if (selected != null) {
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/removeItem.fxml"));
+                AddItemController controller = new AddItemController(warehouseClient);
+                controller.setOnSubmitSuccess(this::loadInventory);
+                fxmlLoader.setController(controller);
 
-                    RemoveItemController controller = new RemoveItemController(warehouseClient, selected);
-                    controller.setOnRemoveSuccess(this::loadInventory);
-                    fxmlLoader.setController(controller);
-
-                    Scene scene = new Scene(fxmlLoader.load());
-                    Stage stage = new Stage();
-                    stage.setTitle("Remove Item");
-                    stage.setScene(scene);
-                    stage.show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                Scene scene = new Scene(fxmlLoader.load());
+                Stage stage = new Stage();
+                stage.setTitle("Add Item");
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        });
+    }
+
+    @FXML
+    private void removeitem() {
+        InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/removeItem.fxml"));
+
+                RemoveItemController controller = new RemoveItemController(warehouseClient, selected);
+                controller.setOnRemoveSuccess(this::loadInventory);
+                fxmlLoader.setController(controller);
+
+                Scene scene = new Scene(fxmlLoader.load());
+                Stage stage = new Stage();
+                stage.setTitle("Remove Item");
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
        /* InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
             Long id = selected.getId();
@@ -384,11 +386,11 @@ public class TabViewController {
         }*/
 
 
-        }
+    }
 
 
-        @FXML
-        private void editbutton() {
+    @FXML
+    private void editbutton() {
             InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 try {
