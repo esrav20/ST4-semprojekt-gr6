@@ -51,13 +51,23 @@ public class SoapWarehouseService implements WarehousePI {
     //Handler at kunne indsætte items på trays
     @Override
     public String insertItem(int trayId, long id, String itemName,int quantity) {
-        InventoryItems item = new InventoryItems();
-        item.setId(id);
-        item.setTrayId(trayId);
-        item.setItemName(itemName);
-        item.setQuantity(quantity);
-        inventoryRepos.save(item);
-        return "Done";
+        Optional<InventoryItems> existingitem = inventoryRepos.findById(id);
+
+        if (existingitem.isPresent()) {
+            InventoryItems item = existingitem.get();
+            item.setQuantity(item.getQuantity() + quantity); // <- den her er vigtig!
+            inventoryRepos.save(item);
+            return "Updated quantity on existing item (ID " + id + ")";
+
+        } else {
+            InventoryItems newItem = new InventoryItems();
+            newItem.setId(id); // Bemærk: kræver du selv holder styr på unikke IDs!
+            newItem.setTrayId(trayId);
+            newItem.setItemName(itemName);
+            newItem.setQuantity(quantity);
+            inventoryRepos.save(newItem);
+            return "Inserted new item (ID " + id + ")";
+        }
     }
 
     //Kan finde/fjerne inventory i bestemt tray
