@@ -23,6 +23,7 @@
     -fx-border-radius: 25px;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0.5, 0, 2);
 }
+
 .addButton:hover {
     -fx-background-color: #584478;
 }
