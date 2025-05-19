@@ -11,5 +11,5 @@ import java.util.Optional;
 @Repository
 public interface InventoryRepos extends JpaRepository<InventoryItems, Long> {
     List<InventoryView> findAllBy();
-    Optional<InventoryView> findByTrayId(int trayId); // full entity for update/delete
+    Optional<InventoryItems> findByTrayId(int trayId); // full entity for update/delete
 }

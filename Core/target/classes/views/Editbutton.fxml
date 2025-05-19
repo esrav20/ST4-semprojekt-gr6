@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"  spacing="10" alignment="CENTER" prefWidth="300" prefHeight="200">
+    <children>
+        <Label text="Rediger Item"/>
+        <TextField fx:id="Item" promptText="Item Navn"/>
+        <TextField fx:id="Amount" promptText="Mængde"/>
+        <Button text="Gem" onAction="#editItem"/>
+    </children>
+</VBox>

@@ -15,19 +15,24 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.converter.IntegerStringConverter;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -39,12 +44,18 @@ public class TabViewController {
     private final IMqttService iMqttService;
     private final WarehousePI warehouseClient;
 
+
+    // vi skal ikke have en setDepencies metode - da Spring ikke kan starte programmet uden Constructor-based DI.
     @Autowired
     public TabViewController(WarehousePI warehouseClient, AGVPI agv, IMqttService iMqttService) throws MqttException {
         this.warehouseClient = warehouseClient;
         this.agv = agv;
         this.iMqttService = iMqttService;
     }
+
+    //Warehouse/Inventory:
+
+
 
     @FXML private TableView<InventoryView> inventoryTable;
     @FXML private TableColumn<InventoryView, Long> IDColumn;
@@ -67,16 +78,17 @@ public class TabViewController {
         warehouseDropdown.setOnAction(event -> loadInventory());
     }
 
-    private void loadInventory() {
-        try {
-            inventoryData.clear();
-            inventoryData.addAll(warehouseClient.getInventory());
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Jeg kan love dig for load Inventory fejler du");
+    protected void loadInventory() {
+        try{
+             inventoryData.clear();
+              inventoryData.addAll(warehouseClient.getInventory());
+        } catch (Exception e){
+              e.printStackTrace();
+              System.out.println("Jeg kan love dig for load Inventory fejler du");
         }
     }
 
+    //---------------------------
     @FXML private Label agvStatusLabel;
     @FXML private Circle agvStatusCircle;
     @FXML private Circle agvConnectionCircle;
@@ -97,34 +109,41 @@ public class TabViewController {
     @FXML private TableColumn<Batch, Integer> batchID;
     @FXML private TableColumn<Batch, String> productQueue;
     @FXML private TableColumn<Batch, Integer> quantityQueue;
-    @FXML private TableColumn<Batch, String> priorityQueue;
+    @FXML private TableColumn<Batch, Integer> priorityQueue;
     @FXML private TableColumn<Batch, String> statusQueue;
     @FXML private Button deleteButton;
+    @FXML private Button addButton;
+    @FXML private Button removeButton;
+    @FXML private ImageView editInventoryButton;
+
 
     private int batchCounter = 1;
     String[] productList = {"Toy Cars1", "Toy Cars2"};
     private ObservableList<Batch> batchList = FXCollections.observableArrayList();
     private SortedList<Batch> sortedList;
     private Integer queueValue;
-    private boolean productionStarted = false;
+
     private Timeline updateTimer;
+    private int status;
 
     @FXML
     private void addQueue(ActionEvent event) {
-        String queuePriority = normalPriorityButton.isSelected() ? "Normal" :
-                (highPriorityButton.isSelected() ? "High" : null);
-        Integer queueQuantity = Integer.valueOf(quantityInput.getText());
+        int queuePriority = normalPriorityButton.isSelected() ? 5 : (highPriorityButton.isSelected() ? 10 : 0);
+        String queueQuantity = quantityInput.getText();
         String queueProduct = productChoice.getValue().toString();
 
-        if (queueQuantity == 0 || queueProduct == null || queuePriority == null) {
+        if (queueQuantity.isEmpty() || queueProduct == null || queuePriority == 0) {
             System.out.println("Please fill all inputs correctly.");
             return;
         }
 
         Batch newBatch = new Batch(batchCounter++, queueProduct, queueQuantity, queuePriority, "Pending");
         batchList.add(newBatch);
+
+        System.out.println("QueueQuantity: " + queueQuantity + ", QueueProduct: " + queueProduct + ", QueuePriority: " + queuePriority);
         quantityInput.clear();
     }
+
 
     @FXML
     private void deleteSelectedRow() {
@@ -139,14 +158,13 @@ public class TabViewController {
         queueView.setEditable(true);
         batchID.setCellValueFactory(new PropertyValueFactory<>("batchID"));
         productQueue.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        quantityQueue.setCellValueFactory(cellData -> cellData.getValue().quantityProperty().asObject());
-        priorityQueue.setCellValueFactory(cellData -> cellData.getValue().priorityProperty());
+        quantityQueue.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        priorityQueue.setCellValueFactory(new PropertyValueFactory<>("priority"));
         statusQueue.setCellValueFactory(new PropertyValueFactory<>("status"));
-
         sortedList = new SortedList<>(batchList);
+        // Comparator: High priority (10) come before Normal (5)
         sortedList.setComparator(
-                Comparator.comparing((Batch b) -> b.getPriority().equalsIgnoreCase("High") ? 1 : 0)
-                        .reversed()
+                Comparator.comparingInt(Batch::getPriority).reversed()
                         .thenComparingInt(Batch::getBatchID)
         );
         queueView.setItems(sortedList);
@@ -181,8 +199,7 @@ public class TabViewController {
         });
 
         productChoice.setItems(FXCollections.observableArrayList(productList));
-
-        iMqttService.setMessagehandler((state, health) -> {
+        iMqttService.setMessagehandler((state,health) -> {
             Platform.runLater(() -> {
                 if (state != null) {
                     String text = switch (state) {
@@ -192,7 +209,7 @@ public class TabViewController {
                     };
                     assemblyStatusLabel.textProperty().unbind();
                     assemblyStatusLabel.setText(text);
-                    assemblyStatusCircle.setFill(text.equals("Running") ? Color.valueOf("#1fff25") : Color.DODGERBLUE);
+                    assemblyStatusCircle.setFill(text.equals("Running") ? Color.valueOf("#1fff25"): Color.DODGERBLUE);
                 }
 
                 if (health != null) {
@@ -211,7 +228,7 @@ public class TabViewController {
             try {
                 agv.sendRequest("MoveToStorageOperation");
                 updateAGVDisplay();
-                iMqttService.publish("emulator/operation", "{\"ProcessID\": 12345}");
+                iMqttService.publish("emulator/operation",  "{\"ProcessID\": 12345}");
             } catch (IOException | InterruptedException | MqttException e) {
                 e.printStackTrace();
             }
@@ -222,14 +239,15 @@ public class TabViewController {
     public void startProd() throws IOException, InterruptedException, MqttException {
         if (!batchList.isEmpty()) {
             productionStarted = true;
-            queueValue = Integer.valueOf(queueView.getItems().get(0).getQuantity());
-            while(queueValue > 0) {
-            /*warehouseClient.pickItem();
+        queueValue = Integer.valueOf(queueView.getItems().get(0).getQuantity());
+        while(queueValue > 0) {
+            warehouseClient.pickItem();
             if (warehouseClient.value()) {
                 agv.sendRequest("{\"Program name\":\"MoveToStorageOperation\",\"State\":1}");
                 agv.sendRequest("{\"State\":2}");
             }
             if (agv.getCurrentstate() == 1) {
+
                 agv.pickItem();
                 agv.sendRequest("{\"Program name\":\"MoveToStorageAssembly\",\"State\":1}");
                 agv.sendRequest("{\"State\":2}");
@@ -248,18 +266,18 @@ public class TabViewController {
             if (agv.getCurrentstate() == 1) {
                 warehouseClient.putItem();
             }
-            */
-                System.out.println(queueValue);
-                queueValue--;
-            }
-            batchList.remove(0);
-            startProd();
+
+            System.out.println(queueValue);
+            queueValue--;
+        }
+        batchList.remove(0);
+        startProd();
         }
     }
 
     private void startAGVUpdates() {
         updateTimer = new Timeline(
-                new KeyFrame(Duration.seconds(0.5), e -> {
+                new KeyFrame(Duration.seconds(0.5), e ->{
                     updateAGVDisplay();
                     updateAssemblyConnectionStatus();
                 })
@@ -289,7 +307,7 @@ public class TabViewController {
             case 1 -> {
                 statusText = "Idle";
                 circleColor = "DODGERBLUE";
-            }
+                }
             case 2 -> {
                 statusText = "Working";
                 circleColor = "#1fff25";
@@ -297,22 +315,101 @@ public class TabViewController {
             case 3 -> {
                 statusText = "Charging";
                 circleColor = "ORANGE";
-            }
+                }
             default -> {
                 statusText = "Error";
                 circleColor = "RED";
-            }
+                }
         }
 
         String connectionStatus = agv.isConnected() ? "#1fff25" : "RED";
 
         Platform.runLater(() -> {
-            agvStatusLabel.textProperty().unbind();
+            agvStatusLabel.textProperty().unbind(); // Vi får en runtimeException, når vi kører appen og denne er bound i forvejen.
             agvStatusLabel.setText(statusText);
             agvStatusCircle.setFill(Color.valueOf(circleColor));
             agvConnectionCircle.setFill(Color.valueOf(connectionStatus));
-            agvParameterLabel.textProperty().unbind();
+            agvParameterLabel.textProperty().unbind(); // samme som l.159.
             agvParameterLabel.setText("Battery: " + agv.getBatteryLevel() + "%");
         });
+        }
+        @FXML
+        private void additem(){
+            addButton.setOnMouseClicked(event -> {
+                try {
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/addItem.fxml"));
+
+                    AddItemController controller = new AddItemController(warehouseClient);
+                    controller.setOnSubmitSuccess(this::loadInventory);
+                    fxmlLoader.setController(controller);
+
+                    Scene scene = new Scene(fxmlLoader.load());
+                    Stage stage = new Stage();
+                    stage.setTitle("Add Item");
+                    stage.setScene(scene);
+                    stage.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        @FXML
+        private void removeitem(){
+            InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                try {
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/removeItem.fxml"));
+
+                    RemoveItemController controller = new RemoveItemController(warehouseClient, selected);
+                    controller.setOnRemoveSuccess(this::loadInventory);
+                    fxmlLoader.setController(controller);
+
+                    Scene scene = new Scene(fxmlLoader.load());
+                    Stage stage = new Stage();
+                    stage.setTitle("Remove Item");
+                    stage.setScene(scene);
+                    stage.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+       /* InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            Long id = selected.getId();
+            String result = warehouseClient.deleteitems(id);
+            System.out.println(result);
+            loadInventory();
+        }else{
+            System.out.println("Item not found");
+        }*/
+
+
+        }
+
+
+        @FXML
+        private void editbutton() {
+            InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                try {
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/Editbutton.fxml"));
+
+                    EditItemController controller = new EditItemController(warehouseClient,selected);
+                    controller.setOnEditSuccess(this::loadInventory);
+                    fxmlLoader.setController(controller);
+
+                    Scene scene = new Scene(fxmlLoader.load());
+                    Stage stage = new Stage();
+                    stage.setTitle("Edit item");
+                    stage.setScene(scene);
+                    stage.show();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
     }
+
 }

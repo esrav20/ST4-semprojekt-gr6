@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 //@ConfigurationProperties("service")
 //connector vores repository til resten af applikationen
@@ -29,13 +30,16 @@ public class SoapWarehouseService implements WarehousePI {
         return inventoryRepos.findAllBy();
     }
 
+
+
     //Handler at kunne indsætte items på trays
     @Override
-    public String insertItem(int trayId, String itemName) {
+    public String insertItem(int trayId, long id, String itemName,int quantity) {
         InventoryItems item = new InventoryItems();
+        item.setId(id);
         item.setTrayId(trayId);
         item.setItemName(itemName);
-        item.setQuantity(1);
+        item.setQuantity(quantity);
         inventoryRepos.save(item);
         return "Done";
     }
@@ -44,7 +48,7 @@ public class SoapWarehouseService implements WarehousePI {
     @Override
     public String pickItem(int trayId) {
         // fetch entity, not projection
-        InventoryItems item = (InventoryItems) inventoryRepos.findByTrayId(trayId)
+        InventoryItems item = inventoryRepos.findByTrayId(trayId)
                 .orElseThrow(() -> new RuntimeException("Item not found"));
 
         item.setQuantity(item.getQuantity() - 1);
@@ -56,6 +60,27 @@ public class SoapWarehouseService implements WarehousePI {
             inventoryRepos.save(item);
             return "Item picked, remaining quantity: " + item.getQuantity();
 
+        }
+    }
+
+
+    @Override
+    public String deleteitems(Long id) {
+        InventoryItems item = inventoryRepos.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+        inventoryRepos.delete(item);
+        return "Item deleted";
+    }
+
+    @Override
+    public void updateItem(long id, String itemName, int quantity) {
+        Optional<InventoryItems> itemOpt = inventoryRepos.findById(id);
+        if (itemOpt.isPresent()) {
+            InventoryItems item = itemOpt.get();
+            item.setId(id);
+            item.setItemName(itemName);
+            item.setQuantity(quantity);
+            inventoryRepos.save(item);
         }
     }
 
