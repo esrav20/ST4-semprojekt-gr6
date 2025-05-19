@@ -55,24 +55,38 @@ public class TabViewController {
     //Warehouse/Inventory:
 
 
-    @FXML
-    private TableView<InventoryView> inventoryTable;
-    @FXML
-    private TableColumn<InventoryView, Long> IDColumn;
-    @FXML
-    private TableColumn<InventoryView, String> itemColumn;
-    @FXML
-    private TableColumn<InventoryView, Integer> availableColumn;
-    @FXML
-    private TableColumn<InventoryView, Integer> inStockColumn;
-    @FXML
-    private ChoiceBox<String> warehouseDropdown;
-    @FXML
-    private Circle databaseConnectionCircle;
-    @FXML
-    private Circle warehouseStateCircle;
-    @FXML
-    private Label warehouseStateLabel;
+
+    @FXML private TableView<InventoryView> inventoryTable;
+    @FXML private TableColumn<InventoryView, Long> IDColumn;
+    @FXML private TableColumn<InventoryView, String> itemColumn;
+    @FXML private TableColumn<InventoryView, Integer> availableColumn;
+    @FXML private TableColumn<InventoryView, Integer> inStockColumn;
+    @FXML private ChoiceBox<String> warehouseDropdown;
+
+    private boolean checkStock(int quantity) {
+
+        inventoryData.setAll(warehouseClient.getInventory());
+        int wheelCount = 0;
+        int chassisCount = 0;
+
+        for (InventoryView item : inventoryData) {
+            String name = item.getItemName().toLowerCase();
+            switch (name) {
+                case "wheel" -> wheelCount = item.getQuantity();
+                case "chassis" -> chassisCount = item.getQuantity();
+            }
+        }
+        int requiredWheels = quantity*4;
+        int requiredChassis = quantity;
+
+        if (wheelCount < requiredWheels || chassisCount < requiredChassis) {
+            System.out.println("Not enough materials");
+            System.out.println("Required: " + requiredWheels + " wheels, " + requiredChassis + " chassis");
+            System.out.println("Available: " + wheelCount + " wheels, " + chassisCount + " chassis");
+            return false;
+        }
+        return true;
+    }
 
     private ObservableList<InventoryView> inventoryData = FXCollections.observableArrayList();
 
@@ -132,7 +146,7 @@ public class TabViewController {
         warehouseDropdown.setOnAction(event -> loadInventory());
     }
 
-    protected void loadInventory() {
+    private void loadInventory() {
         try{
              inventoryData.clear();
               inventoryData.addAll(warehouseClient.getInventory());
@@ -163,7 +177,7 @@ public class TabViewController {
     @FXML private TableColumn<Batch, Integer> batchID;
     @FXML private TableColumn<Batch, String> productQueue;
     @FXML private TableColumn<Batch, Integer> quantityQueue;
-    @FXML private TableColumn<Batch, String> priorityQueue;
+    @FXML private TableColumn<Batch, Integer> priorityQueue;
     @FXML private TableColumn<Batch, String> statusQueue;
     private int batchCounter = 1;
     String[] productList = {"Toy Cars1", "Toy Cars2"};
@@ -277,7 +291,7 @@ public class TabViewController {
             try {
                 agv.sendRequest("MoveToStorageOperation");
                 updateAGVDisplay();
-                iMqttService.publish("emulator/operation", "{\"ProcessID\": 12345}");
+                iMqttService.publish("emulator/operation",  "{\"ProcessID\": 12345}");
             } catch (IOException | InterruptedException | MqttException e) {
                 e.printStackTrace();
             }
@@ -362,6 +376,19 @@ public class TabViewController {
                     agv.sendRequest("{\"State\":2}");
                 }
                 if (agv.getCurrentstate() == 1) {
+            int requestedQuantity = Integer.parseInt(queueView.getItems().get(0).getQuantity());
+            if (!checkStock(requestedQuantity)) {
+                System.out.println("Production cannot start due to insufficient materials");
+                return;
+            }
+            queueValue = requestedQuantity;
+        while(queueValue > 0) {
+            warehouseClient.pickItem();
+            if (warehouseClient.value()) {
+                agv.sendRequest("{\"Program name\":\"MoveToStorageOperation\",\"State\":1}");
+                agv.sendRequest("{\"State\":2}");
+            }
+            if (agv.getCurrentstate() == 1) {
 
                     agv.pickItem();
                     agv.sendRequest("{\"Program name\":\"MoveToStorageAssembly\",\"State\":1}");
