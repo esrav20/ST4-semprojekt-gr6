@@ -19,10 +19,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.TextFlow;
@@ -77,25 +75,6 @@ public class TabViewController {
     private Label warehouseStateLabel;
 
     private ObservableList<InventoryView> inventoryData = FXCollections.observableArrayList();
-
-    private void updateDatabaseConnectionStatus() {
-        boolean isConnected = warehouseClient.isConnected();
-        Platform.runLater(() -> {
-            if (isConnected) {
-                databaseConnectionCircle.setFill(Color.valueOf("#1fff25"));
-            } else {
-                databaseConnectionCircle.setFill(Color.RED);
-            }
-        });
-    }
-
-    private void startDatabaseConnectionCheck() {
-        Timeline connectionCheckTimeline = new Timeline(
-                new KeyFrame(Duration.seconds(2), e -> updateDatabaseConnectionStatus())
-        );
-        connectionCheckTimeline.setCycleCount(Animation.INDEFINITE);
-        connectionCheckTimeline.play();
-    }
 
     private void updateDatabaseConnectionStatus() {
         boolean isConnected = warehouseClient.isConnected(); // Assuming this method exists
@@ -183,8 +162,8 @@ public class TabViewController {
     @FXML private TableView<Batch> queueView;
     @FXML private TableColumn<Batch, Integer> batchID;
     @FXML private TableColumn<Batch, String> productQueue;
-    @FXML private TableColumn<Batch, String> quantityQueue;
-    @FXML private TableColumn<Batch, Integer> priorityQueue;
+    @FXML private TableColumn<Batch, Integer> quantityQueue;
+    @FXML private TableColumn<Batch, String> priorityQueue;
     @FXML private TableColumn<Batch, String> statusQueue;
     private int batchCounter = 1;
     String[] productList = {"Toy Cars1", "Toy Cars2"};
@@ -199,10 +178,10 @@ public class TabViewController {
     @FXML
     private void addQueue(ActionEvent event) {
         int queuePriority = normalPriorityButton.isSelected() ? 5 : (highPriorityButton.isSelected() ? 10 : 0);
-        String queueQuantity = quantityInput.getText();
+        int queueQuantity = Integer.parseInt(quantityInput.getText());
         String queueProduct = productChoice.getValue().toString();
 
-        if (queueQuantity.isEmpty() || queueProduct == null || queuePriority == 0) {
+        if (queueQuantity == 0 || queueProduct == null || queuePriority == 0) {
             System.out.println("Please fill all inputs correctly.");
             return;
         }
