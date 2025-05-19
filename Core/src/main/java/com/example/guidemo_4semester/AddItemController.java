@@ -25,7 +25,7 @@ public class AddItemController {
         @FXML private TextField Item;
 
         @FXML
-        private void handleSubmit() {
+        protected void handleSubmit() {
             String name = Item.getText();
             String amount = Amount.getText();
             String id = Id.getText();
