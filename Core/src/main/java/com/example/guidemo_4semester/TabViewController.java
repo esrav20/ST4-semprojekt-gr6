@@ -31,6 +31,7 @@ import javafx.util.converter.IntegerStringConverter;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.example.guidemo_4semester.AddItemController;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -139,17 +140,34 @@ public class TabViewController {
         this.iMqttService = iMqttService;
     }
 
+
+        private int wheelTrayId;
+        private int chassisTrayId;
+
+
+
+
+
     private boolean checkStock(int quantity) {
+
 
         inventoryData.setAll(warehouseClient.getInventory());
         int wheelCount = 0;
-        int chassisCount = 0;
+        int chassisCount=0;
 
         for (InventoryView item : inventoryData) {
             String name = item.getItemName().toLowerCase();
+
             switch (name) {
-                case "wheel" -> wheelCount = item.getQuantity();
-                case "chassis" -> chassisCount = item.getQuantity();
+                case "wheel" ->{
+                    wheelCount = item.getQuantity();
+                    wheelTrayId = item.getTrayId();
+                }
+                case "chassis" -> {
+                    chassisCount = item.getQuantity();
+                    chassisTrayId = item.getTrayId();
+                }
+
             }
         }
         int requiredWheels = quantity * 4;
@@ -404,7 +422,11 @@ public class TabViewController {
                         agv.needsCharging();
                         System.out.println(queueValue);
                         //Denne linje skal ændres!
-                        warehouseClient.pickItem(1);
+                        if(wheelTrayId == 0 || chassisTrayId == 0){
+                            System.out.println("TRAYID FANDT VI IKKE NEJ");
+                        }
+                        warehouseClient.pickItem(wheelTrayId);
+                        warehouseClient.pickItem(chassisTrayId);
                         if (emergencyActive) {
                             break;
                         }
@@ -482,7 +504,15 @@ public class TabViewController {
                             agv.sendRequest("{\"Program name\":\"PutWarehouseOperation\",\"State\":1}");
                             agv.sendRequest("{\"State\":2}");
                             agv.putItem("");
-                            warehouseClient.insertItem(1,2,"Car",1);
+                            int nextTrayId = warehouseClient.getInventory().stream()
+                                    .mapToInt(InventoryView::getTrayId)
+                                    .max()
+                                    .orElse(0)+1;
+                            Long nextId = warehouseClient.getInventory().stream()
+                                    .mapToLong(InventoryView::getId)
+                                    .max()
+                                    .orElse(0)+1;
+                            warehouseClient.insertItem(nextTrayId,nextId,"Car",1);
                             if (emergencyActive) {
                                 break;
                             }
