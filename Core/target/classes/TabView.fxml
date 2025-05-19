@@ -122,8 +122,8 @@
                             <HBox layoutX="473.0" layoutY="90.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
                                 <children>
                                     <Label text="Current Status:" />
-                                    <Circle fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
-                                    <Label text="Running" />
+                                    <Circle fx:id="warehouseStateCircle" fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
+                                    <Label fx:id="warehouseStateLabel" text="Idle" />
                                 </children>
                             </HBox>
                             <HBox layoutX="5.0" layoutY="139.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
@@ -141,7 +141,7 @@
                             <HBox layoutX="473.0" layoutY="139.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
                                 <children>
                                     <Label text="Connection:" />
-                                    <Circle fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
+                                    <Circle fx:id="databaseConnectionCirlce" fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
                                 </children>
                             </HBox>
                             <Label fx:id="agvParameterLabel" layoutX="7.0" layoutY="188.0" text="${tabViewController.agvParameterLabelText.value}" />  <Label layoutX="242.0" layoutY="188.0" text="Current Parameter: " />
