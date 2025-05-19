@@ -426,7 +426,9 @@ public class TabViewController {
                         if(wheelTrayId == 0 || chassisTrayId == 0){
                             System.out.println("TRAYID FANDT VI IKKE NEJ");
                         }
-                        warehouseClient.pickItem(wheelTrayId);
+                        for(int i = 0; i < 4; i++){
+                            warehouseClient.pickItem(wheelTrayId);
+                        }
                         warehouseClient.pickItem(chassisTrayId);
                         if (emergencyActive) {
                             break;
