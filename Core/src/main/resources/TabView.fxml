@@ -167,15 +167,15 @@
                             <Label layoutX="27.0" layoutY="13.0" styleClass="labels" text="Warehouse:">
                             </Label>
                             <ChoiceBox fx:id="warehouseDropdown" layoutX="114.0" layoutY="10.0" prefWidth="150.0" styleClass="warehouseChoice" />
-                            <Button fx:id="editButton" layoutX="14.0" layoutY="460.0" prefHeight="35.0" prefWidth="53.0" styleClass="editButton">
+                            <Button fx:id="editButton" layoutX="14.0" layoutY="460.0" prefHeight="35.0" prefWidth="53.0" onAction="#editbutton"  styleClass="editButton">
                                 <graphic>
                                     <ImageView fx:id="editInventoryButton" fitHeight="30" fitWidth="30">
                                         <Image url="@com/example/guidemo_4semesterres/editButtonImage.png" />
                                     </ImageView>
                                 </graphic>
                             </Button>
-                            <Button fx:id="addButton" layoutX="80.0" layoutY="482.0" prefHeight="30.0" prefWidth="50.0" styleClass="addButton" text="Add" wrapText="true" />
-                            <Button fx:id="removeButton" layoutX="149.0" layoutY="482.0" prefHeight="30.0" prefWidth="50.0" styleClass="removeButton" text="Remove" wrapText="true" />
+                            <Button fx:id="addButton" layoutX="80.0" layoutY="482.0" prefHeight="30.0" onAction="#additem"  prefWidth="50.0" styleClass="addButton" text="Add" wrapText="true"/>
+                            <Button fx:id="removeButton" layoutX="149.0" layoutY="482.0" prefHeight="30.0" onAction="#removeitem"  prefWidth="50.0" styleClass="removeButton" text="Remove" wrapText="true" />
                         </children>
                     </AnchorPane>
                 </content>
