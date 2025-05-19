@@ -117,33 +117,32 @@ public class TabViewController {
     @FXML private ImageView editInventoryButton;
 
 
+
     private int batchCounter = 1;
     String[] productList = {"Toy Cars1", "Toy Cars2"};
     private ObservableList<Batch> batchList = FXCollections.observableArrayList();
     private SortedList<Batch> sortedList;
     private Integer queueValue;
+    private boolean productionStarted = false;
 
     private Timeline updateTimer;
-    private int status;
 
     @FXML
     private void addQueue(ActionEvent event) {
-        int queuePriority = normalPriorityButton.isSelected() ? 5 : (highPriorityButton.isSelected() ? 10 : 0);
-        String queueQuantity = quantityInput.getText();
+        String queuePriority = normalPriorityButton.isSelected() ? "Normal" :
+                (highPriorityButton.isSelected() ? "High" : null);
+        Integer queueQuantity = Integer.valueOf(quantityInput.getText());
         String queueProduct = productChoice.getValue().toString();
 
-        if (queueQuantity.isEmpty() || queueProduct == null || queuePriority == 0) {
+        if (queueQuantity == 0 || queueProduct == null || queuePriority == null) {
             System.out.println("Please fill all inputs correctly.");
             return;
         }
 
         Batch newBatch = new Batch(batchCounter++, queueProduct, queueQuantity, queuePriority, "Pending");
         batchList.add(newBatch);
-
-        System.out.println("QueueQuantity: " + queueQuantity + ", QueueProduct: " + queueProduct + ", QueuePriority: " + queuePriority);
         quantityInput.clear();
     }
-
 
     @FXML
     private void deleteSelectedRow() {
@@ -158,13 +157,14 @@ public class TabViewController {
         queueView.setEditable(true);
         batchID.setCellValueFactory(new PropertyValueFactory<>("batchID"));
         productQueue.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        quantityQueue.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        priorityQueue.setCellValueFactory(new PropertyValueFactory<>("priority"));
+        quantityQueue.setCellValueFactory(cellData -> cellData.getValue().quantityProperty().asObject());
+        priorityQueue.setCellValueFactory(cellData -> cellData.getValue().priorityProperty().length().asObject());
         statusQueue.setCellValueFactory(new PropertyValueFactory<>("status"));
+
         sortedList = new SortedList<>(batchList);
-        // Comparator: High priority (10) come before Normal (5)
         sortedList.setComparator(
-                Comparator.comparingInt(Batch::getPriority).reversed()
+                Comparator.comparing((Batch b) -> b.getPriority().equalsIgnoreCase("High") ? 1 : 0)
+                        .reversed()
                         .thenComparingInt(Batch::getBatchID)
         );
         queueView.setItems(sortedList);
@@ -182,14 +182,13 @@ public class TabViewController {
             queueView.refresh();
         });
 
-        priorityQueue.setCellFactory(ComboBoxTableCell.forTableColumn("High", "Normal"));
         priorityQueue.setOnEditCommit(event -> {
             int editedRow = event.getTablePosition().getRow();
             if (productionStarted && editedRow == 0) {
                 return;
             }
             Batch batch = event.getRowValue();
-            batch.setPriority(event.getNewValue());
+            batch.setPriority(String.valueOf(event.getNewValue()));
             sortedList.setComparator(null);
             sortedList.setComparator(
                     Comparator.comparing((Batch b) -> b.getPriority().equalsIgnoreCase("High") ? 1 : 0)
