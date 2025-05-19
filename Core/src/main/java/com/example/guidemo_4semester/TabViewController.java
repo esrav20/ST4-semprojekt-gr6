@@ -156,7 +156,7 @@ public class TabViewController {
     @FXML private TableColumn<Batch, Integer> batchID;
     @FXML private TableColumn<Batch, String> productQueue;
     @FXML private TableColumn<Batch, Integer> quantityQueue;
-    @FXML private TableColumn<Batch, Integer> priorityQueue;
+    @FXML private TableColumn<Batch, String> priorityQueue;
     @FXML private TableColumn<Batch, String> statusQueue;
     @FXML private Button emergencyStopButton;
     @FXML private Button deleteButton;
@@ -206,7 +206,7 @@ public class TabViewController {
         batchID.setCellValueFactory(new PropertyValueFactory<>("batchID"));
         productQueue.setCellValueFactory(new PropertyValueFactory<>("productName"));
         quantityQueue.setCellValueFactory(cellData -> cellData.getValue().quantityProperty().asObject());
-        priorityQueue.setCellValueFactory(cellData -> cellData.getValue().priorityProperty().length().asObject());
+        priorityQueue.setCellValueFactory(cellData -> cellData.getValue().priorityProperty());
         statusQueue.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         sortedList = new SortedList<>(batchList);
@@ -230,7 +230,7 @@ public class TabViewController {
             batch.setQuantity(event.getNewValue());
             queueView.refresh();
         });
-
+        priorityQueue.setCellFactory(ComboBoxTableCell.forTableColumn("High", "Normal"));
         priorityQueue.setOnEditCommit(event -> {
             int editedRow = event.getTablePosition().getRow();
             if (productionStarted && editedRow == 0) {
