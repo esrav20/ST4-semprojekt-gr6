@@ -3,15 +3,12 @@ package dk.sdu.CommonInventory;
 import java.util.List;
 
 public interface WarehousePI {
-    String insertItem(int trayId, String itemName);
+
+    String insertItem(int trayId, long id, String itemName, int quantity);
     String pickItem(int trayId);
     List<InventoryView> getInventory();
-    boolean isConnected();
-    int getWarehouseState();
-    boolean isConnected();
-    int getWarehouseState();
     String deleteitems(Long id);
     void updateItem(long id, String itemName, int quantity);
-
-
+    boolean isConnected();
+    int getWarehouseState();
 }

@@ -58,7 +58,8 @@
                                 </toggleGroup></RadioButton>
                             <RadioButton fx:id="highPriorityButton" layoutX="14.0" layoutY="255.0" mnemonicParsing="false" text="High" toggleGroup="$Priority" />
                             <Button fx:id="addQueueButton" layoutX="15.0" layoutY="293.0" onAction="#addQueue" prefHeight="30.0" prefWidth="50.0" styleClass="addButton" text="Add" wrapText="true" />
-                            <Button fx:id="startProdButton" layoutX="346.0" layoutY="537.0" prefHeight="20.0" prefWidth="200.0" styleClass="startProdButton" text="Start Production" wrapText="true" />
+                            <Button fx:id="deleteButton" layoutX="245.0" layoutY="293.0" onAction="#deleteSelectedRow" prefHeight="30.0" prefWidth="50.0" styleClass="removeButton" text="Delete" wrapText="true" />
+                            <Button fx:id="startProdButton" layoutX="346.0" layoutY="537.0" prefHeight="20.0" onAction="#startProd" prefWidth="200.0" styleClass="startProdButton" text="Start Production" wrapText="true" />
                             <TextFlow fx:id="messageBoard" layoutX="13.0" layoutY="352.0" lineSpacing="1.0" prefHeight="181.0" prefWidth="325.0" style="-fx-border-color: lightgrey; -fx-background-color: white;">
                                 <effect>
                                     <Blend />
@@ -141,7 +142,7 @@
                             <HBox layoutX="473.0" layoutY="139.0" prefHeight="29.0" prefWidth="200.0" spacing="5.0">
                                 <children>
                                     <Label text="Connection:" />
-                                    <Circle fx:id="databaseConnectionCirlce" fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
+                                    <Circle fx:id="databaseConnectionCircle" fill="#1fff25" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
                                 </children>
                             </HBox>
                             <Label fx:id="agvParameterLabel" layoutX="7.0" layoutY="188.0" text="${tabViewController.agvParameterLabelText.value}" />  <Label layoutX="242.0" layoutY="188.0" text="Current Parameter: " />
@@ -166,15 +167,15 @@
                             <Label layoutX="27.0" layoutY="13.0" styleClass="labels" text="Warehouse:">
                             </Label>
                             <ChoiceBox fx:id="warehouseDropdown" layoutX="114.0" layoutY="10.0" prefWidth="150.0" styleClass="warehouseChoice" />
-                            <Button fx:id="editButton" layoutX="14.0" layoutY="460.0" prefHeight="35.0" prefWidth="53.0" styleClass="editButton" onAction="#editbutton" >
+                            <Button fx:id="editButton" layoutX="14.0" layoutY="460.0" prefHeight="35.0" prefWidth="53.0" styleClass="editButton">
                                 <graphic>
                                     <ImageView fx:id="editInventoryButton" fitHeight="30" fitWidth="30">
                                         <Image url="@com/example/guidemo_4semesterres/editButtonImage.png" />
                                     </ImageView>
                                 </graphic>
                             </Button>
-                            <Button fx:id="addButton" layoutX="80.0" layoutY="482.0" prefHeight="30.0" prefWidth="50.0" onAction="#additem" styleClass="addButton" text="Add" wrapText="true" />
-                            <Button fx:id="removeButton" layoutX="149.0" layoutY="482.0" prefHeight="30.0" prefWidth="50.0" styleClass="removeButton" text="Remove" wrapText="true" onAction="#removeitem" />
+                            <Button fx:id="addButton" layoutX="80.0" layoutY="482.0" prefHeight="30.0" prefWidth="50.0" styleClass="addButton" text="Add" wrapText="true" />
+                            <Button fx:id="removeButton" layoutX="149.0" layoutY="482.0" prefHeight="30.0" prefWidth="50.0" styleClass="removeButton" text="Remove" wrapText="true" />
                         </children>
                     </AnchorPane>
                 </content>
