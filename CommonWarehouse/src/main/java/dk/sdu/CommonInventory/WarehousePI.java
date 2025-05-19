@@ -8,6 +8,8 @@ public interface WarehousePI {
     List<InventoryView> getInventory();
     boolean isConnected();
     int getWarehouseState();
+    boolean isConnected();
+    int getWarehouseState();
     String deleteitems(Long id);
     void updateItem(long id, String itemName, int quantity);
 
