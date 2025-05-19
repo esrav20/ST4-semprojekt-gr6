@@ -78,7 +78,6 @@ public class SoapWarehouseService implements WarehousePI {
                 .orElseThrow(() -> new RuntimeException("Item not found"));
 
         item.setQuantity(item.getQuantity() - 1);
-
         if (item.getQuantity() <= 0) {
             inventoryRepos.delete(item);
             return "Item picked and tray now empty";
