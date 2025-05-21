@@ -1,5 +1,15 @@
-C:\Users\alexa\Desktop\Komponent Baserede Systemer\ST4-semprojekt-gr6\Warehouse\src\main\java\dk\sdu\Warehouse\Service\SoapWarehouseService.java
-C:\Users\alexa\Desktop\Komponent Baserede Systemer\ST4-semprojekt-gr6\Warehouse\src\main\java\dk\sdu\Warehouse\InventoryRepos.java
-C:\Users\alexa\Desktop\Komponent Baserede Systemer\ST4-semprojekt-gr6\Warehouse\src\main\java\dk\sdu\Warehouse\InventoryItems.java
-C:\Users\alexa\Desktop\Komponent Baserede Systemer\ST4-semprojekt-gr6\Warehouse\src\main\java\dk\sdu\Warehouse\Service\warehouseServiceController.java
-C:\Users\alexa\Desktop\Komponent Baserede Systemer\ST4-semprojekt-gr6\Warehouse\src\main\java\module-info.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\target\generated-sources\wsimport\warehouseclient\PickItem.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\target\generated-sources\wsimport\warehouseclient\InsertItem.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\src\main\java\dk\sdu\Warehouse\Service\warehouseServiceController.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\src\main\java\dk\sdu\Warehouse\InventoryRepos.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\target\generated-sources\wsimport\warehouseclient\InsertItemResponse.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\target\generated-sources\wsimport\warehouseclient\IEmulatorService.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\src\main\java\dk\sdu\Warehouse\InventoryItems.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\target\generated-sources\wsimport\warehouseclient\package-info.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\target\generated-sources\wsimport\warehouseclient\ObjectFactory.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\target\generated-sources\wsimport\warehouseclient\GetInventoryResponse.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\src\main\java\module-info.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\target\generated-sources\wsimport\warehouseclient\PickItemResponse.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\src\main\java\dk\sdu\Warehouse\Service\SoapWarehouseService.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\target\generated-sources\wsimport\warehouseclient\IEmulatorService_Service.java
+C:\Users\Mathias\IdeaProjects\ST4-semprojekt-gr66\Warehouse\target\generated-sources\wsimport\warehouseclient\GetInventory.java

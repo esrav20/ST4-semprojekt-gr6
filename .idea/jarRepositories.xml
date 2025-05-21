@@ -37,14 +37,14 @@
       <option name="url" value="https://maven.oracle.com" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="junit-platform" />
-      <option name="name" value="junit-platform" />
-      <option name="url" value="https://mvnrepository.com/artifact/org.junit.platform/" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="glassfish-repo" />
       <option name="name" value="glassfish-repo" />
       <option name="url" value="https://repo.maven.apache.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="junit-platform" />
+      <option name="name" value="junit-platform" />
+      <option name="url" value="https://mvnrepository.com/artifact/org.junit.platform/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />
