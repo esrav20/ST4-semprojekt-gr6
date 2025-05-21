@@ -4,7 +4,8 @@ import com.example.guidemo_4semester.Queue.Batch;
 import dk.sdu.Common.IMqttService;
 import dk.sdu.CommonAGV.AGVPI;
 import dk.sdu.CommonInventory.InventoryView;
-import dk.sdu.CommonInventory.WarehousePI;
+import dk.sdu.CommonInventory.SoapWarehouseService;
+import dk.sdu.Warehouse.Service.SoapSoapWarehouseService;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -31,7 +32,6 @@ import javafx.util.converter.IntegerStringConverter;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.example.guidemo_4semester.AddItemController;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -42,7 +42,7 @@ public class TabViewController {
 
     private final AGVPI agv;
     private final IMqttService iMqttService;
-    private final WarehousePI warehouseClient;
+    private final SoapWarehouseService warehouseService;
 
 
     String[] productList = {"Toy Cars1", "Toy Cars2"};
@@ -135,10 +135,11 @@ public class TabViewController {
 
     // vi skal ikke have en setDepencies metode - da Spring ikke kan starte programmet uden Constructor-based DI.
     @Autowired
-    public TabViewController(WarehousePI warehouseClient, AGVPI agv, IMqttService iMqttService) throws MqttException {
-        this.warehouseClient = warehouseClient;
+    public TabViewController(SoapWarehouseService warehouseService, AGVPI agv, IMqttService iMqttService) throws MqttException {
+        this.warehouseService = warehouseService;
         this.agv = agv;
         this.iMqttService = iMqttService;
+
     }
 
 
@@ -152,7 +153,7 @@ public class TabViewController {
     private boolean checkStock(int quantity) {
 
 
-        inventoryData.setAll(warehouseClient.getInventory());
+        inventoryData.setAll(warehouseService.getInventory());
         int wheelCount = 0;
         int chassisCount=0;
 
@@ -184,7 +185,7 @@ public class TabViewController {
     }
 
     private void updateDatabaseConnectionStatus() {
-        boolean isConnected = warehouseClient.isConnected(); // Assuming this method exists
+        boolean isConnected = warehouseService.isConnected(); // Assuming this method exists
         Platform.runLater(() -> {
             if (isConnected) {
                 databaseConnectionCircle.setFill(Color.valueOf("#1fff25"));
@@ -197,7 +198,7 @@ public class TabViewController {
 
 
     private void updateWarehouseState() {
-        int state = warehouseClient.getWarehouseState();
+        int state = warehouseService.getWarehouseState();
 
         Platform.runLater(() -> {
             switch (state) {
@@ -236,7 +237,7 @@ public class TabViewController {
     private void loadInventory() {
         try {
             inventoryData.clear();
-            inventoryData.addAll(warehouseClient.getInventory());
+            inventoryData.addAll(warehouseService.getInventory());
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Jeg kan love dig for load Inventory fejler du");
@@ -427,14 +428,14 @@ public class TabViewController {
                             System.out.println("TRAYID FANDT VI IKKE NEJ");
                         }
                         for(int i = 0; i < 4; i++){
-                            warehouseClient.pickItem(wheelTrayId);
+                            warehouseService.pickItem(wheelTrayId);
                         }
-                        warehouseClient.pickItem(chassisTrayId);
+                        warehouseService.pickItem(chassisTrayId);
                         if (emergencyActive) {
                             break;
                         }
 
-                        if (warehouseClient.getWarehouseState() == 0) {
+                        if (warehouseService.getWarehouseState() == 0) {
 
                             agv.needsCharging();
                             agv.sendRequest("{\"Program name\":\"MoveToStorageOperation\",\"State\":1}");
@@ -443,7 +444,7 @@ public class TabViewController {
                                 break;
                             }
                         }
-                        if (warehouseClient.getWarehouseState() == 0 && agv.getCurrentstate() == 1) {
+                        if (warehouseService.getWarehouseState() == 0 && agv.getCurrentstate() == 1) {
                             agv.needsCharging();
                             agv.sendRequest("{\"Program name\":\"PickWarehouseOperation\",\"State\":1}");
                             agv.sendRequest("{\"State\":2}");
@@ -502,13 +503,13 @@ public class TabViewController {
                             }
                         }
 
-                        if (agv.getCurrentstate() == 1 && warehouseClient.getWarehouseState() == 0) {
+                        if (agv.getCurrentstate() == 1 && warehouseService.getWarehouseState() == 0) {
                             agv.needsCharging();
                             agv.sendRequest("{\"Program name\":\"PutWarehouseOperation\",\"State\":1}");
                             agv.sendRequest("{\"State\":2}");
                             agv.putItem("");
 
-                            Optional<InventoryView> existingItemOpt = warehouseClient.getInventory().stream()
+                            Optional<InventoryView> existingItemOpt = warehouseService.getInventory().stream()
                                     .filter(item -> "Car".equals(item.getItemName()))
                                     .findFirst();
 
@@ -516,18 +517,18 @@ public class TabViewController {
                                 // Item exists - increase quantity
                                 InventoryView existingItem = existingItemOpt.get();
                                 int newQuantity = existingItem.getQuantity() + 1; // increase by 1 or your desired amount
-                                warehouseClient.updateItem(existingItem.getId(),existingItem.getItemName(), newQuantity);
+                                warehouseService.updateItem(existingItem.getId(),existingItem.getItemName(), newQuantity);
                             } else {
                                 // Item does not exist - insert new item with new IDs
-                                int nextTrayId = warehouseClient.getInventory().stream()
+                                int nextTrayId = warehouseService.getInventory().stream()
                                         .mapToInt(InventoryView::getTrayId)
                                         .max()
                                         .orElse(0) + 1;
-                                long nextId = warehouseClient.getInventory().stream()
+                                long nextId = warehouseService.getInventory().stream()
                                         .mapToLong(InventoryView::getId)
                                         .max()
                                         .orElse(0) + 1;
-                                warehouseClient.insertItem(nextTrayId, nextId, "Car", 1);
+                                warehouseService.insertItem(nextTrayId, nextId, "Car", 1);
                             }
 
                             if (emergencyActive) {
@@ -629,7 +630,7 @@ public class TabViewController {
                 try {
                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/addItem.fxml"));
 
-                    AddItemController controller = new AddItemController(warehouseClient);
+                    AddItemController controller = new AddItemController(warehouseService);
                     controller.setOnSubmitSuccess(this::loadInventory);
                     fxmlLoader.setController(controller);
 
@@ -651,7 +652,7 @@ public class TabViewController {
                 try {
                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/removeItem.fxml"));
 
-                    RemoveItemController controller = new RemoveItemController(warehouseClient, selected);
+                    RemoveItemController controller = new RemoveItemController(warehouseService, selected);
                     controller.setOnRemoveSuccess(this::loadInventory);
                     fxmlLoader.setController(controller);
 
@@ -685,7 +686,7 @@ public class TabViewController {
                 try {
                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/Editbutton.fxml"));
 
-                    EditItemController controller = new EditItemController(warehouseClient, selected);
+                    EditItemController controller = new EditItemController(warehouseService, selected);
                     controller.setOnEditSuccess(this::loadInventory);
                     fxmlLoader.setController(controller);
 

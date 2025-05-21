@@ -2,7 +2,7 @@ package dk.sdu.CommonInventory;
 
 import java.util.List;
 
-public interface WarehousePI {
+public interface SoapWarehouseService {
 
     String insertItem(int trayId, long id, String itemName, int quantity);
     String pickItem(int trayId);

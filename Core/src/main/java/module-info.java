@@ -22,6 +22,7 @@ module Core {
     requires CommonAssemblyStation;
     requires java.desktop;
     requires org.hibernate.orm.core;
+    requires Warehouse;
     opens com.example.guidemo_4semester.Queue to javafx.base;
     opens com.example.guidemo_4semester to javafx.fxml, spring.core, spring.beans, spring.context;
     //opens views to javafx.fxml, spring.core, spring.beans, spring.context;

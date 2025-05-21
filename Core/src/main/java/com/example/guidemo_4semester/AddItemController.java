@@ -1,22 +1,20 @@
 package com.example.guidemo_4semester;
 
-import dk.sdu.CommonAGV.AGVPI;
 import dk.sdu.CommonInventory.InventoryView;
-import dk.sdu.CommonInventory.WarehousePI;
-import javafx.fxml.FXML;
+import dk.sdu.CommonInventory.SoapWarehouseService;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class AddItemController {
-    private final WarehousePI warehouseClient;
+    private final SoapWarehouseService warehouseClient;
     private Runnable onSubmitSuccess;
 
     public void setOnSubmitSuccess(Runnable onSubmitSuccess) {
         this.onSubmitSuccess = onSubmitSuccess;
     }
 
-    public AddItemController(WarehousePI warehouseClient) {
+    public AddItemController(SoapWarehouseService warehouseClient) {
         this.warehouseClient = warehouseClient;
     }
 

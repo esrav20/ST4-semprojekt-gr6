@@ -1,7 +1,6 @@
 package dk.sdu.Warehouse.Service;
 
 import dk.sdu.CommonInventory.InventoryView;
-import dk.sdu.Warehouse.InventoryItems;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,9 +10,9 @@ import java.util.List;
 @RequestMapping("/warehouse")
 public class warehouseServiceController {
 
-    private SoapWarehouseService soapWarehouseService;
+    private SoapSoapWarehouseService soapWarehouseService;
 
-    public warehouseServiceController(SoapWarehouseService soapWarehouseService) {
+    public warehouseServiceController(SoapSoapWarehouseService soapWarehouseService) {
         this.soapWarehouseService = soapWarehouseService;
     }
 

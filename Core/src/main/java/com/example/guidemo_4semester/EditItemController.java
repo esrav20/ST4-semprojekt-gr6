@@ -1,13 +1,13 @@
 package com.example.guidemo_4semester;
 
 import dk.sdu.CommonInventory.InventoryView;
-import dk.sdu.CommonInventory.WarehousePI;
+import dk.sdu.CommonInventory.SoapWarehouseService;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class EditItemController {
-    WarehousePI warehouse;
+    SoapWarehouseService warehouse;
     private InventoryView selectedItem;
     private Runnable onEditSuccess;
 
@@ -15,7 +15,7 @@ public class EditItemController {
     @FXML private TextField Item;
 
 
-    public EditItemController(WarehousePI warehouse, InventoryView selectedItem) {
+    public EditItemController(SoapWarehouseService warehouse, InventoryView selectedItem) {
         this.warehouse = warehouse;
         this.selectedItem = selectedItem;
     }

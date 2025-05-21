@@ -1,7 +1,6 @@
 package dk.sdu.Warehouse.Service;
 
 import dk.sdu.CommonInventory.InventoryView;
-import dk.sdu.CommonInventory.WarehousePI;
 import dk.sdu.Warehouse.InventoryItems;
 import dk.sdu.Warehouse.InventoryRepos;
 import org.springframework.context.annotation.Lazy;
@@ -14,13 +13,13 @@ import java.util.Optional;
 //@ConfigurationProperties("service")
 //connector vores repository til resten af applikationen
 @Service
-public class SoapWarehouseService implements WarehousePI {
+public class SoapSoapWarehouseService implements dk.sdu.CommonInventory.SoapWarehouseService {
     private final InventoryRepos inventoryRepos;
     private volatile int currentState = 0;
 
     //private final IEmulatorService servicePort;
     @Autowired
-    public SoapWarehouseService(@Lazy InventoryRepos inventoryRepos) {
+    public SoapSoapWarehouseService(@Lazy InventoryRepos inventoryRepos) {
         this.inventoryRepos = inventoryRepos;
     }
 

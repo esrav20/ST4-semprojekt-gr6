@@ -1,17 +1,15 @@
 package com.example.guidemo_4semester;
-import com.example.guidemo_4semester.TabViewController;
 import dk.sdu.CommonInventory.InventoryView;
-import dk.sdu.CommonInventory.WarehousePI;
+import dk.sdu.CommonInventory.SoapWarehouseService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 
 public class RemoveItemController {
-    WarehousePI warehouseClient;
+    SoapWarehouseService warehouseClient;
     private Runnable onRemoveSuccess;
     private InventoryView selectedItem;
     @FXML
@@ -20,7 +18,7 @@ public class RemoveItemController {
     Button yesButton;
     @FXML
     Button removeCancelButton;
-    public RemoveItemController(WarehousePI warehouseClient, InventoryView selectedItem) {
+    public RemoveItemController(SoapWarehouseService warehouseClient, InventoryView selectedItem) {
         this.warehouseClient = warehouseClient;
         this.selectedItem = selectedItem;
     }

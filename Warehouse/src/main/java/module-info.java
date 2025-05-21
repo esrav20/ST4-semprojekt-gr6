@@ -1,4 +1,5 @@
 module Warehouse {
+    exports dk.sdu.Warehouse.Service;
     requires jakarta.persistence;
     requires spring.context;
     requires spring.data.jpa;
