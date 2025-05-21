@@ -13,10 +13,6 @@ public class warehouseServiceController {
 
     private SoapWarehouseService soapWarehouseService;
 
-   public void WarehouseController(SoapWarehouseService soapWarehouseService) {
-        this.soapWarehouseService = soapWarehouseService;
-    }
-
     public warehouseServiceController(SoapWarehouseService soapWarehouseService) {
         this.soapWarehouseService = soapWarehouseService;
     }
