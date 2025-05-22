@@ -1,0 +1,16 @@
+warehouseclient\InsertItemResponse.class
+dk\sdu\Warehouse\Config\SoapClientConfig.class
+warehouseclient\GetInventoryResponse.class
+dk\sdu\Warehouse\Service\WarehouseService.class
+warehouseclient\PickItemResponse.class
+dk\sdu\Warehouse\Service\warehouseServiceController.class
+warehouseclient\IEmulatorService.class
+dk\sdu\Warehouse\InventoryItems.class
+warehouseclient\IEmulatorService_Service.class
+warehouseclient\ObjectFactory.class
+module-info.class
+warehouseclient\InsertItem.class
+warehouseclient\GetInventory.class
+warehouseclient\package-info.class
+warehouseclient\PickItem.class
+dk\sdu\Warehouse\InventoryRepos.class
