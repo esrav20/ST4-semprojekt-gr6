@@ -16,7 +16,7 @@ module Core {
     requires spring.tx;
     requires spring.core;
     requires java.sql;
-
+    requires Warehouse;
     requires CommonWarehouse;
     requires CommonAGV;
     requires CommonAssemblyStation;

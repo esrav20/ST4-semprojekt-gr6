@@ -40,8 +40,8 @@
                 <version>3.10.1</version>
                 <configuration>
                     <fork>true</fork>
-                    <source>17</source> <!-- Replace with your Java version -->
-                    <target>17</target> <!-- Replace with your Java version -->
+                    <source>1.8</source> <!-- Replace with your Java version -->
+                    <target>1.8</target> <!-- Replace with your Java version -->
                 </configuration>
             </plugin>
             <plugin>

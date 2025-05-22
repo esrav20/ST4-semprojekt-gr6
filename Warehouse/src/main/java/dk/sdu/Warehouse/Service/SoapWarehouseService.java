@@ -1,112 +1,116 @@
 package dk.sdu.Warehouse.Service;
 
+import com.example.generated.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.sdu.CommonInventory.InventoryView;
 import dk.sdu.CommonInventory.WarehousePI;
-import dk.sdu.Warehouse.InventoryItems;
-import dk.sdu.Warehouse.InventoryRepos;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-//@ConfigurationProperties("service")
-//connector vores repository til resten af applikationen
 @Service
 public class SoapWarehouseService implements WarehousePI {
-    private final InventoryRepos inventoryRepos;
-    private volatile int currentState = 0;
 
-    //private final IEmulatorService servicePort;
-    @Autowired
-    public SoapWarehouseService(@Lazy InventoryRepos inventoryRepos) {
-        this.inventoryRepos = inventoryRepos;
+    private final IEmulatorService port;
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    public SoapWarehouseService() {
+        IEmulatorService_Service svc = new IEmulatorService_Service();
+        // choose the BasicHttpBinding endpoint
+        this.port = svc.getBasicHttpBindingIEmulatorService();
     }
 
-
-    //returnere inventory
     @Override
     public List<InventoryView> getInventory() {
-        return inventoryRepos.findAllBy();
+        // SOAP call returns a JSON string
+        String json = port.getInventory();
+        try {
+            JsonNode root = mapper.readTree(json);
+            JsonNode inv = root.get("Inventory");
+            List<InventoryView> list = new ArrayList<>();
+            if (inv.isArray()) {
+                for (JsonNode trayMap : inv) {
+                    // each trayMap is an object: keys are trayIds, values are names
+                    trayMap.fieldNames().forEachRemaining(k -> {
+                        JsonNode nameNode = trayMap.get(k);
+                        int trayId = Integer.parseInt(k);
+                        String itemName = nameNode.isNull() ? "" : nameNode.asText();
+                        // no quantity field in JSON, default to 1
+                        list.add(new SimpleInventoryView(null, trayId, itemName, 1));
+                    });
+                }
+            }
+            return list;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to parse inventory JSON", e);
+        }
     }
+
+    @Override
+    public String insertItem(int trayId, long id, String itemName, int quantity) {
+        // SOAP only takes trayId + name
+        return port.insertItem(trayId, itemName);
+    }
+
+    @Override
+    public String pickItem(int trayId) {
+        return port.pickItem(trayId);
+    }
+
+    @Override
+    public String deleteitems(Long id) {
+        // not supported by SOAP emulator
+        throw new UnsupportedOperationException("deleteitems not implemented in SOAP warehouse");
+    }
+
+    @Override
+    public void updateItem(long id, String itemName, int quantity) {
+        // not supported by SOAP emulator
+        throw new UnsupportedOperationException("updateItem not implemented in SOAP warehouse");
+    }
+
     @Override
     public boolean isConnected() {
         try {
-            return inventoryRepos.count() >= 0;
+            port.getInventory();
+            return true;
         } catch (Exception e) {
-            // If any exception occurs, return false (disconnected)
-            e.printStackTrace();
             return false;
         }
     }
 
     @Override
     public int getWarehouseState() {
-        return currentState;
-    }
-
-
-
-    //Handler at kunne indsætte items på trays
-    @Override
-    public String insertItem(int trayId, long id, String itemName,int quantity) {
-        Optional<InventoryItems> existingitem = inventoryRepos.findById(id);
-
-        if (existingitem.isPresent()) {
-            InventoryItems item = existingitem.get();
-            item.setQuantity(item.getQuantity() + quantity); // <- den her er vigtig!
-            inventoryRepos.save(item);
-            return "Updated quantity on existing item (ID " + id + ")";
-
-        } else {
-            InventoryItems newItem = new InventoryItems();
-            newItem.setId(id); // Bemærk: kræver du selv holder styr på unikke IDs!
-            newItem.setTrayId(trayId);
-            newItem.setItemName(itemName);
-            newItem.setQuantity(quantity);
-            inventoryRepos.save(newItem);
-            return "Inserted new item (ID " + id + ")";
+        // parse the "State" field out of the same JSON
+        String json = port.getInventory();
+        try {
+            JsonNode root = mapper.readTree(json);
+            return root.path("State").asInt(0);
+        } catch (IOException e) {
+            return 0;
         }
     }
 
-    //Kan finde/fjerne inventory i bestemt tray
-    @Override
-    public String pickItem(int trayId) {
-        // fetch entity, not projection
-        InventoryItems item = inventoryRepos.findByTrayId(trayId)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
+    // Simple InventoryView implementation
+    private static class SimpleInventoryView implements InventoryView {
+        private final Long id;
+        private final int trayId;
+        private final String itemName;
+        private final int quantity;
 
-        item.setQuantity(item.getQuantity() - 1);
-        if (item.getQuantity() <= 0) {
-            inventoryRepos.delete(item);
-            return "Item picked and tray now empty";
-        } else {
-            inventoryRepos.save(item);
-            return "Item picked, remaining quantity: " + item.getQuantity();
-
+        SimpleInventoryView(Long id, int trayId, String itemName, int quantity) {
+            this.id = id;
+            this.trayId = trayId;
+            this.itemName = itemName;
+            this.quantity = quantity;
         }
+
+        @Override public Long getId()           { return id; }
+        @Override public int getTrayId()        { return trayId; }
+        @Override public String getItemName()   { return itemName; }
+        @Override public int getQuantity()      { return quantity; }
     }
-
-
-    @Override
-    public String deleteitems(Long id) {
-        InventoryItems item = inventoryRepos.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
-        inventoryRepos.delete(item);
-        return "Item deleted";
-    }
-
-    @Override
-    public void updateItem(long id, String itemName, int quantity) {
-        Optional<InventoryItems> itemOpt = inventoryRepos.findById(id);
-        if (itemOpt.isPresent()) {
-            InventoryItems item = itemOpt.get();
-            item.setId(id);
-            item.setItemName(itemName);
-            item.setQuantity(quantity);
-            inventoryRepos.save(item);
-        }
-    }
-
 }
