@@ -6,6 +6,8 @@ import dk.sdu.Warehouse.InventoryRepos;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import warehouseclient.IEmulatorService;
+import warehouseclient.IEmulatorService_Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,12 +19,15 @@ public class SoapSoapWarehouseService implements dk.sdu.CommonInventory.SoapWare
     private final InventoryRepos inventoryRepos;
     private volatile int currentState = 0;
 
-    //private final IEmulatorService servicePort;
-    @Autowired
-    public SoapSoapWarehouseService(@Lazy InventoryRepos inventoryRepos) {
-        this.inventoryRepos = inventoryRepos;
-    }
+    private final IEmulatorService servicePort;
+    private final IEmulatorService_Service service;
 
+    @Autowired
+    public SoapSoapWarehouseService(@Lazy InventoryRepos inventoryRepos, IEmulatorService servicePort, IEmulatorService_Service service) {
+        this.inventoryRepos = inventoryRepos;
+        this.servicePort = servicePort;
+        this.service = service;
+    }
 
     //returnere inventory
     @Override
