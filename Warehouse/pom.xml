@@ -17,6 +17,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>LATEST</version>
         </dependency>
 
         <!-- Shared module -->
@@ -60,6 +61,18 @@
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>rt</artifactId>
             <version>2.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>6.2.6</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>3.4.5</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
