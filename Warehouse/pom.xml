@@ -4,79 +4,67 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>dk.sdu</groupId>
-        <artifactId>Semesterproject</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-
+    <groupId>dk.sdu</groupId>
     <artifactId>Warehouse</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
     <properties>
-<!--        <maven.compiler.source>17</maven.compiler.source>-->
-<!--        <maven.compiler.target>17</maven.compiler.target>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
-        <!-- Spring and JPA -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-        </dependency>
+        <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
-        </dependency>
 
-        <!-- Your shared module -->
+        <!-- Shared module -->
         <dependency>
             <groupId>dk.sdu</groupId>
             <artifactId>CommonWarehouse</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <!-- Jakarta JAXB API and Runtime -->
-        <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>4.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>4.0.4</version>
-        </dependency>
-
-        <!-- Jakarta JAX-WS API and Runtime -->
-        <dependency>
-            <groupId>jakarta.xml.ws</groupId>
-            <artifactId>jakarta.xml.ws-api</artifactId>
-            <version>4.0.1</version>
-        </dependency>
-
-        <!-- Jakarta JWS Annotations (replaces javax.jws) -->
-
-
-        <!-- JSON support -->
+        <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.15.2</version>
         </dependency>
+
+        <!-- JAXB for Java 8 -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>2.3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+
+        <!-- JAX-WS for SOAP -->
+        <dependency>
+            <groupId>javax.xml.ws</groupId>
+            <artifactId>jaxws-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>rt</artifactId>
+            <version>2.3.3</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- WSDL -> Java generation -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxws-maven-plugin</artifactId>
@@ -86,31 +74,23 @@
                         <goals>
                             <goal>wsimport</goal>
                         </goals>
+                        <phase>generate-sources</phase>
                         <configuration>
                             <wsdlUrls>
                                 <wsdlUrl>http://localhost:8081/Service.asmx?WSDL</wsdlUrl>
                             </wsdlUrls>
                             <packageName>com.example.generated</packageName>
-                            <xnocompile>true</xnocompile> <!-- Let Maven compile it properly -->
+                            <xnocompile>true</xnocompile>
                             <args>
                                 <arg>-B-XautoNameResolution</arg>
                                 <arg>-extension</arg>
                                 <arg>-verbose</arg>
-                                <arg>-target</arg><arg>3.0</arg> <!-- JAKARTA MODE -->
+                                <arg>-target</arg><arg>2.2</arg>
                             </args>
                         </configuration>
-
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- Enable Spring Boot if needed -->
-            <!--
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            -->
         </plugins>
     </build>
 </project>

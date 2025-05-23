@@ -32,7 +32,7 @@
       <module name="CommonWarehouse" options="-parameters" />
       <module name="Core" options="-parameters" />
       <module name="Semesterproject" options="-parameters" />
-      <module name="Warehouse" options="-parameters" />
+      <module name="Warehouse" options="" />
       <module name="warehouse-spring-soap" options="-parameters" />
       <module name="warehouse-spring-soap (1)" options="-parameters" />
       <module name="warehouse-spring-soap (2)" options="-parameters" />
