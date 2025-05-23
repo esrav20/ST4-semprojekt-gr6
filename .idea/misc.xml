@@ -8,6 +8,7 @@
         <option value="$PROJECT_DIR$/Core/pom.xml" />
         <option value="$PROJECT_DIR$/Warehouse/pom.xml" />
         <option value="$PROJECT_DIR$/Warehouse/src/main/java/pom.xml" />
+        <option value="$PROJECT_DIR$/CommonAGV/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

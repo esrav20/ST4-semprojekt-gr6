@@ -1,6 +1,7 @@
 package dk.sdu.Warehouse.Service;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import warehouseclient.*;
 
@@ -10,10 +11,10 @@ import java.net.URL;
 public class WarehouseService {
 
     private final IEmulatorService iEmulatorService;
-    public WarehouseService() throws Exception {
-        URL wsdlURL = new URL("http://localhost:8081/Service?wsdl");
-        IEmulatorService_Service service = new IEmulatorService_Service(wsdlURL);
-        this.iEmulatorService = service.getBasicHttpBindingIEmulatorService();
+
+    @Autowired
+    public WarehouseService(IEmulatorService iEmulatorService) {
+        this.iEmulatorService = iEmulatorService;
     }
 
     public String pickItem(int trayId) {

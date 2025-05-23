@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 //@SpringBootApplication(scanBasePackages = "dk.sdu.CommonInventory.dk.sdu.Warehouse.Service")
 @RestController
 @RequestMapping("/warehouse")
+
 public class warehouseServiceController {
 
     private WarehouseService warehouseService;
