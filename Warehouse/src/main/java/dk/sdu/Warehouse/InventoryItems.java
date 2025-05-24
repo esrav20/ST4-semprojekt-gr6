@@ -11,9 +11,11 @@ public class InventoryItems {
 
     private final SimpleIntegerProperty quantity;
 
+    //private final SimpleIntegerProperty trayId;
     public InventoryItems(String itemName, int quantity){
         this.itemName = new SimpleStringProperty(itemName);
         this.quantity = new SimpleIntegerProperty(quantity);
+        //this.trayId = new SimpleIntegerProperty(trayId);
     }
 
 
@@ -25,4 +27,7 @@ public class InventoryItems {
         return quantity.get();
     }
 
+//    public int getTrayId() {
+//        return trayId.get();
+//    }
 }

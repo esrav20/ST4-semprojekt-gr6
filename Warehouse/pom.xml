@@ -91,6 +91,12 @@
             <artifactId>spring-beans</artifactId>
             <version>6.2.6</version>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>21-ea+24</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- <dependency>
              <groupId>org.springframework.ws</groupId>

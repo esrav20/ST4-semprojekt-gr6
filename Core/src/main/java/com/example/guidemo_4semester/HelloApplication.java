@@ -1,14 +1,12 @@
 package com.example.guidemo_4semester;
 
+
 import javafx.application.*;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import java.io.IOException;
 
 
 //@SpringBootApplication

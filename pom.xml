@@ -18,7 +18,7 @@
         <version>3.2.5</version>
         <relativePath/> <!-- Use the Spring Boot parent POM -->
     </parent>
-    <dependencyManagement>
+<dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -27,8 +27,9 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
         </dependencies>
-    </dependencyManagement>
+</dependencyManagement>
     <build>
         <plugins>
             <plugin>
