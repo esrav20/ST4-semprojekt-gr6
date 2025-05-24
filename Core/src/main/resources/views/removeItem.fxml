@@ -4,9 +4,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="94.0" prefWidth="352.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="94.0" prefWidth="352.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.guidemo_4semester.RemoveItemController">
    <children>
-      <Text layoutX="10.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Are you sure you want to remove this item from the inventory?" />
+      <Text fx:id="confirmationText" layoutX="10.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Are you sure you want to remove this item from the inventory?" />
       <Button fx:id="yesButton" layoutX="14.0" layoutY="50.0" prefHeight="30.0" prefWidth="50.0" styleClass="addButton" text="Yes" wrapText="true" onAction="#HandleRemove"/>
       <Button fx:id="removeCancelButton" layoutX="258.0" layoutY="50.0" prefHeight="30.0" prefWidth="50.0" styleClass="removeButton" text="Cancel" wrapText="true" onAction="#handleCancel"/>
    </children>

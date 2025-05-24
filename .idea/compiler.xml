@@ -7,10 +7,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="AGV" />
+        <module name="CommonAssemblyStation" />
         <module name="Warehouse" />
         <module name="AssemblyStation" />
         <module name="CommonAGV" />
-        <module name="CommonAssemblyStation" />
         <module name="Core" />
       </profile>
     </annotationProcessing>

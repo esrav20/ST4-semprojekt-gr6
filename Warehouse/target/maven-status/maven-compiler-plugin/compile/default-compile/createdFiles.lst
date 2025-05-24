@@ -7,7 +7,6 @@ warehouseclient\IEmulatorService.class
 dk\sdu\Warehouse\InventoryItems.class
 warehouseclient\IEmulatorService_Service.class
 warehouseclient\ObjectFactory.class
-module-info.class
 warehouseclient\InsertItem.class
 warehouseclient\GetInventory.class
 warehouseclient\package-info.class

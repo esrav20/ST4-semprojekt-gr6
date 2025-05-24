@@ -4,5 +4,5 @@ public interface InventoryView {
 
     int getTrayId();
     String getItemName();
-
+    int getQuantity();
 }

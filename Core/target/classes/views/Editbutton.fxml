@@ -3,11 +3,22 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml"  spacing="10" alignment="CENTER" prefWidth="300" prefHeight="200">
+<VBox xmlns:fx="http://javafx.com/fxml"  spacing="10" alignment="CENTER" prefWidth="300" prefHeight="200" fx:controller="com.example.guidemo_4semester.EditItemController">
     <children>
-        <Label text="Rediger Item"/>
-        <TextField fx:id="Item" promptText="Item Navn"/>
-        <TextField fx:id="Amount" promptText="Mængde"/>
-        <Button text="Gem" onAction="#editItem"/>
+    <Label text="Edit Item Quantity" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+
+    <HBox alignment="CENTER_LEFT" spacing="10.0">
+        <Label text="Item Name:" />
+        <TextField fx:id="Item" editable="true" prefWidth="150" />
+    </HBox>
+
+    <HBox alignment="CENTER_LEFT" spacing="10.0">
+        <Label text="New Quantity:" />
+        <TextField fx:id="Amount" prefWidth="150" promptText="Enter new quantity" />
+    </HBox>
+
+    <HBox alignment="CENTER" spacing="10.0">
+        <Button text="Submit" onAction="#editItem" />
+    </HBox>
     </children>
 </VBox>

@@ -17,6 +17,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.ComboBoxTableCell;
@@ -26,11 +27,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.converter.IntegerStringConverter;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -53,21 +56,19 @@ public class TabViewController {
 
     //Warehouse/Inventory:
     @FXML
-    private TableView<InventoryView> inventoryTable;
+    private TableView<InventoryItems> inventoryTable;
     @FXML
-    private TableColumn<InventoryView, Long> IDColumn;
+    private TableColumn<InventoryItems, Long> IDColumn;
     @FXML
-    private TableColumn<InventoryView, String> itemColumn;
+    private TableColumn<InventoryItems, String> itemColumn;
     @FXML
-    private TableColumn<InventoryView, Integer> availableColumn;
-//    @FXML
-//    private TableColumn<InventoryView, Integer> inStockColumn;
-//
-@FXML
-    private ChoiceBox<String> warehouseDropdown;
-private ObservableList<InventoryItems> inventoryData = FXCollections.observableArrayList();
+    private TableColumn<InventoryItems, Integer> availableColumn;
 
-@FXML
+    @FXML
+    private ChoiceBox<String> warehouseDropdown;
+    private ObservableList<InventoryItems> inventoryData = FXCollections.observableArrayList();
+
+    @FXML
     private Label agvStatusLabel;
     @FXML
     private Circle agvStatusCircle;
@@ -147,45 +148,60 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
     }
 
 
-        private int wheelTrayId;
-        private int chassisTrayId;
+    private int wheelTrayId = -1;
+    private int chassisTrayId = -1;
 
+    @FXML
+    private void checkStock() {
+        String itemName = itemColumn.getText().trim();
 
-
-
-
-    private boolean checkStock(int quantity) {
-        int wheelCount = 0;
-        int chassisCount = 0;
-        int tempWheelTrayId = -1;
-        int tempChassisTrayId = -1;
-
-        try {
-            String json = serviceSoap.getInventory();
-            JSONObject obj = new JSONObject(json);
-            JSONObject inventoryObj = obj.getJSONArray("Inventory").getJSONObject(0);
-
-            for (String key : inventoryObj.keySet()) {
-                String name = inventoryObj.getString(key).toLowerCase();
-
-                switch (name) {
-                    case "wheel" -> {
-                        wheelCount++;
-                        tempWheelTrayId = Integer.parseInt(key); // last seen trayId with wheel
-                    }
-                    case "chassis" -> {
-                        chassisCount++;
-                        tempChassisTrayId = Integer.parseInt(key); // last seen trayId with chassis
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+        if (itemName.isBlank()) {
+            showAlert(Alert.AlertType.ERROR, "Input Error", "Item Name cannot be empty.");
+            return;
         }
 
-        wheelTrayId = tempWheelTrayId;
-        chassisTrayId = tempChassisTrayId;
+        int requestedQuantity = 0; // Default to 0 if not found
+        boolean itemFoundInTable = false;
+        for (InventoryItems item : inventoryData) {
+            if (item.getItemName().equalsIgnoreCase(itemName)) {
+                requestedQuantity = item.getQuantity();
+                itemFoundInTable = true;
+                break;
+            }
+        }
+
+        if (!itemFoundInTable) {
+            showAlert(Alert.AlertType.ERROR, "Item Not Found", "Item '" + itemName + "' is not currently displayed in the inventory table.");
+            return;
+        }
+
+        // Call the modified private checkStock method
+        if (checkStock(requestedQuantity)) {
+            showAlert(Alert.AlertType.INFORMATION, "Stock Check Result", "Enough components for " + requestedQuantity + " of '" + itemName + "'.");
+        } else {
+            showAlert(Alert.AlertType.WARNING, "Stock Check Result", "Not enough components for " + requestedQuantity + " of '" + itemName + "'. Check console for details.");
+        }
+    }
+
+    private boolean checkStock(int quantity) {
+        // These counts will now come directly from the tableView's displayed data (inventoryData)
+        int wheelCount = 0;
+        int chassisCount = 0;
+
+        // Iterate through the currently displayed inventory data to get counts
+        for (InventoryItems item : inventoryData) {
+            if (item.getItemName().equalsIgnoreCase("wheel")) {
+                wheelCount = item.getQuantity(); // Get the quantity directly from the displayed data
+            } else if (item.getItemName().equalsIgnoreCase("chassis")) {
+                chassisCount = item.getQuantity(); // Get the quantity directly from the displayed data
+            }
+        }
+
+        int tempWheelTrayId = -1; // This won't be dynamically determined from UI data
+        int tempChassisTrayId = -1; // This won't be dynamically determined from UI data
+        wheelTrayId = tempWheelTrayId; // Retaining variable names as requested
+        chassisTrayId = tempChassisTrayId; // Retaining variable names as requested
+
 
         int requiredWheels = quantity * 4;
         int requiredChassis = quantity;
@@ -211,8 +227,13 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
     }
 
     private int parseStateFromInventoryResponse(String response) {
-        JSONObject json = new JSONObject(response);
-        return json.getInt("State");
+        try {
+            JSONObject json = new JSONObject(response);
+            return json.getInt("State");
+        } catch (JSONException e) {
+            System.err.println("Error parsing state from inventory JSON: " + e.getMessage());
+            return -1; // Indicate error
+        }
     }
 
     private void updateWarehouseState() {
@@ -240,24 +261,37 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
             }
         });
     }
+
     private ObservableList<InventoryItems> parseInventoryResponse(String response) {
-        ObservableList<InventoryItems> inventoryData = FXCollections.observableArrayList();
-        JSONObject json = new JSONObject(response);
-        JSONObject inventoryObj = json.getJSONArray("Inventory").getJSONObject(0);
+        ObservableList<InventoryItems> aggregatedInventory = FXCollections.observableArrayList();
+        try {
+            JSONObject json = new JSONObject(response);
+            JSONArray inventoryArray = json.getJSONArray("Inventory");
 
-        Map<String, Integer> itemCounts = new HashMap<>();
+            Map<String, Integer> itemQuantities = new HashMap<>();
 
-        for (String key : inventoryObj.keySet()) {
-            String itemName = String.valueOf(inventoryObj.get(key));
-            if(!itemName.isEmpty()){
-                itemCounts.put(itemName, itemCounts.getOrDefault(itemName, 0)+1);
+            for (int i = 0; i < inventoryArray.length(); i++) {
+                JSONObject itemObj = inventoryArray.getJSONObject(i);
+                String content = itemObj.getString("Content");
+
+                if (content != null && !content.isBlank() && !content.equalsIgnoreCase("null")) {
+                    itemQuantities.put(content, itemQuantities.getOrDefault(content, 0) + 1);
+                }
             }
+
+            for (Map.Entry<String, Integer> entry : itemQuantities.entrySet()) {
+                aggregatedInventory.add(new InventoryItems(entry.getKey(), entry.getValue()));
+            }
+
+        } catch (JSONException e) {
+            System.err.println("Error parsing inventory JSON: " + e.getMessage());
+            e.printStackTrace();
+
+            showAlert(Alert.AlertType.ERROR, "Parsing Error", "Failed to parse inventory data from backend.");
         }
-        for (Map.Entry<String,Integer> entry : itemCounts.entrySet()){
-            inventoryData.add(new InventoryItems(entry.getKey(), entry.getValue()));
-        }
-        return inventoryData;
+        return aggregatedInventory;
     }
+
 
     private void setupTable() {
         itemColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
@@ -270,21 +304,19 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
     }
 
     private void loadInventory() {
+        System.out.println("TabViewController: loadInventory() called. Requesting current inventory from backend.");
         try {
-            String response = serviceSoap.getInventory(); //hent json string
+            String response = serviceSoap.getInventory();
+            System.out.println("TabViewController: Raw response from serviceSoap.getInventory(): " + response);
             ObservableList<InventoryItems> parsedData = parseInventoryResponse(response);
-            inventoryData.clear();
-            inventoryData.addAll(parsedData);
-            ObservableList<InventoryView> viewData = FXCollections.observableArrayList();
-            for (InventoryItems item : inventoryData) {
-                viewData.add(new InventoryView(item.getItemName(), item.getQuantity()));
-            }
-
-            // Set the TableView items
-            inventoryTable.setItems(viewData);
+            System.out.println("TabViewController: Parsed data size for table: " + parsedData.size());
+            Platform.runLater(() -> {
+                inventoryData.setAll(parsedData); // Update the ObservableList
+                System.out.println("TabViewController: inventoryTable updated with new data.");
+            });
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Jeg kan love dig for load Inventory fejler du");
+            System.out.println("TabViewController: Failed to load inventory due to an exception.");
         }
     }
 
@@ -319,6 +351,7 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
 
     @FXML
     public void initialize() throws MqttException {
+        setupTable();
         queueView.setEditable(true);
         batchID.setCellValueFactory(new PropertyValueFactory<>("batchID"));
         productQueue.setCellValueFactory(new PropertyValueFactory<>("productName"));
@@ -386,10 +419,10 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
         startAGVUpdates();
         updateAGVDisplay();
         iMqttService.connect();
-        setupTable();
+        loadInventory();
         inventoryTable.setItems(inventoryData);
         setupWarehouseDropdown();
-        loadInventory();
+//        additem();
         emergencyStopButton.setOnMouseClicked(event -> {
             if (!emergencyActive) {
                 handleEmergencyStop();
@@ -446,7 +479,8 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
             }
         }).start();
     }
-//    int warehouseState = getWarehouseState();
+
+    //    int warehouseState = getWarehouseState();
     private int getWarehouseState() {
         try {
             String json = serviceSoap.getInventory();
@@ -467,7 +501,7 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
                 protected Void call() throws Exception {
                     while (queueValue > 0) {
 
-                        if(!iMqttService.isConnected()) {
+                        if (!iMqttService.isConnected()) {
                             iMqttService.connect();
                         }
 
@@ -479,10 +513,7 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
                         agv.needsCharging();
                         System.out.println(queueValue);
                         //Denne linje skal ændres!
-                        if(wheelTrayId == 0 || chassisTrayId == 0){
-                            System.out.println("TRAYID FANDT VI IKKE NEJ");
-                        }
-                        for(int i = 0; i < 4; i++){
+                        for (int i = 0; i < 4; i++) {
                             serviceSoap.pickItem(wheelTrayId);
                         }
                         serviceSoap.pickItem(chassisTrayId);
@@ -530,7 +561,7 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
 
                         if (agv.getCurrentstate() == 1 || iMqttService.getAssemblyCurrentstate() == 1) {
                             agv.needsCharging();
-                            iMqttService.publish("emulator/operation", "{\"ProcessID\": "+ processId +"}");
+                            iMqttService.publish("emulator/operation", "{\"ProcessID\": " + processId + "}");
                             while (iMqttService.getAssemblyCurrentstate() == 1) {
                                 iMqttService.wait();
                                 if (emergencyActive) {
@@ -563,28 +594,6 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
                             agv.sendRequest("{\"Program name\":\"PutWarehouseOperation\",\"State\":1}");
                             agv.sendRequest("{\"State\":2}");
                             agv.putItem("");
-
-//                            Optional<InventoryView> existingItemOpt = serviceSoap.getInventory().stream()
-//                                    .filter(item -> "Car".equals(item.getItemName()))
-//                                    .findFirst();
-//
-//                            if (existingItemOpt.isPresent()) {
-//                                // Item exists - increase quantity
-//                                InventoryView existingItem = existingItemOpt.get();
-//                                int newQuantity = existingItem.getQuantity() + 1; // increase by 1 or your desired amount
-//                                serviceSoap.updateItem(existingItem.getId(),existingItem.getItemName(), newQuantity);
-//                            } else {
-//                                // Item does not exist - insert new item with new IDs
-//                                int nextTrayId = serviceSoap.getInventory().stream()
-//                                        .mapToInt(InventoryView::getTrayId)
-//                                        .max()
-//                                        .orElse(0) + 1;
-//                                long nextId = serviceSoap.getInventory().stream()
-//                                        .mapToLong(InventoryView::getId)
-//                                        .max()
-//                                        .orElse(0) + 1;
-//                                serviceSoap.insertItem(nextTrayId, nextId, "Car", 1);
-//                            }
 
                             if (emergencyActive) {
                                 break;
@@ -619,141 +628,186 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
         }
     }
 
-        private void startAGVUpdates () {
-            updateTimer = new Timeline(
-                    new KeyFrame(Duration.seconds(0.5), e -> {
-                        updateAGVDisplay();
-                        updateAssemblyConnectionStatus();
-                        updateWarehouseState();
-                    })
-            );
-            updateTimer.setCycleCount(Animation.INDEFINITE);
-            updateTimer.play();
-        }
+    private void startAGVUpdates() {
+        updateTimer = new Timeline(
+                new KeyFrame(Duration.seconds(0.5), e -> {
+                    updateAGVDisplay();
+                    updateAssemblyConnectionStatus();
+                    updateWarehouseState();
+                })
+        );
+        updateTimer.setCycleCount(Animation.INDEFINITE);
+        updateTimer.play();
+    }
 
-        private void updateAssemblyConnectionStatus () {
-            boolean connected = iMqttService.isConnected();
-            Platform.runLater(() -> {
-                if (connected) {
-                    assemblyConnectionCircle.setFill(Color.valueOf("#1fff25"));
-                } else {
-                    assemblyConnectionCircle.setFill(Color.RED);
-                    assemblyStatusCircle.setFill(Color.RED);
-                    assemblyStatusLabel.textProperty().unbind();
-                    assemblyStatusLabel.setText("Error");
-                }
-            });
-        }
-
-        private void updateAGVDisplay () {
-            String statusText;
-            String circleColor;
-            switch (agv.getCurrentstate()) {
-                case 1 -> {
-                    statusText = "Idle";
-                    circleColor = "DODGERBLUE";
-                }
-                case 2 -> {
-                    statusText = "Working";
-                    circleColor = "#1fff25";
-                }
-                case 3 -> {
-                    statusText = "Charging";
-                    circleColor = "ORANGE";
-                }
-                default -> {
-                    statusText = "Error";
-                    circleColor = "RED";
-                }
+    private void updateAssemblyConnectionStatus() {
+        boolean connected = iMqttService.isConnected();
+        Platform.runLater(() -> {
+            if (connected) {
+                assemblyConnectionCircle.setFill(Color.valueOf("#1fff25"));
+            } else {
+                assemblyConnectionCircle.setFill(Color.RED);
+                assemblyStatusCircle.setFill(Color.RED);
+                assemblyStatusLabel.textProperty().unbind();
+                assemblyStatusLabel.setText("Error");
             }
+        });
+    }
 
-            String connectionStatus = agv.isConnected() ? "#1fff25" : "RED";
-
-            Platform.runLater(() -> {
-                agvStatusLabel.textProperty().unbind(); // Vi får en runtimeException, når vi kører appen og denne er bound i forvejen.
-                agvStatusLabel.setText(statusText);
-                agvStatusCircle.setFill(Color.valueOf(circleColor));
-                agvConnectionCircle.setFill(Color.valueOf(connectionStatus));
-                agvParameterLabel.textProperty().unbind(); // samme som l.159.
-                agvParameterLabel.setText("Battery: " + agv.getBatteryLevel() + "%");
-            });
-        }
-
-        @FXML
-        private void additem () {
-            addButton.setOnMouseClicked(event -> {
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/addItem.fxml"));
-
-                    AddItemController controller = new AddItemController(serviceSoap);
-                    controller.setOnSubmitSuccess(this::loadInventory);
-                    fxmlLoader.setController(controller);
-
-                    Scene scene = new Scene(fxmlLoader.load());
-                    Stage stage = new Stage();
-                    stage.setTitle("Add Item");
-                    stage.setScene(scene);
-                    stage.show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-
-        @FXML
-        private void removeitem () {
-            InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
-            if (selected != null) {
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/removeItem.fxml"));
-
-                    RemoveItemController controller = new RemoveItemController(serviceSoap, selected);
-                    controller.setOnRemoveSuccess(this::loadInventory);
-                    fxmlLoader.setController(controller);
-
-                    Scene scene = new Scene(fxmlLoader.load());
-                    Stage stage = new Stage();
-                    stage.setTitle("Remove Item");
-                    stage.setScene(scene);
-                    stage.show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+    private void updateAGVDisplay() {
+        String statusText;
+        String circleColor;
+        switch (agv.getCurrentstate()) {
+            case 1 -> {
+                statusText = "Idle";
+                circleColor = "DODGERBLUE";
             }
-       //InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            int trayId = selected.getTrayId();
-            String result = serviceSoap.pickItem(trayId);
-            System.out.println(result);
-            loadInventory();
-        }else{
-            System.out.println("Item not found");
-        }
-
-
-        }
-
-
-        @FXML
-        private void editbutton () {
-            InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
-            if (selected != null) {
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/Editbutton.fxml"));
-
-                    EditItemController controller = new EditItemController(serviceSoap, selected);
-                    controller.setOnEditSuccess(this::loadInventory);
-                    fxmlLoader.setController(controller);
-
-                    Scene scene = new Scene(fxmlLoader.load());
-                    Stage stage = new Stage();
-                    stage.setTitle("Edit item");
-                    stage.setScene(scene);
-                    stage.show();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            case 2 -> {
+                statusText = "Working";
+                circleColor = "#1fff25";
             }
+            case 3 -> {
+                statusText = "Charging";
+                circleColor = "ORANGE";
+            }
+            default -> {
+                statusText = "Error";
+                circleColor = "RED";
+            }
+        }
+
+        String connectionStatus = agv.isConnected() ? "#1fff25" : "RED";
+
+        Platform.runLater(() -> {
+            agvStatusLabel.textProperty().unbind(); // Vi får en runtimeException, når vi kører appen og denne er bound i forvejen.
+            agvStatusLabel.setText(statusText);
+            agvStatusCircle.setFill(Color.valueOf(circleColor));
+            agvConnectionCircle.setFill(Color.valueOf(connectionStatus));
+            agvParameterLabel.textProperty().unbind(); // samme som l.159.
+            agvParameterLabel.setText("Battery: " + agv.getBatteryLevel() + "%");
+        });
+    }
+
+    @FXML
+    private void additem() {
+
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/addItem.fxml"));
+            Parent parent = fxmlLoader.load();
+
+            AddItemController controller = fxmlLoader.getController();
+            controller.setServiceSoap(serviceSoap);
+            controller.setOnSubmitSuccess(this::loadInventory);
+
+
+            Stage stage = new Stage();
+            stage.setTitle("Add Item");
+            stage.setScene(new Scene(parent));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(type);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
+    }
+
+    @FXML
+    private void removeitem() {
+        InventoryItems selected = inventoryTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            if (selected.getQuantity() <= 0) {
+                // This alert shows if the aggregated quantity is 0, preventing the dialog
+                showAlert(Alert.AlertType.INFORMATION, "No Item to Remove", "There are no '" + selected.getItemName() + "' items listed as 'Available' to remove.");
+                return;
+            }
+
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/removeItem.fxml"));
+
+                Scene scene = new Scene(fxmlLoader.load());
+                RemoveItemController controller = fxmlLoader.getController();
+
+                controller.setServiceSoap(serviceSoap);
+                controller.setSelectedItem(selected); // Passes the selected item to the controller
+                controller.setOnRemoveSuccess(this::loadInventory);
+
+                Stage stage = new Stage();
+                stage.setTitle("Confirm Removal");
+                stage.setScene(scene);
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.showAndWait();
+
+            } catch (IOException e) {
+                System.err.println("Error opening Remove Item dialog: " + e.getMessage());
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to open remove dialog. Details: " + e.getMessage());
+            }
+        } else {
+            // This alert shows if nothing is selected in the main table
+            showAlert(Alert.AlertType.INFORMATION, "No Selection", "Please select an item in the table to remove.");
+        }
+    }
+
+    @FXML
+    private void editbutton() {
+
+        InventoryItems selected = inventoryTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/Editbutton.fxml"));
+
+                Scene scene = new Scene(fxmlLoader.load());
+
+                // Pass the selected InventoryItems object to the EditItemController
+                EditItemController controller = fxmlLoader.getController();
+                controller.setSelectedItem(selected);
+
+                // Set the callback to update the UI directly
+                controller.setOnEditSuccess(this::updateAvailableQuantity);
+
+
+                Stage stage = new Stage();
+                stage.setTitle("Edit Item Quantity");
+                stage.setScene(scene);
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.showAndWait();
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.err.println("Error opening Edit Item dialog.");
+            }
+        } else {
+            System.out.println("No item selected for editing.");
+        }
+    }
+
+    private void updateAvailableQuantity(String itemName, Integer newQuantity) {
+        Platform.runLater(() -> {
+            boolean found = false;
+            for (InventoryItems item : inventoryData) {
+                if (item.getItemName().equalsIgnoreCase(itemName)) {
+                    item.setQuantity(newQuantity); // Update the quantity
+                    found = true;
+                    System.out.println("UI quantity for '" + itemName + "' set to " + newQuantity);
+                    break;
+                }
+            }
+            if (!found) {
+                // If item not found (e.g., quantity was 0, now > 0), add it
+                if (newQuantity > 0) {
+                    inventoryData.add(new InventoryItems(itemName, newQuantity));
+                    System.out.println("Added '" + itemName + "' with quantity " + newQuantity + " to UI.");
+                }
+            }
+        });
+    }
+}

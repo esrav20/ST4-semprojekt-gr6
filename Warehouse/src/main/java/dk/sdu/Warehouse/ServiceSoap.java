@@ -18,7 +18,8 @@ public class ServiceSoap {
         IEmulatorService_Service service = new IEmulatorService_Service();
         this.port = service.getBasicHttpBindingIEmulatorService();
     }
-public boolean isConnected(){
+
+    public boolean isConnected(){
         try{
             port.getInventory();
             return true;
