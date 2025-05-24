@@ -40,7 +40,8 @@ public class AddItemController {
 
         String emptyTrayId = null;
         for (String key : inventoryObj.keySet()) {
-            if (inventoryObj.getString(key).isEmpty()) {
+            Object value = inventoryObj.opt(key);
+            if (value == null || value.toString().isBlank()) {
                 emptyTrayId = key;
                 break;
             }

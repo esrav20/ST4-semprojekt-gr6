@@ -60,9 +60,10 @@ public class TabViewController {
     private TableColumn<InventoryView, String> itemColumn;
     @FXML
     private TableColumn<InventoryView, Integer> availableColumn;
-    @FXML
-    private TableColumn<InventoryView, Integer> inStockColumn;
-    @FXML
+//    @FXML
+//    private TableColumn<InventoryView, Integer> inStockColumn;
+//
+@FXML
     private ChoiceBox<String> warehouseDropdown;
 private ObservableList<InventoryItems> inventoryData = FXCollections.observableArrayList();
 
@@ -247,7 +248,7 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
         Map<String, Integer> itemCounts = new HashMap<>();
 
         for (String key : inventoryObj.keySet()) {
-            String itemName = inventoryObj.getString(key);
+            String itemName = String.valueOf(inventoryObj.get(key));
             if(!itemName.isEmpty()){
                 itemCounts.put(itemName, itemCounts.getOrDefault(itemName, 0)+1);
             }
@@ -274,6 +275,13 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
             ObservableList<InventoryItems> parsedData = parseInventoryResponse(response);
             inventoryData.clear();
             inventoryData.addAll(parsedData);
+            ObservableList<InventoryView> viewData = FXCollections.observableArrayList();
+            for (InventoryItems item : inventoryData) {
+                viewData.add(new InventoryView(item.getItemName(), item.getQuantity()));
+            }
+
+            // Set the TableView items
+            inventoryTable.setItems(viewData);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Jeg kan love dig for load Inventory fejler du");
@@ -379,6 +387,7 @@ private ObservableList<InventoryItems> inventoryData = FXCollections.observableA
         updateAGVDisplay();
         iMqttService.connect();
         setupTable();
+        inventoryTable.setItems(inventoryData);
         setupWarehouseDropdown();
         loadInventory();
         emergencyStopButton.setOnMouseClicked(event -> {
