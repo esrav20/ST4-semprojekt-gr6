@@ -1,35 +1,28 @@
-module Core {
-    requires javafx.controls;
-    requires javafx.fxml;
-
-    requires org.eclipse.paho.client.mqttv3;
-    requires spring.boot;
-    requires spring.boot.autoconfigure;
-    requires jdk.compiler;
-    requires spring.context;
-    requires spring.beans;
-    requires java.net.http;
-    requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
-    requires spring.web;
-    requires spring.data.jpa;
-    requires spring.tx;
-    requires spring.core;
-    requires java.sql;
-
-    requires CommonWarehouse;
-    requires CommonAGV;
-    requires CommonAssemblyStation;
-    requires java.desktop;
-    requires org.hibernate.orm.core;
-    opens com.example.guidemo_4semester.Queue to javafx.base;
-    opens com.example.guidemo_4semester to javafx.fxml, spring.core, spring.beans, spring.context;
-    //opens views to javafx.fxml, spring.core, spring.beans, spring.context;
-            exports com.example.guidemo_4semester;
-
-
-}
-
-
-
-
+//module Core {
+//    requires javafx.controls;
+//    requires spring.boot;
+//    requires spring.context;
+//    requires spring.boot.autoconfigure;
+//    requires spring.beans;
+//    requires spring.core;
+//    requires javafx.fxml;
+//    requires CommonAGV;
+//    requires CommonAssemblyStation;
+//    requires org.eclipse.paho.client.mqttv3;
+//    requires com.fasterxml.jackson.core;
+//    requires com.fasterxml.jackson.databind;
+//    requires org.json;
+////    requires CommonWarehouse;
+//    requires Warehouse;
+//
+//    opens com.example.guidemo_4semester.Queue to javafx.base;
+//    opens com.example.guidemo_4semester to javafx.fxml, spring.core, spring.beans, spring.context;
+//
+//    exports com.example.guidemo_4semester;
+//
+//
+//}
+//
+//
+//
+//
