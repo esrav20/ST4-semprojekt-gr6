@@ -1,17 +1,15 @@
 package com.example.guidemo_4semester;
-import com.example.guidemo_4semester.TabViewController;
-import dk.sdu.CommonInventory.InventoryView;
-import dk.sdu.CommonInventory.WarehousePI;
+import dk.sdu.Warehouse.InventoryView;
+import dk.sdu.Warehouse.ServiceSoap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 
 public class RemoveItemController {
-    WarehousePI warehouseClient;
+    ServiceSoap serviceSoap;
     private Runnable onRemoveSuccess;
     private InventoryView selectedItem;
     @FXML
@@ -20,8 +18,8 @@ public class RemoveItemController {
     Button yesButton;
     @FXML
     Button removeCancelButton;
-    public RemoveItemController(WarehousePI warehouseClient, InventoryView selectedItem) {
-        this.warehouseClient = warehouseClient;
+    public RemoveItemController(ServiceSoap serviceSoap, InventoryView selectedItem) {
+        this.serviceSoap = serviceSoap;
         this.selectedItem = selectedItem;
     }
     public void setOnRemoveSuccess(Runnable onRemoveSuccess) {
@@ -32,8 +30,10 @@ public class RemoveItemController {
     private void HandleRemove() {
         //InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
-            Long id = selectedItem.getId();
-            String result = warehouseClient.deleteitems(id);
+            //Long id = selectedItem.getId();
+            //String result = warehouseClient.deleteitems(id);
+            int trayId = selectedItem.getTrayId();
+            serviceSoap.pickItem(trayId);
 
             if (onRemoveSuccess != null) {
                 onRemoveSuccess.run(); // <-- triggers loadInventory()

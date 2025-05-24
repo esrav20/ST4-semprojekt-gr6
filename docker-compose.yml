@@ -4,77 +4,23 @@ services:
     ports:
       - 9001:9001
       - 1883:1883
-    networks:
-      - spring-network
 
   st4-agv:
     image: thmork/st4-agv:latest
     ports:
       - 8082:80
-    networks:
-      - spring-network
 
   st4-warehouse:
     image: thmork/st4-warehouse:latest
     ports:
       - 8081:80
-    networks:
-      - spring-network
+
 
   st4-assemblystation:
     image: thmork/st4-assemblystation:latest
     environment:
       MQTT_TCP_CONNECTION_HOST: "mqtt"
       MQTT_TCP_CONNECTION_PORT: 9001
-    networks:
-      - spring-network
 
-  warehouse-db:
-    image: mysql:8.0
-    container_name: mysql-db
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: kodeord1
-      MYSQL_DATABASE: warehouse_db
-    ports:
-      - "3306:3306"
-    networks:
-      - spring-network
-    volumes:
-      - mysql:/var/lib/mysql
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    restart: always
-    ports:
-      - "8083:80"
-    environment:
-      PMA_HOST: warehouse-db
-      PMA_PORT: 3306
-      PMA_USER: root
-      PMA_PASSWORD: kodeord1
-    depends_on:
-      - warehouse-db
-    networks:
-      - spring-network
 
-  spring-app:
-    build: .
-    container_name: spring-app
-    ports:
-      - "8085:8080"
-    depends_on:
-      - warehouse-db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://warehouse-db:3306/warehouse_db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: kodeord1
-    networks:
-      - spring-network
-
-networks:
-  spring-network:
-    driver: bridge
-
-volumes:
-  mysql:

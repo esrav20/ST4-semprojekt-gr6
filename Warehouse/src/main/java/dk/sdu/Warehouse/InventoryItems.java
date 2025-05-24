@@ -1,47 +1,28 @@
 package dk.sdu.Warehouse;
 
-import jakarta.persistence.*;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 
-//Model af layout af database tables
-@Entity
-@Table(name = "inventory_items")
+//Data model til at display inventory i view
+
 public class InventoryItems {
-    @Id
-    private Long id;
 
-    private int trayId;
-    private String itemName;
-    private int quantity;
+    private final SimpleStringProperty itemName;
 
+    private final SimpleIntegerProperty quantity;
 
-    //getter og setters
-    public Long getId(){
-        return id;
-    }
-    public void setId(Long id){
-        this.id = id;
+    public InventoryItems(String itemName, int quantity){
+        this.itemName = new SimpleStringProperty(itemName);
+        this.quantity = new SimpleIntegerProperty(quantity);
     }
 
-    public int getTrayId(){
-        return trayId;
-    }
 
-    public void setTrayId(int trayId){
-        this.trayId = trayId;
-    }
-
-    public String getItemName(){
-        return itemName;
-    }
-
-    public void setItemName(String itemName){
-        this.itemName = itemName;
+    public String getItemName() {
+        return itemName.get();
     }
 
     public int getQuantity(){
-        return quantity;
+        return quantity.get();
     }
-    public void setQuantity(int quantity){
-        this.quantity = quantity;
-    }
+
 }

@@ -3,8 +3,9 @@ package com.example.guidemo_4semester;
 import com.example.guidemo_4semester.Queue.Batch;
 import dk.sdu.Common.IMqttService;
 import dk.sdu.CommonAGV.AGVPI;
-import dk.sdu.CommonInventory.InventoryView;
-import dk.sdu.CommonInventory.WarehousePI;
+import dk.sdu.Warehouse.InventoryView;
+import dk.sdu.Warehouse.InventoryItems;
+import dk.sdu.Warehouse.ServiceSoap;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -31,18 +32,21 @@ import javafx.util.converter.IntegerStringConverter;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.example.guidemo_4semester.AddItemController;
 
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.Optional;
+import java.util.*;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONObject;
 
 @Component
 public class TabViewController {
 
     private final AGVPI agv;
     private final IMqttService iMqttService;
-    private final WarehousePI warehouseClient;
+    private final ServiceSoap serviceSoap;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
 
     String[] productList = {"Toy Cars1", "Toy Cars2"};
@@ -60,9 +64,9 @@ public class TabViewController {
     private TableColumn<InventoryView, Integer> inStockColumn;
     @FXML
     private ChoiceBox<String> warehouseDropdown;
-    private ObservableList<InventoryView> inventoryData = FXCollections.observableArrayList();
-    //---------------------------
-    @FXML
+private ObservableList<InventoryItems> inventoryData = FXCollections.observableArrayList();
+
+@FXML
     private Label agvStatusLabel;
     @FXML
     private Circle agvStatusCircle;
@@ -134,9 +138,9 @@ public class TabViewController {
     private int processId = 0;
 
     // vi skal ikke have en setDepencies metode - da Spring ikke kan starte programmet uden Constructor-based DI.
-    @Autowired
-    public TabViewController(WarehousePI warehouseClient, AGVPI agv, IMqttService iMqttService) throws MqttException {
-        this.warehouseClient = warehouseClient;
+
+    public TabViewController(ServiceSoap serviceSoap, AGVPI agv, IMqttService iMqttService) throws MqttException {
+        this.serviceSoap = serviceSoap;
         this.agv = agv;
         this.iMqttService = iMqttService;
     }
@@ -150,27 +154,38 @@ public class TabViewController {
 
 
     private boolean checkStock(int quantity) {
-
-
-        inventoryData.setAll(warehouseClient.getInventory());
         int wheelCount = 0;
-        int chassisCount=0;
+        int chassisCount = 0;
+        int tempWheelTrayId = -1;
+        int tempChassisTrayId = -1;
 
-        for (InventoryView item : inventoryData) {
-            String name = item.getItemName().toLowerCase();
+        try {
+            String json = serviceSoap.getInventory();
+            JSONObject obj = new JSONObject(json);
+            JSONObject inventoryObj = obj.getJSONArray("Inventory").getJSONObject(0);
 
-            switch (name) {
-                case "wheel" ->{
-                    wheelCount = item.getQuantity();
-                    wheelTrayId = item.getTrayId();
+            for (String key : inventoryObj.keySet()) {
+                String name = inventoryObj.getString(key).toLowerCase();
+
+                switch (name) {
+                    case "wheel" -> {
+                        wheelCount++;
+                        tempWheelTrayId = Integer.parseInt(key); // last seen trayId with wheel
+                    }
+                    case "chassis" -> {
+                        chassisCount++;
+                        tempChassisTrayId = Integer.parseInt(key); // last seen trayId with chassis
+                    }
                 }
-                case "chassis" -> {
-                    chassisCount = item.getQuantity();
-                    chassisTrayId = item.getTrayId();
-                }
-
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
+
+        wheelTrayId = tempWheelTrayId;
+        chassisTrayId = tempChassisTrayId;
+
         int requiredWheels = quantity * 4;
         int requiredChassis = quantity;
 
@@ -184,7 +199,7 @@ public class TabViewController {
     }
 
     private void updateDatabaseConnectionStatus() {
-        boolean isConnected = warehouseClient.isConnected(); // Assuming this method exists
+        boolean isConnected = serviceSoap.isConnected();
         Platform.runLater(() -> {
             if (isConnected) {
                 databaseConnectionCircle.setFill(Color.valueOf("#1fff25"));
@@ -194,10 +209,14 @@ public class TabViewController {
         });
     }
 
-
+    private int parseStateFromInventoryResponse(String response) {
+        JSONObject json = new JSONObject(response);
+        return json.getInt("State");
+    }
 
     private void updateWarehouseState() {
-        int state = warehouseClient.getWarehouseState();
+        String response = serviceSoap.getInventory();
+        int state = parseStateFromInventoryResponse(response);
 
         Platform.runLater(() -> {
             switch (state) {
@@ -220,23 +239,41 @@ public class TabViewController {
             }
         });
     }
+    private ObservableList<InventoryItems> parseInventoryResponse(String response) {
+        ObservableList<InventoryItems> inventoryData = FXCollections.observableArrayList();
+        JSONObject json = new JSONObject(response);
+        JSONObject inventoryObj = json.getJSONArray("Inventory").getJSONObject(0);
+
+        Map<String, Integer> itemCounts = new HashMap<>();
+
+        for (String key : inventoryObj.keySet()) {
+            String itemName = inventoryObj.getString(key);
+            if(!itemName.isEmpty()){
+                itemCounts.put(itemName, itemCounts.getOrDefault(itemName, 0)+1);
+            }
+        }
+        for (Map.Entry<String,Integer> entry : itemCounts.entrySet()){
+            inventoryData.add(new InventoryItems(entry.getKey(), entry.getValue()));
+        }
+        return inventoryData;
+    }
 
     private void setupTable() {
-        IDColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         itemColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
         availableColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        inventoryTable.setItems(inventoryData);
     }
 
     private void setupWarehouseDropdown() {
-        warehouseDropdown.setItems(FXCollections.observableArrayList("Warehouse1", "Warehouse2"));
+        warehouseDropdown.setItems(FXCollections.observableArrayList("Warehouse1"));
         warehouseDropdown.setOnAction(event -> loadInventory());
     }
 
     private void loadInventory() {
         try {
+            String response = serviceSoap.getInventory(); //hent json string
+            ObservableList<InventoryItems> parsedData = parseInventoryResponse(response);
             inventoryData.clear();
-            inventoryData.addAll(warehouseClient.getInventory());
+            inventoryData.addAll(parsedData);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Jeg kan love dig for load Inventory fejler du");
@@ -400,7 +437,17 @@ public class TabViewController {
             }
         }).start();
     }
-
+//    int warehouseState = getWarehouseState();
+    private int getWarehouseState() {
+        try {
+            String json = serviceSoap.getInventory();
+            JSONObject obj = new JSONObject(json);
+            return obj.getInt("State");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1; // or any value indicating error/unknown
+        }
+    }
 
     @FXML
     public void startProd() {
@@ -427,14 +474,14 @@ public class TabViewController {
                             System.out.println("TRAYID FANDT VI IKKE NEJ");
                         }
                         for(int i = 0; i < 4; i++){
-                            warehouseClient.pickItem(wheelTrayId);
+                            serviceSoap.pickItem(wheelTrayId);
                         }
-                        warehouseClient.pickItem(chassisTrayId);
+                        serviceSoap.pickItem(chassisTrayId);
                         if (emergencyActive) {
                             break;
                         }
 
-                        if (warehouseClient.getWarehouseState() == 0) {
+                        if (getWarehouseState() == 0) {
 
                             agv.needsCharging();
                             agv.sendRequest("{\"Program name\":\"MoveToStorageOperation\",\"State\":1}");
@@ -443,7 +490,7 @@ public class TabViewController {
                                 break;
                             }
                         }
-                        if (warehouseClient.getWarehouseState() == 0 && agv.getCurrentstate() == 1) {
+                        if (getWarehouseState() == 0 && agv.getCurrentstate() == 1) {
                             agv.needsCharging();
                             agv.sendRequest("{\"Program name\":\"PickWarehouseOperation\",\"State\":1}");
                             agv.sendRequest("{\"State\":2}");
@@ -502,33 +549,33 @@ public class TabViewController {
                             }
                         }
 
-                        if (agv.getCurrentstate() == 1 && warehouseClient.getWarehouseState() == 0) {
+                        if (agv.getCurrentstate() == 1 && getWarehouseState() == 0) {
                             agv.needsCharging();
                             agv.sendRequest("{\"Program name\":\"PutWarehouseOperation\",\"State\":1}");
                             agv.sendRequest("{\"State\":2}");
                             agv.putItem("");
 
-                            Optional<InventoryView> existingItemOpt = warehouseClient.getInventory().stream()
-                                    .filter(item -> "Car".equals(item.getItemName()))
-                                    .findFirst();
-
-                            if (existingItemOpt.isPresent()) {
-                                // Item exists - increase quantity
-                                InventoryView existingItem = existingItemOpt.get();
-                                int newQuantity = existingItem.getQuantity() + 1; // increase by 1 or your desired amount
-                                warehouseClient.updateItem(existingItem.getId(),existingItem.getItemName(), newQuantity);
-                            } else {
-                                // Item does not exist - insert new item with new IDs
-                                int nextTrayId = warehouseClient.getInventory().stream()
-                                        .mapToInt(InventoryView::getTrayId)
-                                        .max()
-                                        .orElse(0) + 1;
-                                long nextId = warehouseClient.getInventory().stream()
-                                        .mapToLong(InventoryView::getId)
-                                        .max()
-                                        .orElse(0) + 1;
-                                warehouseClient.insertItem(nextTrayId, nextId, "Car", 1);
-                            }
+//                            Optional<InventoryView> existingItemOpt = serviceSoap.getInventory().stream()
+//                                    .filter(item -> "Car".equals(item.getItemName()))
+//                                    .findFirst();
+//
+//                            if (existingItemOpt.isPresent()) {
+//                                // Item exists - increase quantity
+//                                InventoryView existingItem = existingItemOpt.get();
+//                                int newQuantity = existingItem.getQuantity() + 1; // increase by 1 or your desired amount
+//                                serviceSoap.updateItem(existingItem.getId(),existingItem.getItemName(), newQuantity);
+//                            } else {
+//                                // Item does not exist - insert new item with new IDs
+//                                int nextTrayId = serviceSoap.getInventory().stream()
+//                                        .mapToInt(InventoryView::getTrayId)
+//                                        .max()
+//                                        .orElse(0) + 1;
+//                                long nextId = serviceSoap.getInventory().stream()
+//                                        .mapToLong(InventoryView::getId)
+//                                        .max()
+//                                        .orElse(0) + 1;
+//                                serviceSoap.insertItem(nextTrayId, nextId, "Car", 1);
+//                            }
 
                             if (emergencyActive) {
                                 break;
@@ -629,7 +676,7 @@ public class TabViewController {
                 try {
                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/addItem.fxml"));
 
-                    AddItemController controller = new AddItemController(warehouseClient);
+                    AddItemController controller = new AddItemController(serviceSoap);
                     controller.setOnSubmitSuccess(this::loadInventory);
                     fxmlLoader.setController(controller);
 
@@ -651,7 +698,7 @@ public class TabViewController {
                 try {
                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/removeItem.fxml"));
 
-                    RemoveItemController controller = new RemoveItemController(warehouseClient, selected);
+                    RemoveItemController controller = new RemoveItemController(serviceSoap, selected);
                     controller.setOnRemoveSuccess(this::loadInventory);
                     fxmlLoader.setController(controller);
 
@@ -664,15 +711,15 @@ public class TabViewController {
                     e.printStackTrace();
                 }
             }
-       /* InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
+       //InventoryView selected = inventoryTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            Long id = selected.getId();
-            String result = warehouseClient.deleteitems(id);
+            int trayId = selected.getTrayId();
+            String result = serviceSoap.pickItem(trayId);
             System.out.println(result);
             loadInventory();
         }else{
             System.out.println("Item not found");
-        }*/
+        }
 
 
         }
@@ -685,7 +732,7 @@ public class TabViewController {
                 try {
                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/Editbutton.fxml"));
 
-                    EditItemController controller = new EditItemController(warehouseClient, selected);
+                    EditItemController controller = new EditItemController(serviceSoap, selected);
                     controller.setOnEditSuccess(this::loadInventory);
                     fxmlLoader.setController(controller);
 

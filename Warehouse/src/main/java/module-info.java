@@ -1,11 +1,13 @@
-module Warehouse {
-    requires jakarta.persistence;
-    requires spring.context;
-    requires spring.data.jpa;
-    requires spring.boot.autoconfigure;
-    requires spring.web;
-    requires spring.beans;
-    requires CommonWarehouse;
-
-
-}
+//module Warehouse {
+//    requires spring.boot;
+//    requires spring.context;
+//    requires jakarta.xml.ws;
+//    requires jakarta.annotation;
+//    requires jakarta.xml.bind;
+//    requires java.xml;
+//    requires javafx.base;
+//    //requires CommonWarehouse;
+//    exports dk.sdu.Warehouse;
+//    opens warehouseclient to jakarta.xml.bind, jakarta.xml.ws;
+//
+//}

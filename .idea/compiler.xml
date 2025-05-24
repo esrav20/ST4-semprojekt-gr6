@@ -8,7 +8,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="AGV" />
         <module name="Warehouse" />
-        <module name="CommonWarehouse" />
         <module name="AssemblyStation" />
         <module name="CommonAGV" />
         <module name="CommonAssemblyStation" />
@@ -16,6 +15,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="CommonWarehouse" target="17" />
       <module name="GUI" target="21" />
       <module name="ST4-semprojekt-gr6" target="1.5" />
       <module name="warehouse-spring-soap" target="17" />
