@@ -26,7 +26,8 @@ public class ServiceSoap {
         } catch (Exception e){
             return false;
         }
-}
+    }
+
     public String insertItem(int trayId, String name) {
         return port.insertItem(trayId, name);
     }

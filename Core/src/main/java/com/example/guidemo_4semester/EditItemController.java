@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import java.util.function.BiConsumer;
 
 public class EditItemController {
-    ServiceSoap serviceSoap;
+
     private InventoryView selectedItem;
     private BiConsumer<String, Integer> onEditSuccess;
 

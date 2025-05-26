@@ -38,12 +38,9 @@ public class AddItemController {
     @FXML
     private TextField Item;
 
-    // REMOVED: @FXML private TextField Amount; // Removed as per new requirement
-
     @FXML
     public void initialize() {
         System.out.println("Add Item Controller initialized. Item field is " + (Item == null ? "null" : "OK"));
-        // Amount field initialization removed
     }
 
     @FXML
@@ -213,14 +210,6 @@ public class AddItemController {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "System Error", "An unexpected error occurred: " + e.getMessage());
         }
-    }
-
-    @FXML
-    private void handleCancel() {
-        Platform.runLater(() -> {
-            Stage stage = (Stage) Item.getScene().getWindow();
-            stage.close();
-        });
     }
 
     // Helper method for showing alerts (private to this controller)

@@ -66,7 +66,7 @@ public class TabViewController {
 
     @FXML
     private ChoiceBox<String> warehouseDropdown;
-    private ObservableList<InventoryItems> inventoryData = FXCollections.observableArrayList();
+    private final ObservableList<InventoryItems> inventoryData = FXCollections.observableArrayList();
 
     @FXML
     private Label agvStatusLabel;
@@ -130,16 +130,15 @@ public class TabViewController {
     private Button emergencyStopButton;
 
     private int batchCounter = 1;
-    private ObservableList<Batch> batchList = FXCollections.observableArrayList();
+    private final ObservableList<Batch> batchList = FXCollections.observableArrayList();
     private SortedList<Batch> sortedList;
     private Integer queueValue;
-    private boolean productionStarted = false;
+    private final boolean productionStarted = false;
     private Timeline updateTimer;
     private int status;
     private boolean emergencyActive = false;
     private int processId = 0;
 
-    // vi skal ikke have en setDepencies metode - da Spring ikke kan starte programmet uden Constructor-based DI.
 
     public TabViewController(ServiceSoap serviceSoap, AGVPI agv, IMqttService iMqttService) throws MqttException {
         this.serviceSoap = serviceSoap;
@@ -150,38 +149,6 @@ public class TabViewController {
 
     private int wheelTrayId = -1;
     private int chassisTrayId = -1;
-
-    @FXML
-    private void checkStock() {
-        String itemName = itemColumn.getText().trim();
-
-        if (itemName.isBlank()) {
-            showAlert(Alert.AlertType.ERROR, "Input Error", "Item Name cannot be empty.");
-            return;
-        }
-
-        int requestedQuantity = 0; // Default to 0 if not found
-        boolean itemFoundInTable = false;
-        for (InventoryItems item : inventoryData) {
-            if (item.getItemName().equalsIgnoreCase(itemName)) {
-                requestedQuantity = item.getQuantity();
-                itemFoundInTable = true;
-                break;
-            }
-        }
-
-        if (!itemFoundInTable) {
-            showAlert(Alert.AlertType.ERROR, "Item Not Found", "Item '" + itemName + "' is not currently displayed in the inventory table.");
-            return;
-        }
-
-        // Call the modified private checkStock method
-        if (checkStock(requestedQuantity)) {
-            showAlert(Alert.AlertType.INFORMATION, "Stock Check Result", "Enough components for " + requestedQuantity + " of '" + itemName + "'.");
-        } else {
-            showAlert(Alert.AlertType.WARNING, "Stock Check Result", "Not enough components for " + requestedQuantity + " of '" + itemName + "'. Check console for details.");
-        }
-    }
 
     private boolean checkStock(int quantity) {
         // These counts will now come directly from the tableView's displayed data (inventoryData)
@@ -422,7 +389,6 @@ public class TabViewController {
         loadInventory();
         inventoryTable.setItems(inventoryData);
         setupWarehouseDropdown();
-//        additem();
         emergencyStopButton.setOnMouseClicked(event -> {
             if (!emergencyActive) {
                 handleEmergencyStop();
@@ -592,6 +558,11 @@ public class TabViewController {
                         if (agv.getCurrentstate() == 1 && getWarehouseState() == 0) {
                             agv.needsCharging();
                             agv.sendRequest("{\"Program name\":\"PutWarehouseOperation\",\"State\":1}");
+                            serviceSoap.pickItem(10);
+                            loadInventory();
+                            Thread.sleep(100);
+                            serviceSoap.insertItem(10, "Toy Car");
+                            loadInventory();
                             agv.sendRequest("{\"State\":2}");
                             agv.putItem("");
 
@@ -607,6 +578,7 @@ public class TabViewController {
 
                         queueValue--;
                         Thread.sleep(100);
+                        processId++;
                     }
 
 
@@ -614,9 +586,7 @@ public class TabViewController {
                         batchList.remove(0);
                         if (!batchList.isEmpty()) {
                             startProd();
-                            processId++;
                         }
-
                     });
 
                     return null;

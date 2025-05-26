@@ -4,16 +4,12 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
-//Data model til at display inventory i view
-
 public class InventoryItems implements InventoryView {
 
     private final SimpleStringProperty itemName;
-
     private final SimpleIntegerProperty quantity;
     private final SimpleIntegerProperty trayId;
 
-    //private final SimpleIntegerProperty trayId;
     public InventoryItems(String itemName, int quantity){
         this.itemName = new SimpleStringProperty(itemName);
         this.quantity = new SimpleIntegerProperty(quantity);
@@ -24,7 +20,8 @@ public class InventoryItems implements InventoryView {
     public int getTrayId() {
         return trayId.get();
     }
-    public IntegerProperty trayIdProperty() { // Add property getter
+
+    public IntegerProperty trayIdProperty() {
         return trayId;
     }
 
@@ -32,9 +29,11 @@ public class InventoryItems implements InventoryView {
     public String getItemName() {
         return itemName.get();
     }
+
     public SimpleStringProperty itemNameProperty() { // Add property getter
         return itemName;
     }
+
     @Override
     public int getQuantity() {
         return quantity.get();

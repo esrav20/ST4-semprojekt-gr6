@@ -8,7 +8,6 @@ public class AGVConnectionManager {
     private static AGVConnectionManager instance;
     private String baseUrl;
 
-
     private AGVConnectionManager() {
         this.baseUrl = "http://localhost:8082/v1/status/";
     }
@@ -25,10 +24,6 @@ public class AGVConnectionManager {
         if (baseUrl != null && !baseUrl.isEmpty()) {
             this.baseUrl = baseUrl;
         }
-    }
-
-    public String getBaseUrl() {
-        return baseUrl;
     }
 
     public HttpURLConnection createConnection(String endpoint) throws IOException {

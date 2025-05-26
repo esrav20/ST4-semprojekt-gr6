@@ -4,36 +4,32 @@ import dk.sdu.CommonAGV.AGVPI;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Component
 public class AGVMovement implements AGVPI {
-    private AGVConnectionManager connectionManager = AGVConnectionManager.getInstance();
+    private final AGVConnectionManager connectionManager = AGVConnectionManager.getInstance();
     private int currentState;
     private static volatile int battery = 100;
     private static int lastStatusCode;
     private static String status;
-    private List<String> carriedItems = new ArrayList<>();
+    private final List<String> carriedItems = new ArrayList<>();
     private final int MAX_ITEMS_CAPACITY = 10;
     private final int battery_threshold = 20;
     private boolean connected;
 
     @Override
-    public int getStatus() {
-        return lastStatusCode;
-    }
-    @Override
-    public String getErrorcode(){
-        return status;
-    }
-    @Override
-    public int getCurrentstate(){
+    public int getCurrentstate() {
         return currentState;
     }
+
     @Override
     public int getBatteryLevel() {
         return battery;
@@ -41,9 +37,9 @@ public class AGVMovement implements AGVPI {
 
     @Override
     public void needsCharging() throws IOException, InterruptedException {
-        if(battery < battery_threshold){
+        if (battery < battery_threshold) {
             charge();
-        };
+        }
     }
 
     @Override
@@ -60,15 +56,18 @@ public class AGVMovement implements AGVPI {
 
         System.out.println("Charging complete. Battery level: " + battery + "%");
     }
+
     @Override
     public void connectionAGV(String url) {
         connectionManager.setBaseUrl(url);
         connected = true;
     }
+
     @Override
-    public boolean isConnected(){
+    public boolean isConnected() {
         return connected;
     }
+
     @Override
     public void sendRequest(String operationJson) throws IOException, InterruptedException {
         HttpURLConnection connection = connectionManager.createConnection();
@@ -79,7 +78,7 @@ public class AGVMovement implements AGVPI {
         connection.setRequestProperty("Content-Type", "application/json");
 
         try (OutputStream os = connection.getOutputStream()) {
-            byte[] input = operationJson.getBytes("utf-8");
+            byte[] input = operationJson.getBytes(StandardCharsets.UTF_8);
             os.write(input, 0, input.length);
         }
 
@@ -106,7 +105,7 @@ public class AGVMovement implements AGVPI {
 
         lastStatusCode = connection.getResponseCode();
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
             StringBuilder response = new StringBuilder();
             String responseLine;
 
@@ -124,6 +123,7 @@ public class AGVMovement implements AGVPI {
 
         connection.disconnect();
     }
+
     @Override
     public void pickItem(String itemId) throws IOException, InterruptedException {
         if (carriedItems.size() >= MAX_ITEMS_CAPACITY) {
@@ -150,15 +150,5 @@ public class AGVMovement implements AGVPI {
 
         sendRequest(putOperation.toString());
         carriedItems.remove(itemId);
-    }
-
-    @Override
-    public List<String> getCarriedItems() {
-        return Collections.unmodifiableList(carriedItems);
-    }
-
-    @Override
-    public boolean canCarryMoreItems() {
-        return carriedItems.size() < MAX_ITEMS_CAPACITY;
     }
 }

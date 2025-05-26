@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
 
 @Component
 public class MqttService implements IMqttService {
-    private MqttClient client;
+    private final MqttClient client;
     private MqttCallback callback;
     private BiConsumer<Integer, Boolean> messageHandler;
     private int state;
